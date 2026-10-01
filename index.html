@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agbamami Restaurant Menu</title>
+<meta name="description" content="Agbamami Restaurant digital menu">
+<style>
+:root{
+  --cream:#fff7e8;
+  --ink:#272727;
+  --muted:#6f675d;
+  --card:#191919;
+  --accent:#b56b2a;
+  --white:#fff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+}
+button,a{font:inherit}
+a{text-decoration:none;color:inherit}
+.page{
+  width:min(100%,520px);
+  margin:0 auto;
+  min-height:100vh;
+  padding:18px 14px 34px;
+  background:var(--cream);
+}
+.topbar{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin:2px 4px 14px;
+}
+.icon-btn{
+  width:42px;height:42px;border-radius:50%;
+  border:0;background:rgba(255,255,255,.9);
+  box-shadow:0 3px 12px rgba(0,0,0,.12);
+  display:grid;place-items:center;
+  cursor:pointer;
+}
+.icon-btn svg{width:20px;height:20px}
+.brand{
+  text-align:center;
+  padding:4px 0 16px;
+}
+.logo-placeholder{
+  width:74px;height:74px;border-radius:50%;
+  margin:0 auto 10px;
+  display:grid;place-items:center;
+  background:#eee0c5;
+  color:#76644d;
+  font-size:11px;font-weight:700;
+  letter-spacing:.5px;
+}
+.brand h1{
+  margin:0;
+  font-size:22px;
+  font-weight:500;
+  letter-spacing:.1px;
+}
+.subtitle{
+  margin:7px 0 0;
+  color:var(--muted);
+  font-size:12px;
+}
+.categories{display:grid;gap:12px}
+.category{
+  position:relative;
+  height:142px;
+  border-radius:17px;
+  overflow:hidden;
+  background:#303030;
+  box-shadow:0 5px 14px rgba(0,0,0,.16);
+  cursor:pointer;
+  border:0;
+  width:100%;
+  padding:0;
+  text-align:left;
+}
+.category::after{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(0,0,0,.58),rgba(0,0,0,.05) 75%,rgba(0,0,0,.22));
+}
+.category .placeholder{
+  position:absolute;inset:0;
+  display:grid;place-items:center;
+  color:rgba(255,255,255,.5);
+  font-size:12px;
+  letter-spacing:1px;
+  background:
+    radial-gradient(circle at 25% 30%,#80654c 0 18%,transparent 19%),
+    radial-gradient(circle at 72% 55%,#aa8664 0 22%,transparent 23%),
+    linear-gradient(135deg,#353535,#81705d);
+}
+.category img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.category .label{
+  position:absolute;z-index:2;left:18px;bottom:17px;
+  color:#fff;font-weight:700;font-size:14px;
+  letter-spacing:.2px;text-transform:uppercase;
+  text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+.view{display:none}
+.view.active{display:block}
+.back{
+  border:0;background:transparent;padding:4px 0 16px;
+  color:var(--ink);font-weight:700;cursor:pointer;
+}
+.view h2{text-align:center;margin:4px 0 18px;font-size:22px}
+.items{display:grid;gap:10px}
+.item{
+  background:#fff;border-radius:14px;padding:14px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+.item-row{display:flex;justify-content:space-between;gap:16px}
+.item-name{font-weight:700;font-size:15px}
+.item-price{font-weight:700;white-space:nowrap;color:var(--accent)}
+.item-desc{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.45}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
+.small-note{
+  margin:15px 2px 0;text-align:center;font-size:10px;color:#8a8177
+}
+@media(min-width:700px){
+  body{background:#1f1f1f}
+  .page{box-shadow:0 0 35px rgba(0,0,0,.25)}
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <section id="home" class="view active">
+    <div class="topbar">
+      <a class="icon-btn" id="callBtn" aria-label="Call Agbamami" title="Call Agbamami">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .7 2.9a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.2-1.3a2 2 0 0 1 2.1-.5c.9.4 1.9.6 2.9.7A2 2 0 0 1 22 16.9z"/>
+        </svg>
+      </a>
+      <a class="icon-btn" id="locationBtn" aria-label="Open location" title="Open location">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/>
+          <circle cx="12" cy="10" r="2.5"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="brand">
+      <div class="logo-placeholder">ADD LOGO</div>
+      <h1>Agbamami Restaurant Menu</h1>
+      <p class="subtitle">Explore our menu</p>
+    </div>
+
+    <div id="categories" class="categories"></div>
+    <p class="small-note">Tap a category to view the menu.</p>
+    <footer>© <span id="year"></span> Agbamami</footer>
+  </section>
+
+  <section id="categoryView" class="view">
+    <button class="back" id="backBtn">← Back to menu</button>
+    <h2 id="categoryTitle"></h2>
+    <div id="items" class="items"></div>
+  </section>
+</main>
+
+<script>
+/*
+  EASY EDITING:
+  1. Change PHONE, WHATSAPP, LOCATION below.
+  2. Add/change categories in MENU.
+  3. To use your own category photo, put the image in /images/
+     and set image:"images/your-photo.jpg".
+  4. Add menu items inside each category's items array.
+*/
+const PHONE = "+233XXXXXXXXX";
+const WHATSAPP = "233XXXXXXXXX";
+const LOCATION = "https://maps.google.com/?q=Agbamami";
+
+const MENU = [
+  {
+    name:"Soups",
+    image:"",
+    items:[
+      {name:"Sample Soup", price:"GH₵ 0.00", desc:"Replace this with your soup name and description."},
+      {name:"Another Soup", price:"GH₵ 0.00", desc:"Add your description here."}
+    ]
+  },
+  {
+    name:"Sidelines & Accompaniments",
+    image:"",
+    items:[
+      {name:"Sample Side", price:"GH₵ 0.00", desc:"Replace with your actual menu item."}
+    ]
+  },
+  {
+    name:"Sauces",
+    image:"",
+    items:[
+      {name:"Sample Sauce", price:"GH₵ 0.00", desc:"Replace with your actual menu item."}
+    ]
+  },
+  {
+    name:"Grill",
+    image:"",
+    items:[
+      {name:"Grilled Chicken", price:"GH₵ 0.00", desc:"Replace with your actual menu item."}
+    ]
+  },
+  {
+    name:"Extras",
+    image:"",
+    items:[
+      {name:"Sample Extra", price:"GH₵ 0.00", desc:"Replace with your actual menu item."}
+    ]
+  },
+  {
+    name:"Drinks",
+    image:"",
+    items:[
+      {name:"Sample Drink", price:"GH₵ 0.00", desc:"Replace with your actual menu item."}
+    ]
+  }
+];
+
+const categories = document.getElementById("categories");
+const home = document.getElementById("home");
+const categoryView = document.getElementById("categoryView");
+const title = document.getElementById("categoryTitle");
+const items = document.getElementById("items");
+
+document.getElementById("callBtn").href = "tel:" + PHONE;
+document.getElementById("locationBtn").href = LOCATION;
+document.getElementById("year").textContent = new Date().getFullYear();
+
+function renderCategories(){
+  categories.innerHTML = "";
+  MENU.forEach((cat, index)=>{
+    const btn = document.createElement("button");
+    btn.className = "category";
+    btn.type = "button";
+    if(cat.image){
+      const img = document.createElement("img");
+      img.src = cat.image;
+      img.alt = cat.name;
+      btn.appendChild(img);
+    }else{
+      const ph = document.createElement("div");
+      ph.className = "placeholder";
+      ph.textContent = "ADD CATEGORY PHOTO";
+      btn.appendChild(ph);
+    }
+    const label = document.createElement("span");
+    label.className = "label";
+    label.textContent = cat.name;
+    btn.appendChild(label);
+    btn.addEventListener("click", ()=>openCategory(index));
+    categories.appendChild(btn);
+  });
+}
+
+function openCategory(index){
+  const cat = MENU[index];
+  title.textContent = cat.name;
+  items.innerHTML = "";
+  cat.items.forEach(item=>{
+    const card = document.createElement("article");
+    card.className = "item";
+    card.innerHTML = `
+      <div class="item-row">
+        <div class="item-name">${escapeHtml(item.name)}</div>
+        <div class="item-price">${escapeHtml(item.price)}</div>
+      </div>
+      ${item.desc ? `<p class="item-desc">${escapeHtml(item.desc)}</p>` : ""}
+    `;
+    items.appendChild(card);
+  });
+  home.classList.remove("active");
+  categoryView.classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+  history.pushState({category:index},"","#"+slug(cat.name));
+}
+
+document.getElementById("backBtn").addEventListener("click",()=>{
+  categoryView.classList.remove("active");
+  home.classList.add("active");
+  history.pushState({},"","#");
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+renderCategories();
+</script>
+</body>
+</html>
