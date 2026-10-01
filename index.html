@@ -5,32 +5,54 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agbamami Restaurant Menu</title>
 <meta name="description" content="Agbamami Restaurant digital menu">
+
+<!--
+  FONT OPTIONS:
+  You can change FONT_FAMILY in the SETTINGS section near the bottom.
+  Available Google fonts included here:
+  Poppins, Montserrat, Lato, Roboto, Nunito, Playfair Display,
+  Cormorant Garamond, Merriweather, Oswald
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=Oswald:wght@400;500;600&family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
 <style>
 :root{
-  --cream:#fff7e8;
+  --page-bg:#fff7e8;
+  --body-bg:#1f1f1f;
   --ink:#272727;
   --muted:#6f675d;
-  --card:#191919;
+  --card:#ffffff;
   --accent:#b56b2a;
   --white:#fff;
+  --overlay:rgba(0,0,0,.58);
+  --font-family:'Poppins',Arial,Helvetica,sans-serif;
 }
+
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
   margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:var(--cream);
+  font-family:var(--font-family);
+  background:var(--body-bg);
   color:var(--ink);
 }
 button,a{font:inherit}
 a{text-decoration:none;color:inherit}
+
 .page{
   width:min(100%,520px);
   margin:0 auto;
   min-height:100vh;
   padding:18px 14px 34px;
-  background:var(--cream);
+  background-color:var(--page-bg);
+  background-image:var(--page-bg-image, none);
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
 }
+
 .topbar{
   display:flex;
   justify-content:flex-end;
@@ -39,12 +61,13 @@ a{text-decoration:none;color:inherit}
 }
 .icon-btn{
   width:42px;height:42px;border-radius:50%;
-  border:0;background:rgba(255,255,255,.9);
+  border:0;background:rgba(255,255,255,.92);
   box-shadow:0 3px 12px rgba(0,0,0,.12);
   display:grid;place-items:center;
   cursor:pointer;
 }
 .icon-btn svg{width:20px;height:20px}
+
 .brand{
   text-align:center;
   padding:4px 0 16px;
@@ -57,11 +80,15 @@ a{text-decoration:none;color:inherit}
   color:#76644d;
   font-size:11px;font-weight:700;
   letter-spacing:.5px;
+  overflow:hidden;
+}
+.logo-placeholder img{
+  width:100%;height:100%;object-fit:cover;display:block;
 }
 .brand h1{
   margin:0;
   font-size:22px;
-  font-weight:500;
+  font-weight:600;
   letter-spacing:.1px;
 }
 .subtitle{
@@ -69,6 +96,7 @@ a{text-decoration:none;color:inherit}
   color:var(--muted);
   font-size:12px;
 }
+
 .categories{display:grid;gap:12px}
 .category{
   position:relative;
@@ -86,7 +114,7 @@ a{text-decoration:none;color:inherit}
 .category::after{
   content:"";
   position:absolute;inset:0;
-  background:linear-gradient(90deg,rgba(0,0,0,.58),rgba(0,0,0,.05) 75%,rgba(0,0,0,.22));
+  background:linear-gradient(90deg,rgba(0,0,0,.60),rgba(0,0,0,.05) 75%,rgba(0,0,0,.22));
 }
 .category .placeholder{
   position:absolute;inset:0;
@@ -108,6 +136,7 @@ a{text-decoration:none;color:inherit}
   letter-spacing:.2px;text-transform:uppercase;
   text-shadow:0 1px 3px rgba(0,0,0,.5);
 }
+
 .view{display:none}
 .view.active{display:block}
 .back{
@@ -115,27 +144,58 @@ a{text-decoration:none;color:inherit}
   color:var(--ink);font-weight:700;cursor:pointer;
 }
 .view h2{text-align:center;margin:4px 0 18px;font-size:22px}
+
 .items{display:grid;gap:10px}
 .item{
-  background:#fff;border-radius:14px;padding:14px;
+  background:var(--card);
+  border-radius:14px;
+  padding:10px;
   box-shadow:0 3px 12px rgba(0,0,0,.08);
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
-.item-row{display:flex;justify-content:space-between;gap:16px}
-.item-name{font-weight:700;font-size:15px}
-.item-price{font-weight:700;white-space:nowrap;color:var(--accent)}
-.item-desc{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.45}
+.item-photo{
+  width:82px;
+  height:82px;
+  min-width:82px;
+  border-radius:11px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 30% 30%,#b7a28b 0 18%,transparent 19%),
+    linear-gradient(135deg,#ded2c0,#8e7d68);
+  display:grid;
+  place-items:center;
+  color:rgba(255,255,255,.8);
+  font-size:8px;
+  font-weight:700;
+  letter-spacing:.7px;
+  text-align:center;
+}
+.item-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.item-info{flex:1;min-width:0}
+.item-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.item-name{font-weight:700;font-size:14px}
+.item-price{font-weight:700;white-space:nowrap;color:var(--accent);font-size:14px}
+.item-desc{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.45}
+
 footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
 .small-note{
   margin:15px 2px 0;text-align:center;font-size:10px;color:#8a8177
 }
 @media(min-width:700px){
-  body{background:#1f1f1f}
   .page{box-shadow:0 0 35px rgba(0,0,0,.25)}
 }
 </style>
 </head>
+
 <body>
-<main class="page">
+<main class="page" id="page">
   <section id="home" class="view active">
     <div class="topbar">
       <a class="icon-btn" id="callBtn" aria-label="Call Agbamami" title="Call Agbamami">
@@ -152,7 +212,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
     </div>
 
     <div class="brand">
-      <div class="logo-placeholder">ADD LOGO</div>
+      <div class="logo-placeholder" id="logoBox">ADD LOGO</div>
       <h1>Agbamami Restaurant Menu</h1>
       <p class="subtitle">Explore our menu</p>
     </div>
@@ -171,62 +231,182 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
 
 <script>
 /*
-  EASY EDITING:
-  1. Change PHONE, WHATSAPP, LOCATION below.
-  2. Add/change categories in MENU.
-  3. To use your own category photo, put the image in /images/
-     and set image:"images/your-photo.jpg".
-  4. Add menu items inside each category's items array.
+==========================================================
+AGBAMAMI MENU — EASY SETTINGS
+==========================================================
+
+1. CHANGE THE FONT:
+   Set FONT_FAMILY to one of:
+   'Poppins'
+   'Montserrat'
+   'Lato'
+   'Roboto'
+   'Nunito'
+   'Playfair Display'
+   'Cormorant Garamond'
+   'Merriweather'
+   'Oswald'
+
+2. CHANGE THE BACKGROUND:
+   Option A — solid colour:
+   BACKGROUND_COLOR = "#fff7e8";
+   BACKGROUND_IMAGE = "";
+
+   Option B — your own photo:
+   Put the photo inside the images folder, then:
+   BACKGROUND_IMAGE = "images/background.jpg";
+
+3. CHANGE BACKGROUND OPACITY:
+   If using a photo, BACKGROUND_OVERLAY controls the colour
+   placed over the photo. Example:
+   "rgba(255,255,255,.20)" = light overlay
+   "rgba(0,0,0,.15)" = dark overlay
+
+4. CHANGE LOGO:
+   Put your logo in /images/ and set LOGO = "images/logo.png".
+
+5. ITEM PHOTOS:
+   Every individual menu item has its own image field.
+   Example:
+   {
+     name:"Fufu with Goat Soup",
+     price:"GH₵ 120",
+     desc:"Served with...",
+     image:"images/items/fufu-goat-soup.jpg"
+   }
+
+   You can create folders inside /images/ such as:
+   images/items/
+   images/categories/
+   images/background/
+
+   Then upload your photos to GitHub and use the matching path.
+
+==========================================================
 */
+
 const PHONE = "+233XXXXXXXXX";
 const WHATSAPP = "233XXXXXXXXX";
 const LOCATION = "https://maps.google.com/?q=Agbamami";
 
+/* ===== VISUAL SETTINGS ===== */
+const FONT_FAMILY = "Poppins";
+const BACKGROUND_COLOR = "#fff7e8";
+const BACKGROUND_IMAGE = "";
+const BACKGROUND_OVERLAY = "rgba(255,255,255,0)";
+const ACCENT_COLOR = "#b56b2a";
+const TEXT_COLOR = "#272727";
+const MUTED_COLOR = "#6f675d";
+const CARD_COLOR = "#ffffff";
+
+/* ===== BRANDING ===== */
+const LOGO = "";
+
+/* ===== MENU =====
+   Add as many categories and items as you want.
+   Each item can have its OWN photo.
+*/
 const MENU = [
   {
     name:"Soups",
     image:"",
     items:[
-      {name:"Sample Soup", price:"GH₵ 0.00", desc:"Replace this with your soup name and description."},
-      {name:"Another Soup", price:"GH₵ 0.00", desc:"Add your description here."}
+      {
+        name:"Fufu with Goat Soup",
+        price:"GH₵ 120",
+        desc:"Replace with your actual description.",
+        image:""
+      },
+      {
+        name:"Banku with Okro Soup",
+        price:"GH₵ 100",
+        desc:"Replace with your actual description.",
+        image:""
+      }
     ]
   },
   {
     name:"Sidelines & Accompaniments",
     image:"",
     items:[
-      {name:"Sample Side", price:"GH₵ 0.00", desc:"Replace with your actual menu item."}
+      {
+        name:"Sample Side",
+        price:"GH₵ 0.00",
+        desc:"Replace with your actual menu item.",
+        image:""
+      }
     ]
   },
   {
     name:"Sauces",
     image:"",
     items:[
-      {name:"Sample Sauce", price:"GH₵ 0.00", desc:"Replace with your actual menu item."}
+      {
+        name:"Sample Sauce",
+        price:"GH₵ 0.00",
+        desc:"Replace with your actual menu item.",
+        image:""
+      }
     ]
   },
   {
     name:"Grill",
     image:"",
     items:[
-      {name:"Grilled Chicken", price:"GH₵ 0.00", desc:"Replace with your actual menu item."}
+      {
+        name:"Grilled Chicken",
+        price:"GH₵ 0.00",
+        desc:"Replace with your actual menu item.",
+        image:""
+      }
     ]
   },
   {
     name:"Extras",
     image:"",
     items:[
-      {name:"Sample Extra", price:"GH₵ 0.00", desc:"Replace with your actual menu item."}
+      {
+        name:"Sample Extra",
+        price:"GH₵ 0.00",
+        desc:"Replace with your actual menu item.",
+        image:""
+      }
     ]
   },
   {
     name:"Drinks",
     image:"",
     items:[
-      {name:"Sample Drink", price:"GH₵ 0.00", desc:"Replace with your actual menu item."}
+      {
+        name:"Sample Drink",
+        price:"GH₵ 0.00",
+        desc:"Replace with your actual menu item.",
+        image:""
+      }
     ]
   }
 ];
+
+/* Apply visual settings */
+document.documentElement.style.setProperty("--font-family", `'${FONT_FAMILY}', Arial, Helvetica, sans-serif`);
+document.documentElement.style.setProperty("--page-bg", BACKGROUND_COLOR);
+document.documentElement.style.setProperty("--body-bg", BACKGROUND_COLOR);
+document.documentElement.style.setProperty("--accent", ACCENT_COLOR);
+document.documentElement.style.setProperty("--ink", TEXT_COLOR);
+document.documentElement.style.setProperty("--muted", MUTED_COLOR);
+document.documentElement.style.setProperty("--card", CARD_COLOR);
+
+if(BACKGROUND_IMAGE){
+  document.documentElement.style.setProperty(
+    "--page-bg-image",
+    `linear-gradient(${BACKGROUND_OVERLAY},${BACKGROUND_OVERLAY}), url("${BACKGROUND_IMAGE}")`
+  );
+}
+
+if(LOGO){
+  const logoBox = document.getElementById("logoBox");
+  logoBox.innerHTML = `<img src="${LOGO}" alt="Agbamami logo">`;
+}
 
 const categories = document.getElementById("categories");
 const home = document.getElementById("home");
@@ -244,6 +424,7 @@ function renderCategories(){
     const btn = document.createElement("button");
     btn.className = "category";
     btn.type = "button";
+
     if(cat.image){
       const img = document.createElement("img");
       img.src = cat.image;
@@ -255,10 +436,12 @@ function renderCategories(){
       ph.textContent = "ADD CATEGORY PHOTO";
       btn.appendChild(ph);
     }
+
     const label = document.createElement("span");
     label.className = "label";
     label.textContent = cat.name;
     btn.appendChild(label);
+
     btn.addEventListener("click", ()=>openCategory(index));
     categories.appendChild(btn);
   });
@@ -268,18 +451,57 @@ function openCategory(index){
   const cat = MENU[index];
   title.textContent = cat.name;
   items.innerHTML = "";
+
   cat.items.forEach(item=>{
     const card = document.createElement("article");
     card.className = "item";
-    card.innerHTML = `
-      <div class="item-row">
-        <div class="item-name">${escapeHtml(item.name)}</div>
-        <div class="item-price">${escapeHtml(item.price)}</div>
-      </div>
-      ${item.desc ? `<p class="item-desc">${escapeHtml(item.desc)}</p>` : ""}
-    `;
+
+    const photo = document.createElement("div");
+    photo.className = "item-photo";
+
+    if(item.image){
+      const img = document.createElement("img");
+      img.src = item.image;
+      img.alt = item.name;
+      img.loading = "lazy";
+      img.onerror = function(){
+        photo.innerHTML = "PHOTO<br>NOT FOUND";
+      };
+      photo.appendChild(img);
+    }else{
+      photo.innerHTML = "ADD<br>ITEM PHOTO";
+    }
+
+    const info = document.createElement("div");
+    info.className = "item-info";
+
+    const row = document.createElement("div");
+    row.className = "item-row";
+
+    const name = document.createElement("div");
+    name.className = "item-name";
+    name.textContent = item.name;
+
+    const price = document.createElement("div");
+    price.className = "item-price";
+    price.textContent = item.price;
+
+    row.appendChild(name);
+    row.appendChild(price);
+    info.appendChild(row);
+
+    if(item.desc){
+      const desc = document.createElement("p");
+      desc.className = "item-desc";
+      desc.textContent = item.desc;
+      info.appendChild(desc);
+    }
+
+    card.appendChild(photo);
+    card.appendChild(info);
     items.appendChild(card);
   });
+
   home.classList.remove("active");
   categoryView.classList.add("active");
   window.scrollTo({top:0,behavior:"smooth"});
@@ -293,10 +515,10 @@ document.getElementById("backBtn").addEventListener("click",()=>{
   window.scrollTo({top:0,behavior:"smooth"});
 });
 
-function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+function slug(s){
+  return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 }
+
 renderCategories();
 </script>
 </body>
