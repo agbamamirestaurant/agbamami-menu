@@ -31,9 +31,12 @@
 }
 
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;width:100%;max-width:100%;overflow-x:hidden}
 body{
   margin:0;
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
   font-family:var(--font-family);
   background:var(--body-bg);
   color:var(--ink);
@@ -42,10 +45,12 @@ button,a{font:inherit}
 a{text-decoration:none;color:inherit}
 
 .page{
-  width:min(100%,520px);
+  width:100%;
+  max-width:520px;
   margin:0 auto;
   min-height:100vh;
   padding:18px 14px 34px;
+  overflow-x:hidden;
   background-color:var(--page-bg);
   background-image:var(--page-bg-image, none);
   background-size:cover;
@@ -145,31 +150,40 @@ a{text-decoration:none;color:inherit}
 }
 .view h2{text-align:center;margin:4px 0 18px;font-size:22px}
 
-.items{display:grid;gap:10px}
+.items{display:grid;gap:12px}
 .item{
-  background:var(--card);
-  border-radius:14px;
-  padding:10px;
-  box-shadow:0 3px 12px rgba(0,0,0,.08);
-  display:flex;
-  align-items:center;
-  gap:12px;
+  position:relative;
+  width:100%;
+  min-height:210px;
+  border-radius:17px;
+  overflow:hidden;
+  background:#303030;
+  box-shadow:0 5px 14px rgba(0,0,0,.16);
+}
+.item::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:linear-gradient(180deg,rgba(0,0,0,.04) 25%,rgba(0,0,0,.12) 45%,rgba(0,0,0,.78) 100%);
 }
 .item-photo{
-  width:82px;
-  height:82px;
-  min-width:82px;
-  border-radius:11px;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border-radius:0;
   overflow:hidden;
   background:
-    radial-gradient(circle at 30% 30%,#b7a28b 0 18%,transparent 19%),
-    linear-gradient(135deg,#ded2c0,#8e7d68);
+    radial-gradient(circle at 25% 30%,#80654c 0 18%,transparent 19%),
+    radial-gradient(circle at 72% 55%,#aa8664 0 22%,transparent 23%),
+    linear-gradient(135deg,#353535,#81705d);
   display:grid;
   place-items:center;
-  color:rgba(255,255,255,.8);
-  font-size:8px;
+  color:rgba(255,255,255,.65);
+  font-size:11px;
   font-weight:700;
-  letter-spacing:.7px;
+  letter-spacing:1px;
   text-align:center;
 }
 .item-photo img{
@@ -178,16 +192,59 @@ a{text-decoration:none;color:inherit}
   object-fit:cover;
   display:block;
 }
-.item-info{flex:1;min-width:0}
-.item-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-.item-name{font-weight:700;font-size:14px}
-.item-price{font-weight:700;white-space:nowrap;color:var(--accent);font-size:14px}
-.item-desc{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.45}
+.item-info{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:16px;
+  z-index:2;
+  min-width:0;
+  color:#fff;
+}
+.item-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-end;
+  min-width:0;
+}
+.item-name{
+  min-width:0;
+  font-weight:700;
+  font-size:15px;
+  line-height:1.25;
+  overflow-wrap:anywhere;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.item-price{
+  flex-shrink:0;
+  font-weight:700;
+  white-space:nowrap;
+  color:#fff;
+  font-size:15px;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.item-desc{
+  margin:6px 0 0;
+  color:rgba(255,255,255,.9);
+  font-size:11px;
+  line-height:1.45;
+  overflow-wrap:anywhere;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
 
 footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
 .small-note{
   margin:15px 2px 0;text-align:center;font-size:10px;color:#8a8177
 }
+@media(max-width:380px){
+  .page{padding-left:10px;padding-right:10px}
+  .category{height:136px}
+  .item{min-height:195px}
+  .item-info{left:15px;right:15px;bottom:14px}
+  .item-name,.item-price{font-size:14px}
+}
+
 @media(min-width:700px){
   .page{box-shadow:0 0 35px rgba(0,0,0,.25)}
 }
@@ -223,7 +280,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
   </section>
 
   <section id="categoryView" class="view">
-    <button class="back" id="backBtn">← Back to menu</button>
+    <button class="back" id="backBtn" aria-label="All categories">‹ All categories</button>
     <h2 id="categoryTitle"></h2>
     <div id="items" class="items"></div>
   </section>
@@ -285,14 +342,14 @@ AGBAMAMI MENU — EASY SETTINGS
 ==========================================================
 */
 
-const PHONE = "0549503755";
+const PHONE = "+233549503755";
 const WHATSAPP = "233XXXXXXXXX";
 const LOCATION = "https://maps.google.com/?q=Agbamami";
 
 /* ===== VISUAL SETTINGS ===== */
 const FONT_FAMILY = "Poppins";
 const BACKGROUND_COLOR = "#fff7e8";
-const BACKGROUND_IMAGE = "background.png";
+const BACKGROUND_IMAGE = "";
 const BACKGROUND_OVERLAY = "rgba(255,255,255,0)";
 const ACCENT_COLOR = "#b56b2a";
 const TEXT_COLOR = "#272727";
@@ -813,7 +870,7 @@ const MENU = [
   },
     {
     name:"SALADS",
-    image:"salad.png",
+    image:"images/categories/salad.png",
     items:[
       {
         name:"MIXED SALAD WITH BAKED BEANS (E&M)",
@@ -871,6 +928,129 @@ const MENU = [
       }
     ]
   },
+  {
+    name:"SOFT DRINKS",
+    image:"",
+    items:[
+      { name:"MALTA GUINNESS", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"ALVARO", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"COKE", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"SPRITE", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"FANTA", price:"GH₵ 20.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"FRUIT JUICE",
+    image:"",
+    items:[
+      { name:"CERES", price:"GH₵ 60.00", desc:"", image:"" },
+      { name:"DON SIMON", price:"GH₵ 60.00", desc:"", image:"" },
+      { name:"FRESHLY SQUEEZED JUICE", price:"GH₵ 30.00", desc:"", image:"" },
+      { name:"FRESHLY SQUEEZED JUICE IN BOTTLE (350ML)", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"BB COCKTAIL", price:"GH₵ 25.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"LAGER BEER & OTHER DRINKS",
+    image:"",
+    items:[
+      { name:"GULDER", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"STAR", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"CLUB", price:"GH₵ 30.00", desc:"", image:"" },
+      { name:"GUINNESS", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"HUNTERS GOLD", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"KISS CIDER", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"HENEIKEN BOTTLE", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"MINI CLUB", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"SMIRNOFF ICE", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"SHANDY", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"SAVANNA", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"ORIGIN BEER", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"PANACHE", price:"GH₵ 20.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"GIN",
+    image:"",
+    items:[
+      { name:"CASTLE BRIDGE", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"KASAPREKO", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"BEEFEATER", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"SMIRNOFF VODKA (RED)", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"GORDONS", price:"GH₵ 15.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"WHISKY",
+    image:"",
+    items:[
+      { name:"JACK DANIELS", price:"GH₵ 40.00", desc:"", image:"" },
+      { name:"GRANTS", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"RED LABEL", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"BLACK LABEL", price:"GH₵ 40.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"LIQUOR",
+    image:"",
+    items:[
+      { name:"ST. JAMES RHUM", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"ELLIOT", price:"GH₵ 5.00", desc:"", image:"" },
+      { name:"SOUTHERN COMFORT", price:"GH₵ 5.00", desc:"", image:"" },
+      { name:"KASAPREKO CARDINAL", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"COURVOISEIR", price:"GH₵ 50.00", desc:"", image:"" },
+      { name:"HENNESY", price:"GH₵ 50.00", desc:"", image:"" },
+      { name:"REMY MARTINI", price:"GH₵ 50.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"BRANDY",
+    image:"",
+    items:[
+      { name:"NAPOLEON", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"KASAPREKO", price:"GH₵ 10.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"APERITIFS",
+    image:"",
+    items:[
+      { name:"DUBONNET", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"MARTINI ROSSO", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"CINZANO", price:"GH₵ 20.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"BITTERS",
+    image:"",
+    items:[
+      { name:"CAMPARI", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"MANDINGO BITTERS", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"JAGD BITTERS", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"ALOMO BITTERS", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"HERB AFRIK", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"JAGERMEISTER", price:"GH₵ 30.00", desc:"", image:"" },
+      { name:"LIME", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"ORIGIN BITTERS", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"JOY DADI", price:"GH₵ 10.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"MINERAL WATER",
+    image:"",
+    items:[
+      { name:"VOLTIC (SMALL)", price:"GH₵ 8.00", desc:"", image:"" },
+      { name:"VOLTIC (MEDIUM)", price:"GH₵ 10.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"OTHERS",
+    image:"",
+    items:[
+      { name:"RED BULL", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"TZEPAO", price:"GH₵ 45.00", desc:"", image:"" }
+    ]
+  }
 ];
 
 /* Apply visual settings */
