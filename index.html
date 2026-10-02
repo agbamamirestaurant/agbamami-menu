@@ -234,12 +234,16 @@ a{text-decoration:none;color:inherit}
 }
 
 .drink-item{
-  padding:10px 4px;
+  padding:4px 4px;
   min-height:0;
   border-radius:0;
   background:transparent;
   box-shadow:none;
   overflow:visible;
+}
+
+.drink-item + .drink-item{
+  margin-top:-2px;
 }
 
 .drink-item::after{
@@ -972,7 +976,7 @@ const MENU = [
     isDrink:true,
     image:"",
     items:[
-      { name:"MALTA GUINNESS", price:"GH₵ 20" },
+      { name:"MALTA GUINNESS", price:"GH₵ 20.00" },
       { name:"ALVARO", price:"GH₵ 20.00", desc:"", image:"" },
       { name:"COKE", price:"GH₵ 20.00", desc:"", image:"" },
       { name:"SPRITE", price:"GH₵ 20.00", desc:"", image:"" },
