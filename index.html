@@ -58,6 +58,11 @@ a{text-decoration:none;color:inherit}
   background-attachment:fixed;
 }
 
+/* Drink interface background */
+.page.drink-mode{
+  background-image:var(--drink-bg-image);
+}
+
 .topbar{
   display:flex;
   justify-content:flex-end;
@@ -418,7 +423,8 @@ const LOCATION = "https://maps.google.com/?q=Agbamami";
 /* ===== VISUAL SETTINGS ===== */
 const FONT_FAMILY = "Nunito";
 const BACKGROUND_COLOR = "#fff7e8";
-const BACKGROUND_IMAGE = "menu bg 1.jpg";
+const BACKGROUND_IMAGE = "background.png";
+const DRINK_BACKGROUND_IMAGE = "menu bg 1.jpg";
 const BACKGROUND_OVERLAY = "rgba(255,255,255,0)";
 const ACCENT_COLOR = "#b56b2a";
 const TEXT_COLOR = "#272727";
@@ -1156,6 +1162,13 @@ if(BACKGROUND_IMAGE){
   );
 }
 
+if(DRINK_BACKGROUND_IMAGE){
+  document.documentElement.style.setProperty(
+    "--drink-bg-image",
+    `linear-gradient(${BACKGROUND_OVERLAY},${BACKGROUND_OVERLAY}), url("${DRINK_BACKGROUND_IMAGE}")`
+  );
+}
+
 if(LOGO){
   const logoBox = document.getElementById("logoBox");
   logoBox.innerHTML = `<img src="${LOGO}" alt="Agbamami logo">`;
@@ -1216,6 +1229,12 @@ const DRINK_CATEGORIES = new Set([
 
 function openCategory(index){
   const cat = MENU[index];
+
+  if(cat.isDrink){
+    document.getElementById("page").classList.add("drink-mode");
+  }else{
+    document.getElementById("page").classList.remove("drink-mode");
+  }
 
   title.textContent = cat.name;
   items.innerHTML = "";
@@ -1294,10 +1313,17 @@ function openCategory(index){
 }
 
 document.getElementById("backBtn").addEventListener("click",()=>{
+  document.getElementById("page").classList.remove("drink-mode");
+
   categoryView.classList.remove("active");
   home.classList.add("active");
+
   history.pushState({},"","#");
-  window.scrollTo({top:0,behavior:"smooth"});
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
 });
 
 function slug(s){
@@ -1305,6 +1331,7 @@ function slug(s){
 }
 
 renderCategories();
+
 </script>
 </body>
 </html>
