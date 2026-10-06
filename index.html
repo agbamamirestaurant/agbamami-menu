@@ -19,14 +19,14 @@
 
 <style>
 :root{
-  --page-bg:#3a2115;
-  --body-bg:#2a180f;
-  --ink:#fff3dc;
-  --muted:#e3d0b3;
-  --card:rgba(35,20,12,.88);
-  --accent:#f2bd5b;
+  --page-bg:#fff7e8;
+  --body-bg:#1f1f1f;
+  --ink:#272727;
+  --muted:#6f675d;
+  --card:#ffffff;
+  --accent:#b56b2a;
   --white:#fff;
-  --overlay:rgba(0,0,0,.12);
+  --overlay:rgba(0,0,0,.58);
   --font-family:'Poppins',Arial,Helvetica,sans-serif;
 }
 
@@ -92,16 +92,13 @@ a{text-decoration:none;color:inherit}
 }
 .brand h1{
   margin:0;
-  color:#fff3dc;
-  text-shadow:0 1px 4px rgba(0,0,0,.75);
   font-size:22px;
   font-weight:600;
   letter-spacing:.1px;
 }
 .subtitle{
   margin:7px 0 0;
-  color:#e3d0b3;
-  text-shadow:0 1px 3px rgba(0,0,0,.65);
+  color:var(--muted);
   font-size:12px;
 }
 
@@ -127,7 +124,7 @@ a{text-decoration:none;color:inherit}
 .category .placeholder{
   position:absolute;inset:0;
   display:grid;place-items:center;
-  color:rgba(255,248,232,.72);
+  color:rgba(255,255,255,.5);
   font-size:12px;
   letter-spacing:1px;
   background:
@@ -140,7 +137,7 @@ a{text-decoration:none;color:inherit}
 }
 .category .label{
   position:absolute;z-index:2;left:18px;bottom:17px;
-  color:#fff8e8;font-weight:700;font-size:14px;
+  color:#fff;font-weight:700;font-size:14px;
   letter-spacing:.2px;text-transform:uppercase;
   text-shadow:0 1px 3px rgba(0,0,0,.5);
 }
@@ -149,10 +146,9 @@ a{text-decoration:none;color:inherit}
 .view.active{display:block}
 .back{
   border:0;background:transparent;padding:4px 0 16px;
-  color:#fff3dc;font-weight:700;cursor:pointer;
-  text-shadow:0 1px 3px rgba(0,0,0,.75);
+  color:var(--ink);font-weight:700;cursor:pointer;
 }
-.view h2{text-align:center;margin:4px 0 18px;font-size:22px;color:#fff3dc;text-shadow:0 1px 3px rgba(0,0,0,.75)}
+.view h2{text-align:center;margin:4px 0 18px;font-size:22px}
 
 .items{
   display:grid;
@@ -191,7 +187,7 @@ a{text-decoration:none;color:inherit}
     linear-gradient(135deg,#353535,#81705d);
   display:grid;
   place-items:center;
-  color:rgba(255,248,232,.78);
+  color:rgba(255,255,255,.65);
   font-size:11px;
   font-weight:700;
   letter-spacing:1px;
@@ -237,7 +233,7 @@ a{text-decoration:none;color:inherit}
 }
 .item-desc{
   margin:6px 0 0;
-  color:rgba(255,243,220,.92);
+  color:rgba(255,255,255,.9);
   font-size:11px;
   line-height:1.45;
   overflow-wrap:anywhere;
@@ -305,9 +301,9 @@ a{text-decoration:none;color:inherit}
 .drink-item .item-photo{
   display:none;
 }
-footer{text-align:center;color:#d9c4a5;font-size:11px;padding:25px 0 5px;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
 .small-note{
-  margin:15px 2px 0;text-align:center;font-size:10px;color:#d9c4a5
+  margin:15px 2px 0;text-align:center;font-size:10px;color:#8a8177
 }
 @media(max-width:380px){
   .page{padding-left:10px;padding-right:10px}
@@ -421,13 +417,13 @@ const LOCATION = "https://maps.google.com/?q=Agbamami";
 
 /* ===== VISUAL SETTINGS ===== */
 const FONT_FAMILY = "Nunito";
-const BACKGROUND_COLOR = "#3a2115";
-const BACKGROUND_IMAGE = "menu bg.jpg";
-const BACKGROUND_OVERLAY = "rgba(0,0,0,.12)";
-const ACCENT_COLOR = "#f2bd5b";
-const TEXT_COLOR = "#fff3dc";
-const MUTED_COLOR = "#e3d0b3";
-const CARD_COLOR = "rgba(35,20,12,.88)";
+const BACKGROUND_COLOR = "#fff7e8";
+const BACKGROUND_IMAGE = "menu background 2.jpg";
+const BACKGROUND_OVERLAY = "rgba(255,255,255,0)";
+const ACCENT_COLOR = "#b56b2a";
+const TEXT_COLOR = "#272727";
+const MUTED_COLOR = "#6f675d";
+const CARD_COLOR = "#ffffff";
 
 /* ===== BRANDING ===== */
 const LOGO = "";
