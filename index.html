@@ -1236,8 +1236,6 @@ const categoryView = document.getElementById("categoryView");
 const title = document.getElementById("categoryTitle");
 const items = document.getElementById("items");
 
-/* Remember exactly where the user was on the categories page */
-let homeScrollY = 0;
 
 document.getElementById("callBtn").href = "tel:" + PHONE;
 document.getElementById("locationBtn").href = LOCATION;
@@ -1295,6 +1293,14 @@ function instantScrollTo(y){
 }
 
 let homeScrollY = 0;
+
+function slug(text){
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 function openCategory(index){
   const cat = MENU[index];
