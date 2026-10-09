@@ -333,74 +333,85 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
 }
 
 /* Category page entering */
+/* Smooth menu transitions */
+#home,
+#categoryView{
+  will-change: transform, opacity;
+}
+
+/* Category page entrance */
 #categoryView.menu-enter{
-  animation: menuSlideIn 0.38s cubic-bezier(.22,.61,.36,1) both;
+  animation: categoryEnter 0.42s cubic-bezier(.22,.61,.36,1) both;
 }
 
-/* Home page returning */
+/* Home page return */
 #home.menu-return{
-  animation: menuSlideBack 0.38s cubic-bezier(.22,.61,.36,1) both;
+  animation: homeReturn 0.38s cubic-bezier(.22,.61,.36,1) both;
 }
 
-/* Individual food/list items */
+/* Food cards */
 #items .item.menu-item-enter{
-  animation: itemFadeUp 0.35s ease-out both;
+  animation: foodCardEnter 0.38s cubic-bezier(.22,.61,.36,1) both;
 }
 
-/* Slightly different animation for list-style categories */
+/* Drink/list items */
 #items .drink-item.menu-item-enter{
-  animation: drinkItemFade 0.28s ease-out both;
+  animation: drinkItemEnter 0.30s ease-out both;
 }
 
-/* Category page slides in from the right */
-@keyframes menuSlideIn{
+/* Category enters gently from below */
+@keyframes categoryEnter{
   from{
     opacity:0;
-    transform:translateX(35px);
+    transform:translateY(18px);
   }
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
-}
 
-/* Home page slides back into place */
-@keyframes menuSlideBack{
-  from{
-    opacity:0;
-    transform:translateX(-25px);
-  }
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
-}
-
-/* Food cards gently rise into view */
-@keyframes itemFadeUp{
-  from{
-    opacity:0;
-    transform:translateY(12px);
-  }
   to{
     opacity:1;
     transform:translateY(0);
   }
 }
 
-/* Drink / list items use a softer animation */
-@keyframes drinkItemFade{
+/* Home returns gently */
+@keyframes homeReturn{
   from{
     opacity:0;
-    transform:translateY(6px);
+    transform:translateY(-12px);
   }
+
   to{
     opacity:1;
     transform:translateY(0);
   }
 }
 
-/* Respect users who prefer reduced motion */
+/* Food cards rise very slightly */
+@keyframes foodCardEnter{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* Drink/list items */
+@keyframes drinkItemEnter{
+  from{
+    opacity:0;
+    transform:translateY(5px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce){
   #categoryView.menu-enter,
   #home.menu-return,
@@ -1337,7 +1348,7 @@ function openCategory(index){
       : "item menu-item-enter";
 
     /* Stagger the items slightly */
-    card.style.animationDelay = `${itemIndex * 0.045}s`;
+    card.style.animationDelay = `${Math.min(itemIndex * 0.035, 0.35)}s`;
 
     const photo = document.createElement("div");
     photo.className = "item-photo";
@@ -1403,10 +1414,10 @@ function openCategory(index){
 
   categoryView.classList.add("menu-enter");
 
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
+ window.scrollTo({
+  top:0,
+  behavior:"auto"
+});
 
   history.pushState(
     {category:index},
