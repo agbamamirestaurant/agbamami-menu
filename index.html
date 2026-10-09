@@ -322,6 +322,92 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
 @media(min-width:700px){
   .page{box-shadow:0 0 35px rgba(0,0,0,.25)}
 }
+/* ================================
+   SMOOTH MENU PAGE TRANSITIONS
+   ================================ */
+
+/* Keep the views ready for animation */
+#home,
+#categoryView{
+  will-change: transform, opacity;
+}
+
+/* Category page entering */
+#categoryView.menu-enter{
+  animation: menuSlideIn 0.38s cubic-bezier(.22,.61,.36,1) both;
+}
+
+/* Home page returning */
+#home.menu-return{
+  animation: menuSlideBack 0.38s cubic-bezier(.22,.61,.36,1) both;
+}
+
+/* Individual food/list items */
+#items .item.menu-item-enter{
+  animation: itemFadeUp 0.35s ease-out both;
+}
+
+/* Slightly different animation for list-style categories */
+#items .drink-item.menu-item-enter{
+  animation: drinkItemFade 0.28s ease-out both;
+}
+
+/* Category page slides in from the right */
+@keyframes menuSlideIn{
+  from{
+    opacity:0;
+    transform:translateX(35px);
+  }
+  to{
+    opacity:1;
+    transform:translateX(0);
+  }
+}
+
+/* Home page slides back into place */
+@keyframes menuSlideBack{
+  from{
+    opacity:0;
+    transform:translateX(-25px);
+  }
+  to{
+    opacity:1;
+    transform:translateX(0);
+  }
+}
+
+/* Food cards gently rise into view */
+@keyframes itemFadeUp{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* Drink / list items use a softer animation */
+@keyframes drinkItemFade{
+  from{
+    opacity:0;
+    transform:translateY(6px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce){
+  #categoryView.menu-enter,
+  #home.menu-return,
+  #items .item.menu-item-enter{
+    animation:none;
+  }
+}
 </style>
 </head>
 
@@ -1230,6 +1316,11 @@ const DRINK_CATEGORIES = new Set([
 function openCategory(index){
   const cat = MENU[index];
 
+  /* Remove any previous animation classes */
+  home.classList.remove("menu-return");
+  categoryView.classList.remove("menu-enter");
+
+  /* Keep your existing drink/list background behavior */
   if(cat.isDrink){
     document.getElementById("page").classList.add("drink-mode");
   }else{
@@ -1239,9 +1330,14 @@ function openCategory(index){
   title.textContent = cat.name;
   items.innerHTML = "";
 
-  cat.items.forEach(item=>{
+  cat.items.forEach((item, itemIndex)=>{
     const card = document.createElement("article");
-    card.className = cat.isDrink ? "item drink-item" : "item";
+    card.className = cat.isDrink
+      ? "item drink-item menu-item-enter"
+      : "item menu-item-enter";
+
+    /* Stagger the items slightly */
+    card.style.animationDelay = `${itemIndex * 0.045}s`;
 
     const photo = document.createElement("div");
     photo.className = "item-photo";
@@ -1277,6 +1373,7 @@ function openCategory(index){
 
     row.appendChild(name);
     row.appendChild(price);
+
     info.appendChild(row);
 
     if(item.desc){
@@ -1286,7 +1383,7 @@ function openCategory(index){
       info.appendChild(desc);
     }
 
-    /* Drinks: show only name and price */
+    /* List-style categories: show only name and price */
     if(cat.isDrink){
       card.appendChild(info);
     }else{
@@ -1297,8 +1394,14 @@ function openCategory(index){
     items.appendChild(card);
   });
 
+  /* Switch to category view */
   home.classList.remove("active");
   categoryView.classList.add("active");
+
+  /* Force animation to restart every time */
+  void categoryView.offsetWidth;
+
+  categoryView.classList.add("menu-enter");
 
   window.scrollTo({
     top:0,
@@ -1313,18 +1416,29 @@ function openCategory(index){
 }
 
 document.getElementById("backBtn").addEventListener("click",()=>{
-  document.getElementById("page").classList.remove("drink-mode");
+  /* Remove category animation */
+  categoryView.classList.remove("menu-enter");
 
+  /* Return to home */
   categoryView.classList.remove("active");
   home.classList.add("active");
 
-  history.pushState({},"","#");
+  /* Smoothly animate home back in */
+  void home.offsetWidth;
+  home.classList.add("menu-return");
+
+  /* Restore normal background */
+  document.getElementById("page").classList.remove("drink-mode");
+
+  /* Clear URL hash */
+  history.pushState({}, "", "#");
 
   window.scrollTo({
     top:0,
     behavior:"smooth"
   });
 });
+
 
 function slug(s){
   return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
