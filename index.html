@@ -326,99 +326,56 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
    SMOOTH MENU PAGE TRANSITIONS
    ================================ */
 
-/* Keep the views ready for animation */
 #home,
 #categoryView{
-  will-change: transform, opacity;
+  will-change:transform,opacity;
 }
 
-/* Category page entering */
-/* Smooth menu transitions */
-#home,
-#categoryView{
-  will-change: transform, opacity;
-}
-
-/* Category page entrance */
 #categoryView.menu-enter{
-  animation: categoryEnter 0.42s cubic-bezier(.22,.61,.36,1) both;
+  animation:categoryEnter .42s cubic-bezier(.22,.61,.36,1) both;
 }
 
-/* Home page return */
 #home.menu-return{
-  animation: homeReturn 0.38s cubic-bezier(.22,.61,.36,1) both;
+  animation:homeReturn .38s cubic-bezier(.22,.61,.36,1) both;
 }
 
-/* Food cards */
 #items .item.menu-item-enter{
-  animation: foodCardEnter 0.38s cubic-bezier(.22,.61,.36,1) both;
+  animation:foodCardEnter .38s cubic-bezier(.22,.61,.36,1) both;
 }
 
-/* Drink/list items */
 #items .drink-item.menu-item-enter{
-  animation: drinkItemEnter 0.30s ease-out both;
+  animation:drinkItemEnter .30s ease-out both;
 }
 
-/* Category enters gently from below */
 @keyframes categoryEnter{
-  from{
-    opacity:0;
-    transform:translateY(18px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
 }
 
-/* Home returns gently */
 @keyframes homeReturn{
-  from{
-    opacity:0;
-    transform:translateY(-12px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+  from{opacity:0;transform:translateY(-12px);}
+  to{opacity:1;transform:translateY(0);}
 }
 
-/* Food cards rise very slightly */
 @keyframes foodCardEnter{
-  from{
-    opacity:0;
-    transform:translateY(10px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:translateY(0);}
 }
 
-/* Drink/list items */
 @keyframes drinkItemEnter{
-  from{
-    opacity:0;
-    transform:translateY(5px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+  from{opacity:0;transform:translateY(5px);}
+  to{opacity:1;transform:translateY(0);}
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce){
+@media (prefers-reduced-motion:reduce){
   #categoryView.menu-enter,
   #home.menu-return,
-  #items .item.menu-item-enter{
+  #items .item.menu-item-enter,
+  #items .drink-item.menu-item-enter{
     animation:none;
   }
 }
+
 </style>
 </head>
 
@@ -512,6 +469,8 @@ AGBAMAMI MENU — EASY SETTINGS
 
 ==========================================================
 */
+
+history.scrollRestoration = "manual";
 
 const PHONE = "+233549503755";
 const WHATSAPP = "233XXXXXXXXX";
@@ -1277,6 +1236,9 @@ const categoryView = document.getElementById("categoryView");
 const title = document.getElementById("categoryTitle");
 const items = document.getElementById("items");
 
+/* Remember exactly where the user was on the categories page */
+let homeScrollY = 0;
+
 document.getElementById("callBtn").href = "tel:" + PHONE;
 document.getElementById("locationBtn").href = LOCATION;
 document.getElementById("year").textContent = new Date().getFullYear();
@@ -1324,14 +1286,31 @@ const DRINK_CATEGORIES = new Set([
   "OTHERS"
 ]);
 
+function instantScrollTo(y){
+  const root = document.documentElement;
+  const previous = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+  window.scrollTo(0, y);
+  return previous;
+}
+
+let homeScrollY = 0;
+
 function openCategory(index){
   const cat = MENU[index];
 
-  /* Remove any previous animation classes */
+  /* Remember exactly where the user was on the category page. */
+  homeScrollY = window.scrollY;
+
+  const root = document.documentElement;
+  const previousScrollBehavior = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+
+  /* Remove old animation classes before rebuilding the view. */
   home.classList.remove("menu-return");
   categoryView.classList.remove("menu-enter");
 
-  /* Keep your existing drink/list background behavior */
+  /* Prepare the category content while the old view is still hidden. */
   if(cat.isDrink){
     document.getElementById("page").classList.add("drink-mode");
   }else{
@@ -1347,26 +1326,7 @@ function openCategory(index){
       ? "item drink-item menu-item-enter"
       : "item menu-item-enter";
 
-    /* Stagger the items slightly */
     card.style.animationDelay = `${Math.min(itemIndex * 0.035, 0.35)}s`;
-
-    const photo = document.createElement("div");
-    photo.className = "item-photo";
-
-    if(item.image){
-      const img = document.createElement("img");
-      img.src = item.image;
-      img.alt = item.name;
-      img.loading = "lazy";
-
-      img.onerror = function(){
-        photo.innerHTML = "PHOTO<br>NOT FOUND";
-      };
-
-      photo.appendChild(img);
-    }else{
-      photo.innerHTML = "ADD<br>ITEM PHOTO";
-    }
 
     const info = document.createElement("div");
     info.className = "item-info";
@@ -1384,7 +1344,6 @@ function openCategory(index){
 
     row.appendChild(name);
     row.appendChild(price);
-
     info.appendChild(row);
 
     if(item.desc){
@@ -1394,10 +1353,22 @@ function openCategory(index){
       info.appendChild(desc);
     }
 
-    /* List-style categories: show only name and price */
     if(cat.isDrink){
       card.appendChild(info);
     }else{
+      const photo = document.createElement("div");
+      photo.className = "item-photo";
+
+      if(item.image){
+        const img = document.createElement("img");
+        img.src = item.image;
+        img.alt = item.name;
+        img.loading = "lazy";
+        photo.appendChild(img);
+      }else{
+        photo.textContent = "ADD PHOTO";
+      }
+
       card.appendChild(photo);
       card.appendChild(info);
     }
@@ -1405,57 +1376,60 @@ function openCategory(index){
     items.appendChild(card);
   });
 
-  /* Switch to category view */
+  /*
+    Critical part:
+    switch views and move the scroll position in the SAME JavaScript task,
+    while smooth scrolling is disabled. The browser therefore paints the
+    category page already at the top instead of visibly travelling there.
+  */
   home.classList.remove("active");
   categoryView.classList.add("active");
+  window.scrollTo(0, 0);
 
-  /* Force animation to restart every time */
+  /* Force the new view to register before starting its animation. */
   void categoryView.offsetWidth;
-
   categoryView.classList.add("menu-enter");
-
- window.scrollTo({
-  top:0,
-  behavior:"auto"
-});
 
   history.pushState(
     {category:index},
     "",
     "#" + slug(cat.name)
   );
+
+  /* Re-enable the user's normal smooth scrolling after the switch. */
+  requestAnimationFrame(()=>{
+    root.style.scrollBehavior = previousScrollBehavior;
+  });
 }
 
 document.getElementById("backBtn").addEventListener("click",()=>{
-  /* Remove category animation */
-  categoryView.classList.remove("menu-enter");
+  const root = document.documentElement;
+  const previousScrollBehavior = root.style.scrollBehavior;
 
-  /* Return to home */
+  /* Prevent a visible scroll from the category top back to the saved position. */
+  root.style.scrollBehavior = "auto";
+
+  categoryView.classList.remove("menu-enter");
+  home.classList.remove("menu-return");
+
+  /* Restore the categories view and its exact previous scroll position
+     before the browser gets a chance to paint the intermediate state. */
   categoryView.classList.remove("active");
   home.classList.add("active");
 
-  /* Smoothly animate home back in */
+  document.getElementById("page").classList.remove("drink-mode");
+  history.pushState({}, "", "#");
+
+  window.scrollTo(0, homeScrollY);
+
+  /* Restart the beautiful home transition without moving the page. */
   void home.offsetWidth;
   home.classList.add("menu-return");
 
-  /* Restore normal background */
-  document.getElementById("page").classList.remove("drink-mode");
-
-  /* Clear URL hash */
-  history.pushState({}, "", "#");
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
+  requestAnimationFrame(()=>{
+    root.style.scrollBehavior = previousScrollBehavior;
   });
 });
-
-
-function slug(s){
-  return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-}
-
-renderCategories();
 
 </script>
 </body>
