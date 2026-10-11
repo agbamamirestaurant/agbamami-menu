@@ -177,6 +177,7 @@ a{text-decoration:none;color:inherit}
   position:absolute;
   inset:0;
   z-index:1;
+  pointer-events:none;
   background:linear-gradient(180deg,rgba(0,0,0,.04) 25%,rgba(0,0,0,.12) 45%,rgba(0,0,0,.78) 100%);
 }
 .item-photo{
@@ -197,6 +198,9 @@ a{text-decoration:none;color:inherit}
   font-weight:700;
   letter-spacing:1px;
   text-align:center;
+}
+.item-photo{
+  z-index:0;
 }
 .item-photo img{
   width:100%;
@@ -1302,6 +1306,7 @@ const imageLightboxCaption = document.getElementById("imageLightboxCaption");
 const imageLightboxClose = document.getElementById("imageLightboxClose");
 
 function openImagePreview(src,name){
+  if(!src) return;
   imageLightboxImg.src = src;
   imageLightboxImg.alt = name || "";
   imageLightboxCaption.textContent = name || "";
@@ -1468,8 +1473,1574 @@ function openCategory(index){
         img.alt = item.name;
         img.loading = "lazy";
         img.addEventListener("click",(event)=>{
+          event.preventDefault();
           event.stopPropagation();
-          openImagePreview(item.image,item.name);
+          openImagePreview(img.currentSrc || img.src,item.name);
+        });
+        photo.addEventListener("click",(event)=>{
+          if(event.target !== img){
+            event.preventDefault();
+            event.stopPropagation();
+            openImagePreview(img.currentSrc || img.src,item.name);
+          }
+        });
+        photo.appendChild(img);
+      }else{
+        photo.textContent = "ADD PHOTO";
+      }
+
+      card.appendChild(photo);
+      card.appendChild(info);
+    }
+
+    items.appendChild(card);
+  });
+
+  /*
+    Critical part:
+    switch views and move the scroll position in the SAME JavaScript task,
+    while smooth scrolling is disabled. The browser therefore paints the
+    category page already at the top instead of visibly travelling there.
+  */
+  home.classList.remove("active");
+  categoryView.classList.add("active");
+  window.scrollTo(0, 0);
+
+  /* Force the new view to register before starting its animation. */
+  void categoryView.offsetWidth;
+  categoryView.classList.add("menu-enter");
+
+  history.pushState(
+    {category:index},
+    "",
+    "#" + slug(cat.name)
+  );
+
+  /* Re-enable the user's normal smooth scrolling after the switch. */
+  requestAnimationFrame(()=>{
+    root.style.scrollBehavior = previousScrollBehavior;
+  });
+}
+
+document.getElementById("backBtn").addEventListener("click",()=>{
+  const root = document.documentElement;
+  const previousScrollBehavior = root.style.scrollBehavior;
+
+  /* Prevent a visible scroll from the category top back to the saved position. */
+  root.style.scrollBehavior = "auto";
+
+  categoryView.classList.remove("menu-enter");
+  home.classList.remove("menu-return");
+
+  /* Restore the categories view and its exact previous scroll position
+     before the browser gets a chance to paint the intermediate state. */
+  categoryView.classList.remove("active");
+  home.classList.add("active");
+
+  document.getElementById("page").classList.remove("drink-mode");
+  history.pushState({}, "", "#");
+
+  window.scrollTo(0, homeScrollY);
+
+  /* Restart the beautiful home transition without moving the page. */
+  void home.offsetWidth;
+  home.classList.add("menu-return");
+
+  requestAnimationFrame(()=>{
+    root.style.scrollBehavior = previousScrollBehavior;
+  });
+});
+  
+renderCategories();
+
+</script>
+</body>
+</html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agbamami Restaurant Menu</title>
+<meta name="description" content="Agbamami Restaurant digital menu">
+
+<!--
+  FONT OPTIONS:
+  You can change FONT_FAMILY in the SETTINGS section near the bottom.
+  Available Google fonts included here:
+  Poppins, Montserrat, Lato, Roboto, Nunito, Playfair Display,
+  Cormorant Garamond, Merriweather, Oswald
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=Oswald:wght@400;500;600&family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --page-bg:#fff7e8;
+  --body-bg:#1f1f1f;
+  --ink:#272727;
+  --muted:#6f675d;
+  --card:#ffffff;
+  --accent:#b56b2a;
+  --white:#fff;
+  --overlay:rgba(0,0,0,.58);
+  --font-family:'Poppins',Arial,Helvetica,sans-serif;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;width:100%;max-width:100%;overflow-x:hidden}
+body{
+  margin:0;
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+  font-family:var(--font-family);
+  background:var(--body-bg);
+  color:var(--ink);
+}
+button,a{font:inherit}
+a{text-decoration:none;color:inherit}
+
+.page{
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+  min-height:100vh;
+  padding:18px 14px 34px;
+  overflow-x:hidden;
+  background-color:var(--page-bg);
+  background-image:var(--page-bg-image, none);
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+}
+
+/* Drink interface background */
+.page.drink-mode{
+  background-image:var(--drink-bg-image);
+}
+
+.topbar{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin:2px 4px 14px;
+}
+.icon-btn{
+  width:42px;height:42px;border-radius:50%;
+  border:0;background:rgba(255,255,255,.92);
+  box-shadow:0 3px 12px rgba(0,0,0,.12);
+  display:grid;place-items:center;
+  cursor:pointer;
+}
+.icon-btn svg{width:20px;height:20px}
+
+.brand{
+  text-align:center;
+  padding:4px 0 16px;
+}
+.logo-placeholder{
+  width:74px;height:74px;border-radius:50%;
+  margin:0 auto 10px;
+  display:grid;place-items:center;
+  background:#eee0c5;
+  color:#76644d;
+  font-size:11px;font-weight:700;
+  letter-spacing:.5px;
+  overflow:hidden;
+}
+.logo-placeholder img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.brand h1{
+  margin:0;
+  font-size:22px;
+  font-weight:600;
+  letter-spacing:.1px;
+}
+.subtitle{
+  margin:7px 0 0;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.categories{display:grid;gap:12px}
+.category{
+  position:relative;
+  height:142px;
+  border-radius:17px;
+  overflow:hidden;
+  background:#303030;
+  box-shadow:0 5px 14px rgba(0,0,0,.16);
+  cursor:pointer;
+  border:0;
+  width:100%;
+  padding:0;
+  text-align:left;
+}
+.category::after{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(0,0,0,.60),rgba(0,0,0,.05) 75%,rgba(0,0,0,.22));
+}
+.category .placeholder{
+  position:absolute;inset:0;
+  display:grid;place-items:center;
+  color:rgba(255,255,255,.5);
+  font-size:12px;
+  letter-spacing:1px;
+  background:
+    radial-gradient(circle at 25% 30%,#80654c 0 18%,transparent 19%),
+    radial-gradient(circle at 72% 55%,#aa8664 0 22%,transparent 23%),
+    linear-gradient(135deg,#353535,#81705d);
+}
+.category img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.category .label{
+  position:absolute;z-index:2;left:18px;bottom:17px;
+  color:#fff;font-weight:700;font-size:14px;
+  letter-spacing:.2px;text-transform:uppercase;
+  text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+
+.view{display:none}
+.view.active{display:block}
+.back{
+  border:0;background:transparent;padding:4px 0 16px;
+  color:var(--ink);font-weight:700;cursor:pointer;
+}
+.view h2{text-align:center;margin:4px 0 18px;font-size:22px}
+
+.items{
+  display:grid;
+  gap:12px;
+}
+
+.items:has(.drink-item){
+  gap:0;
+}
+.item{
+  position:relative;
+  width:100%;
+  min-height:210px;
+  border-radius:17px;
+  overflow:hidden;
+  background:#303030;
+  box-shadow:0 5px 14px rgba(0,0,0,.16);
+}
+.item::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.04) 25%,rgba(0,0,0,.12) 45%,rgba(0,0,0,.78) 100%);
+}
+.item-photo{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border-radius:0;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 25% 30%,#80654c 0 18%,transparent 19%),
+    radial-gradient(circle at 72% 55%,#aa8664 0 22%,transparent 23%),
+    linear-gradient(135deg,#353535,#81705d);
+  display:grid;
+  place-items:center;
+  color:rgba(255,255,255,.65);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-align:center;
+}
+.item-photo{
+  z-index:0;
+}
+.item-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.item-info{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:16px;
+  z-index:2;
+  min-width:0;
+  color:#fff;
+}
+.item-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-end;
+  min-width:0;
+}
+.item-name{
+  min-width:0;
+  font-weight:700;
+  font-size:15px;
+  line-height:1.25;
+  overflow-wrap:anywhere;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.item-price{
+  flex-shrink:0;
+  font-weight:700;
+  white-space:nowrap;
+  color:#fff;
+  font-size:15px;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.item-desc{
+  margin:6px 0 0;
+  color:rgba(255,255,255,.9);
+  font-size:11px;
+  line-height:1.45;
+  overflow-wrap:anywhere;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.drink-item{
+  display:block;
+  width:100%;
+  height:auto;
+  min-height:0;
+  margin:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  overflow:visible;
+}
+
+.drink-item + .drink-item{
+  margin-top:0;
+}
+
+.drink-item::after{
+  display:none;
+}
+
+.drink-item .item-info{
+  position:static;
+  left:auto;
+  right:auto;
+  bottom:auto;
+  width:100%;
+  margin:0;
+  padding:0 4px;
+  color:var(--ink);
+}
+
+.drink-item .item-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin:0;
+  padding:0;
+  min-height:22px;
+}
+
+.drink-item .item-name{
+  font-size:14px;
+  line-height:1.2;
+  color:var(--ink);
+  text-shadow:none;
+}
+
+.drink-item .item-price{
+  flex-shrink:0;
+  font-size:14px;
+  line-height:1.2;
+  color:var(--accent);
+  text-shadow:none;
+}
+
+.drink-item .item-desc,
+.drink-item .item-photo{
+  display:none;
+}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
+.small-note{
+  margin:15px 2px 0;text-align:center;font-size:10px;color:#8a8177
+}
+@media(max-width:380px){
+  .page{padding-left:10px;padding-right:10px}
+  .category{height:136px}
+  .item{min-height:195px}
+  .drink-item{min-height:0}
+  .item-info{left:15px;right:15px;bottom:14px}
+  .item-name,.item-price{font-size:14px}
+}
+
+@media(min-width:700px){
+  .page{box-shadow:0 0 35px rgba(0,0,0,.25)}
+}
+/* ================================
+   SMOOTH MENU PAGE TRANSITIONS
+   ================================ */
+
+#home,
+#categoryView{
+  will-change:transform,opacity;
+}
+
+#categoryView.menu-enter{
+  animation:categoryEnter .42s cubic-bezier(.22,.61,.36,1) both;
+}
+
+#home.menu-return{
+  animation:homeReturn .38s cubic-bezier(.22,.61,.36,1) both;
+}
+
+#items .item.menu-item-enter{
+  animation:foodCardEnter .62s cubic-bezier(.22,.61,.36,1) both;
+}
+
+#items .drink-item.menu-item-enter{
+  animation:drinkItemEnter .30s ease-out both;
+}
+
+@keyframes categoryEnter{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@keyframes homeReturn{
+  from{opacity:0;transform:translateY(-12px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@keyframes foodCardEnter{
+  from{opacity:0;transform:translateX(-34px);}
+  to{opacity:1;transform:translateX(0);}
+}
+
+@keyframes drinkItemEnter{
+  from{opacity:0;transform:translateY(5px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@media (prefers-reduced-motion:reduce){
+  #categoryView.menu-enter,
+  #home.menu-return,
+  #items .item.menu-item-enter,
+  #items .drink-item.menu-item-enter{
+    animation:none;
+  }
+}
+
+
+/* Full-image food preview */
+.item-photo img{cursor:zoom-in}
+.image-lightbox{
+  position:fixed;inset:0;z-index:9999;
+  display:none;align-items:center;justify-content:center;
+  padding:18px;background:rgba(0,0,0,.90);
+  opacity:0;transition:opacity .28s ease;
+}
+.image-lightbox.show{display:flex;opacity:1}
+.image-lightbox-backdrop{position:absolute;inset:0}
+.image-lightbox-content{
+  position:relative;z-index:1;
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+}
+.image-lightbox img{
+  display:block;
+  width:auto;height:auto;
+  max-width:96vw;max-height:88vh;
+  object-fit:contain;
+  border-radius:14px;
+  box-shadow:0 20px 70px rgba(0,0,0,.55);
+  transform:scale(.92);
+  transition:transform .32s cubic-bezier(.22,.61,.36,1);
+  cursor:zoom-out;
+}
+.image-lightbox.show img{transform:scale(1)}
+.image-lightbox-close{
+  position:absolute;top:14px;right:14px;z-index:2;
+  width:44px;height:44px;border:0;border-radius:50%;
+  background:rgba(255,255,255,.16);color:#fff;
+  font-size:30px;line-height:1;cursor:pointer;
+}
+.image-lightbox-caption{
+  position:absolute;left:18px;right:18px;bottom:16px;z-index:2;
+  text-align:center;color:#fff;font-size:14px;font-weight:700;
+  text-shadow:0 2px 10px rgba(0,0,0,.75);pointer-events:none;
+}
+body.lightbox-open{overflow:hidden}
+@media(max-width:480px){
+  .image-lightbox{padding:10px}
+  .image-lightbox img{max-width:98vw;max-height:84vh;border-radius:12px}
+}
+</style>
+</head>
+
+<body>
+<main class="page" id="page">
+  <section id="home" class="view active">
+    <div class="topbar">
+      <a class="icon-btn" id="callBtn" aria-label="Call Agbamami" title="Call Agbamami">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .7 2.9a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.2-1.3a2 2 0 0 1 2.1-.5c.9.4 1.9.6 2.9.7A2 2 0 0 1 22 16.9z"/>
+        </svg>
+      </a>
+      <a class="icon-btn" id="locationBtn" aria-label="Open location" title="Open location">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/>
+          <circle cx="12" cy="10" r="2.5"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="brand">
+      <div class="logo-placeholder" id="logoBox">ADD LOGO</div>
+      <h1>Agbamami Restaurant Menu</h1>
+      <p class="subtitle">Explore our menu</p>
+    </div>
+
+    <div id="categories" class="categories"></div>
+    <p class="small-note">Tap a category to view the menu.</p>
+    <footer>© <span id="year"></span> Agbamami</footer>
+  </section>
+
+  <section id="categoryView" class="view">
+    <button class="back" id="backBtn" aria-label="All categories">‹ All categories</button>
+    <h2 id="categoryTitle"></h2>
+    <div id="items" class="items"></div>
+  </section>
+</main>
+
+
+<div class="image-lightbox" id="imageLightbox" aria-hidden="true">
+  <button class="image-lightbox-close" id="imageLightboxClose" type="button" aria-label="Close image">&times;</button>
+  <div class="image-lightbox-backdrop"></div>
+  <div class="image-lightbox-content">
+    <img id="imageLightboxImg" src="" alt="">
+    <div class="image-lightbox-caption" id="imageLightboxCaption"></div>
+  </div>
+</div>
+
+<script>
+/*
+==========================================================
+AGBAMAMI MENU — EASY SETTINGS
+==========================================================
+
+1. CHANGE THE FONT:
+   Set FONT_FAMILY to one of:
+   'Poppins'
+   'Montserrat'
+   'Lato'
+   'Roboto'
+   'Nunito'
+   'Playfair Display'
+   'Cormorant Garamond'
+   'Merriweather'
+   'Oswald'
+
+2. CHANGE THE BACKGROUND:
+   Option A — solid colour:
+   BACKGROUND_COLOR = "#fff7e8";
+   BACKGROUND_IMAGE = "";
+
+   Option B — your own photo:
+   Put the photo inside the images folder, then:
+   BACKGROUND_IMAGE = "images/background.jpg";
+
+3. CHANGE BACKGROUND OPACITY:
+   If using a photo, BACKGROUND_OVERLAY controls the colour
+   placed over the photo. Example:
+   "rgba(255,255,255,.20)" = light overlay
+   "rgba(0,0,0,.15)" = dark overlay
+
+4. CHANGE LOGO:
+   Put your logo in /images/ and set LOGO = "images/logo.png".
+
+5. ITEM PHOTOS:
+   Every individual menu item has its own image field.
+   Example:
+   {
+     name:"Fufu with Goat Soup",
+     price:"GH₵ 120",
+     desc:"Served with...",
+     image:"images/items/fufu-goat-soup.jpg"
+   }
+
+   You can create folders inside /images/ such as:
+   images/items/
+   images/categories/
+   images/background/
+
+   Then upload your photos to GitHub and use the matching path.
+
+==========================================================
+*/
+
+history.scrollRestoration = "manual";
+
+const PHONE = "+233549503755";
+const WHATSAPP = "233XXXXXXXXX";
+const LOCATION = "https://maps.google.com/?q=Agbamami";
+
+/* ===== VISUAL SETTINGS ===== */
+const FONT_FAMILY = "Nunito";
+const BACKGROUND_COLOR = "#fff7e8";
+const BACKGROUND_IMAGE = "background.png";
+const DRINK_BACKGROUND_IMAGE = "menu bg 1.jpg";
+const BACKGROUND_OVERLAY = "rgba(255,255,255,0)";
+const ACCENT_COLOR = "#b56b2a";
+const TEXT_COLOR = "#272727";
+const MUTED_COLOR = "#6f675d";
+const CARD_COLOR = "#ffffff";
+
+/* ===== BRANDING ===== */
+const LOGO = "";
+
+/* ===== MENU =====
+   Add as many categories and items as you want.
+   Each item can have its OWN photo.
+*/
+const MENU = [
+  {
+    name:"SOUPS",
+    image:"images/categories/soups.png",
+    items:[
+      {
+        name:"FRESH TILAPIA LIGHT SOUP",
+        price:"GH₵ 100",
+        desc:"",
+        image:"5.jpeg"
+      },
+      {
+        name:"FRESH CATFISH (BLOLO) LIGHT SOUP",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      },
+      {
+        name:"FRESH TILAPIA WITH OKRO SOUP",
+        price:"GH₵ 120",
+        desc:"",
+        image:"tilapia with okro.jpeg"
+      },
+      {
+        name:"OKRO SOUP WITH PRAWNS AND SMOKED FISH",
+        price:"GH₵ 200",
+        desc:"",
+        image:""
+      },
+      {
+        name:"FRESH FISH",
+        price:"GH₵ 120",
+        desc:"",
+        image:""
+      },
+       {
+        name:"FRESH FISH (GRUPPER/RED SNIPPER)",
+        price:"GH₵ 160",
+        desc:"",
+        image:""
+      },
+      {
+        name:"PALMNUT SOUP WITH FISH",
+        price:"GH₵ 160",
+        desc:"",
+        image:"palmnut soup with fish.jpeg"
+      },
+      {
+        name:"PALMNUT SOUP WITH (FISH,BEEF,CRAB & WELE)",
+        price:"GH₵ 140",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"PALMNUT SOUP WITH BEEF",
+        price:"GH₵ 140",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"GROUNDNUT SOUP/PEANUT SOUP(FISH)",
+        price:"GH₵ 160",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"GROUNDNUT SOUP/PEANUT SOUP(BEEF)",
+        price:"GH₵ 140",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"GROUNDNUT SOUP/PEANUT SOUP(FISH,BEEF,CRAB & WELE) ",
+        price:"GH₵ 140",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"OKRO MIXED WITH SPINACH/GBOMA(FISH)",
+        price:"GH₵ 160",
+        desc:"",
+        image:"11F.jpeg"   
+      },
+      {
+        name:"OKRO MIXED WITH SPINACH/GBOMA(BEEF)",
+        price:"GH₵ 140",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"OKRO MIXED WITH SPINACH/GBOMA(FISH,BEEF,CRAB & WELE)",
+        price:"GH₵ 160",
+        desc:"",
+        image:"11 special.jpeg"   
+      },
+      {
+        name:"OKRO STEW(FISH)",
+        price:"GH₵ 160",
+        desc:"",
+        image:"okro stew w fish.jpeg" 
+      },
+      {
+        name:"GOAT LIGHT SOUP",
+        price:"GH₵ 80",
+        desc:"",
+        image:"goat light soup.jpeg"   
+      },
+      {
+        name:"SMOKED GRASSCUTTER LIGHT SOUP",
+        price:"GH₵ 180",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"CHICKEN LIGHT SOUP",
+        price:"GH₵ 100",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"SMOKED CATFISH (BLOLO) LIGHT SOUP",
+        price:"GH₵ 80",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"ADEME(FISH)",
+        price:"GH₵ 160",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"ADEME(FISH,BEEF,CRAB & WELE)",
+        price:"GH₵ 160",
+        desc:"",
+        image:""   
+      },
+      {
+        name:"OKRO MIXED WITH GBOMA WITH(FRIED FISH)",
+        price:"GH₵ 100",
+        desc:"",
+        image:"" 
+      }
+    ]
+  },
+  {
+    name:"SIDELINES & ACCOMPANIMENTS",
+    image:"21L.jpeg",
+    items:[
+      {
+        name:"BANKU (LARGE/REGULAR)",
+        price:"GH₵ 20/10",
+        desc:"",
+        image:"21L.jpeg"
+      },
+      {
+        name:"FUFU (LARGE/REGULAR)",
+        price:"GH₵ 20/15",
+        desc:"",
+        image:"fufu large.jpeg"
+      },
+      {
+        name:"EWORKPLE (LARGE/REGULAR)",
+        price:"GH₵ 20/10",
+        desc:"",
+        image:"23L.jpeg"
+      },
+      {
+        name:"PLAIN RICE",
+        price:"GH₵ 30",
+        desc:"",
+        image:"24L.jpeg"
+      },
+      {
+        name:"EBA (LARGE/REGULAR)",
+        price:"GH₵ 20/10",
+        desc:"",
+        image:""
+        },
+      {
+        name:"JOLLOF RICE",
+        price:"GH₵ 40",
+        desc:"",
+        image:"27C.jpeg"
+      },
+      {
+        name:"PLANTAIN",
+        price:"GH₵ 35",
+        desc:"",
+        image:"plantain.jpeg"
+      },
+      {
+        name:"YAM",
+        price:"GH₵ 35",
+        desc:"",
+        image:""
+      },
+      {
+        name:"PLANTAIN & YAM",
+        price:"GH₵ 35",
+        desc:"",
+        image:"plantain and yam.jpeg"
+      },
+      {
+        name:"POTATO CHIPS",
+        price:"GH₵ 50",
+        desc:"",
+        image:"potato chips.jpeg"
+      },
+      {
+        name:"FRIED YAM",
+        price:"GH₵ 50",
+        desc:"",
+        image:"fried yam.jpeg"
+      }
+    ]
+  },
+  {
+    name:"SAUCES",
+    image:"beef sauce.png",
+    items:[
+      {
+        name:"ANCHOVIES(KETA SCHOOL BOYS WITH STEW)",
+        price:"GH₵ 85",
+        desc:"",
+        image:"13 stew.jpeg"
+      },
+      {
+        name:"ANCHOVIES (KETA SCHOOL BOYS) WITH PEPPER	",
+        price:"GH₵ 80",
+        desc:"",
+        image:""
+      },
+      {
+        name:"GBOMA NYANYA",
+        price:"GH₵ 100",
+        desc:"(GBOMA/SPINACH, SMOKED FISH, WELE, SMOKED ANCHOVIES)",
+        image:"gboma nyanya.jpeg"
+      },
+      {
+        name:"GARDEN EGG STEW",
+        price:"GH₵ 160",
+        desc:".",
+        image:"garden.jpeg"
+      },
+      {
+        name:"GBORVILOLO WITH PEPPER",
+        price:"GH₵ 80",
+        desc:"",
+        image:""
+      },
+      {
+        name:"GBORVILOLO STEW",
+        price:"GH₵ 85",
+        desc:"",
+        image:""
+      },
+      {
+        name:"BEEF SAUCE",
+        price:"GH₵ 100",
+        desc:"SLICED BEEF, GREEN PEPPER, ONION AND CARROT",
+        image:"beef sauce.png"
+      },
+      {
+        name:"SPICY BEEF IN TOMATOES SAUCE",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      }
+    ]
+  },
+  {
+    name:"GRILL",
+    isDrink:true,
+    image:"tilapia.png",
+    items:[
+      {
+        name:"CHAR GRILLED TILAPIA WITH PEPPER (LARGE)",
+        price:"GH₵ 130",
+        desc:"",
+        image:""
+      },
+      {
+        name:"CHAR GRILLED TILAPIA WITH PEPPER (MEDIUM)",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      }
+    ]
+  },
+  {
+    name:"EXTRAS",
+    isDrink:true,
+    image:"extra.jpg",
+    items:[
+      {
+        name:"GOAT MEAT",
+        price:"GH₵ 40",
+        desc:"",
+        image:""
+      },
+      {
+        name:"BEEF",
+        price:"GH₵ 50",
+        desc:"",
+        image:""
+      },
+      {
+        name:"FRESH FISH",
+        price:"GH₵ 80",
+        desc:"",
+        image:""
+      },
+      {
+        name:"SMOKED FISH",
+        price:"GH₵ 80",
+        desc:"",
+        image:""
+      },
+      {
+        name:"SMOKED GRASSCUTTER",
+        price:"GH₵ 90",
+        desc:"Replace with your actual menu item.",
+        image:""
+      },
+      {
+        name:"WELE",
+        price:"GH₵ 10",
+        desc:"Replace with your actual menu item.",
+        image:""
+      },
+      {
+        name:"ANCHOVIES (KETA SCHOOL BOYS)",
+        price:"GH₵ 25",
+        desc:"Replace with your actual menu item.",
+        image:""
+      },
+      {
+        name:"OKRO MIXED WITH SPINACH (GBOMA)",
+        price:"GH₵ 20",
+        desc:"Replace with your actual menu item.",
+        image:""
+      },
+      {
+        name:"SHRIMPS/PRAWNS",
+        price:"GH₵ 50",
+        desc:"Replace with your actual menu item.",
+        image:""
+      },
+      {
+        name:"GOAT INTESTINE",
+        price:"GH₵ 20",
+        desc:"Replace with your actual menu item.",
+        image:""
+      }
+    ]
+  },
+  {
+    name:"RED RED",
+    image:"BP.png",
+    items:[
+      {
+        name:"BEANS WITH FRIED PLANTAIN",
+        price:"GH₵ 65",
+        desc:"",
+        image:"BP.png"
+      },
+      {
+        name:"BEANS WITH FRIED PLANTAIN AND FISH",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      },
+      {
+        name:"BEANS WITH FRIED PLANTAIN AND CHICKEN",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      },
+      {
+        name:"FRIED PLANTAIN",
+        price:"GH₵ 40",
+        desc:"",
+        image:"fried plantain.jpeg"
+      },
+      {
+        name:"KELEWELE",
+        price:"GH₵ 60",
+        desc:"",
+        image:""
+      }
+    ]
+  },
+      {
+    name:"RICE DISHES",
+    image:"fried rice with chicken.jpeg",
+    items:[
+      {
+        name:"BEEF FRIED RICE",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      },
+      {
+        name:"FRIED RICE WITH FISH",
+        price:"GH₵ 110",
+        desc:"",
+        image:""
+      },
+      {
+        name:"FRIED RICE WITH SHRIMPS",
+        price:"GH₵ 125",
+        desc:"",
+        image:"fried rice with shrimps.jpeg"
+      },
+      {
+        name:"FRIED RICE WITH CHICKEN",
+        price:"GH₵ 100",
+        desc:"",
+        image:"fried rice with chicken.jpeg"
+      },
+      {
+        name:"JOLLOF RICE WITH FISH",
+        price:"GH₵ 125",
+        desc:"",
+        image:"47F.jpeg"
+      },
+      {
+        name:"JOLLOF RICE WITH CHICKEN",
+        price:"GH₵ 110",
+        desc:"",
+        image:"47C.png"
+      },
+      {
+        name:"JOLLOF RICE WITH BEEF",
+        price:"GH₵ 125",
+        desc:"",
+        image:"47B.png"
+      },
+      {
+        name:"PLAIN RICE WITH SPICY BEEF AND TOMATO SAUCE",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      },
+      {
+        name:"PLAIN RICE WITH FRIED FISH AND TOMATO SAUCE",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      },
+      {
+        name:"PLAIN RICE WITH CHICKEN AND TOMATO SAUCE",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      },
+      {
+        name:"ASSORTED FRIED RICE",
+        price:"GH₵ 125",
+        desc:"",
+        image:""
+      },
+      {
+        name:"VEGETABLE FRIED RICE",
+        price:"GH₵ 50",
+        desc:"",
+        image:"vegetable fried rice.jpeg"
+      },
+    ]
+  },
+     {
+    name:"PASTA",
+    image:"pasta.jpg",
+    items:[
+      {
+        name:"SPAGHETTI WITH STIR FRIED BEEF",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      },
+      {
+        name:"SPGHETTI BOLOGNESE",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      }
+    ]
+  },
+    {
+    name:"CHIPS & CHICKEN",
+    image:"chicken.jpg",
+    items:[
+      {
+        name:"YAM CHIPS WITH CHICKEN",
+        price:"GH₵ 100",
+        desc:"",
+        image:""
+      },
+      {
+        name:"POTATO CHIPS WITH CHICKEN",
+        price:"GH₵ 100",
+        desc:"",
+        image:"42C.jpeg"
+      },
+      {
+        name:"POTATO CHIPS WITH FISH",
+        price:"GH₵ 100",
+        desc:"",
+        image:"42F.png"
+      },
+      {
+        name:"GRILLED CHICKEN WINGS",
+        price:"GH₵ 60",
+        desc:"",
+        image:""
+      },
+      {
+        name:"QUARTER GRILLED CHICKEN",
+        price:"GH₵ 65",
+        desc:"",
+        image:""
+      }
+    ]
+  },
+    {
+    name:"SALADS",
+    image:"salad.png",
+    items:[
+      {
+        name:"MIXED SALAD WITH BAKED BEANS (E&M)",
+        price:"GH₵ 60",
+        desc:"",
+        image:""
+      },
+      {
+        name:"MIXED SALAD (E&M)",
+        price:"GH₵ 60",
+        desc:"",
+        image:""
+      },
+      {
+        name:"MIXED SALAD WITH BEEF (M)",
+        price:"GH₵ 80",
+        desc:"",
+        image:""
+      },
+      {
+        name:"MIXED SALAD WITH STRIPS OF GRILLED CHICKEN BREASTS (M)",
+        price:"GH₵ 80",
+        desc:"",
+        image:""
+      },
+      {
+        name:"FRESH GREEN SALAD (E&M)",
+        price:"GH₵ 50",
+        desc:"",
+        image:""
+      },
+      {
+        name:"GREEN SALAD WITH STRIPS OF CHICKEN BREAST",
+        price:"GH₵ 70",
+        desc:"",
+        image:"green salad with chicken.jpeg"
+      },
+      {
+        name:"MIXED SALAD SPECIAL",
+        price:"GH₵ 100",
+        desc:"LETTUCE, SPAGHETTI, BEEF, TUNA ,EGG, CARROT, CUCUMBER TOMATOES, POTATOES AND ONIONS",
+        image:""
+      },
+      {
+        name:"MIXED SALAD WITH TUNA",
+        price:"GH₵ 80",
+        desc:"",
+        image:""
+      },
+      {
+        name:"COLESLAW",
+        price:"GH₵ 30",
+        desc:"",
+        image:""
+      }
+    ]
+  },
+  {
+    name:"SOFT DRINKS",
+    isDrink:true,
+    image:"soft drinks.jpg",
+    items:[
+      { name:"MALTA GUINNESS", price:"GH₵ 20.00" },
+      { name:"ALVARO", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"COKE", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"SPRITE", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"FANTA", price:"GH₵ 20.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"FRUIT JUICE",
+    isDrink:true,
+    image:"fj.jpg",
+    items:[
+      { name:"CERES", price:"GH₵ 60.00", desc:"", image:"" },
+      { name:"DON SIMON", price:"GH₵ 60.00", desc:"", image:"" },
+      { name:"FRESHLY SQUEEZED JUICE", price:"GH₵ 30.00", desc:"", image:"" },
+      { name:"FRESHLY SQUEEZED JUICE IN BOTTLE (350ML)", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"BB COCKTAIL", price:"GH₵ 25.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"LAGER BEER & OTHER DRINKS",
+    isDrink:true,
+    image:"lager beer.png",
+    items:[
+      { name:"GULDER", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"STAR", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"CLUB", price:"GH₵ 30.00", desc:"", image:"" },
+      { name:"GUINNESS", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"HUNTERS GOLD", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"KISS CIDER", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"HENEIKEN BOTTLE", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"MINI CLUB", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"SMIRNOFF ICE", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"SHANDY", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"SAVANNA", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"ORIGIN BEER", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"PANACHE", price:"GH₵ 20.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"GIN",
+    isDrink:true,
+    image:"gin.jpg",
+    items:[
+      { name:"CASTLE BRIDGE", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"KASAPREKO", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"BEEFEATER", price:"GH₵ 25.00", desc:"", image:"" },
+      { name:"SMIRNOFF VODKA (RED)", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"GORDONS", price:"GH₵ 15.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"WHISKY",
+    isDrink:true,
+    image:"whisky.jpg",
+    items:[
+      { name:"JACK DANIELS", price:"GH₵ 40.00", desc:"", image:"" },
+      { name:"GRANTS", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"RED LABEL", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"BLACK LABEL", price:"GH₵ 40.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"LIQUOR",
+    isDrink:true,
+    image:"hennessy.jpg",
+    items:[
+      { name:"ST. JAMES RHUM", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"ELLIOT", price:"GH₵ 5.00", desc:"", image:"" },
+      { name:"SOUTHERN COMFORT", price:"GH₵ 5.00", desc:"", image:"" },
+      { name:"KASAPREKO CARDINAL", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"COURVOISEIR", price:"GH₵ 50.00", desc:"", image:"" },
+      { name:"HENNESY", price:"GH₵ 50.00", desc:"", image:"" },
+      { name:"REMY MARTINI", price:"GH₵ 50.00", desc:"", image:"" },
+      { name:"NAPOLEON", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"KASAPREKO", price:"GH₵ 10.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"APERITIFS",
+    isDrink:true,
+    image:"martini.jpg",
+    items:[
+      { name:"DUBONNET", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"MARTINI ROSSO", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"CINZANO", price:"GH₵ 20.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"BITTERS",
+    isDrink:true,
+    image:"bitters.jpg",
+    items:[
+      { name:"CAMPARI", price:"GH₵ 20.00", desc:"", image:"" },
+      { name:"MANDINGO BITTERS", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"JAGD BITTERS", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"ALOMO BITTERS", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"HERB AFRIK", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"JAGERMEISTER", price:"GH₵ 30.00", desc:"", image:"" },
+      { name:"LIME", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"ORIGIN BITTERS", price:"GH₵ 10.00", desc:"", image:"" },
+      { name:"JOY DADI", price:"GH₵ 10.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"MINERAL WATER",
+    isDrink:true,
+    image:"water.jpg",
+    items:[
+      { name:"VOLTIC (SMALL)", price:"GH₵ 8.00", desc:"", image:"" },
+      { name:"VOLTIC (MEDIUM)", price:"GH₵ 10.00", desc:"", image:"" }
+    ]
+  },
+  {
+    name:"OTHERS",
+    isDrink:true,
+    image:"red bull.jpg",
+    items:[
+      { name:"RED BULL", price:"GH₵ 35.00", desc:"", image:"" },
+      { name:"TZEPAO", price:"GH₵ 45.00", desc:"", image:"" }
+    ]
+  }
+];
+
+/* Apply visual settings */
+document.documentElement.style.setProperty("--font-family", `'${FONT_FAMILY}', Arial, Helvetica, sans-serif`);
+document.documentElement.style.setProperty("--page-bg", BACKGROUND_COLOR);
+document.documentElement.style.setProperty("--body-bg", BACKGROUND_COLOR);
+document.documentElement.style.setProperty("--accent", ACCENT_COLOR);
+document.documentElement.style.setProperty("--ink", TEXT_COLOR);
+document.documentElement.style.setProperty("--muted", MUTED_COLOR);
+document.documentElement.style.setProperty("--card", CARD_COLOR);
+
+if(BACKGROUND_IMAGE){
+  document.documentElement.style.setProperty(
+    "--page-bg-image",
+    `linear-gradient(${BACKGROUND_OVERLAY},${BACKGROUND_OVERLAY}), url("${BACKGROUND_IMAGE}")`
+  );
+}
+
+if(DRINK_BACKGROUND_IMAGE){
+  document.documentElement.style.setProperty(
+    "--drink-bg-image",
+    `linear-gradient(${BACKGROUND_OVERLAY},${BACKGROUND_OVERLAY}), url("${DRINK_BACKGROUND_IMAGE}")`
+  );
+}
+
+if(LOGO){
+  const logoBox = document.getElementById("logoBox");
+  logoBox.innerHTML = `<img src="${LOGO}" alt="Agbamami logo">`;
+}
+
+const categories = document.getElementById("categories");
+const home = document.getElementById("home");
+const categoryView = document.getElementById("categoryView");
+const title = document.getElementById("categoryTitle");
+const items = document.getElementById("items");
+
+const imageLightbox = document.getElementById("imageLightbox");
+const imageLightboxImg = document.getElementById("imageLightboxImg");
+const imageLightboxCaption = document.getElementById("imageLightboxCaption");
+const imageLightboxClose = document.getElementById("imageLightboxClose");
+
+function openImagePreview(src,name){
+  if(!src) return;
+  imageLightboxImg.src = src;
+  imageLightboxImg.alt = name || "";
+  imageLightboxCaption.textContent = name || "";
+  imageLightbox.classList.add("show");
+  imageLightbox.setAttribute("aria-hidden","false");
+  document.body.classList.add("lightbox-open");
+}
+
+function closeImagePreview(){
+  imageLightbox.classList.remove("show");
+  imageLightbox.setAttribute("aria-hidden","true");
+  document.body.classList.remove("lightbox-open");
+  setTimeout(()=>{
+    if(!imageLightbox.classList.contains("show")) imageLightboxImg.src = "";
+  },280);
+}
+
+imageLightboxClose.addEventListener("click",closeImagePreview);
+imageLightbox.addEventListener("click",event=>{
+  if(event.target===imageLightbox ||
+     event.target.classList.contains("image-lightbox-backdrop") ||
+     event.target===imageLightboxImg){
+    closeImagePreview();
+  }
+});
+document.addEventListener("keydown",event=>{
+  if(event.key==="Escape" && imageLightbox.classList.contains("show")){
+    closeImagePreview();
+  }
+});
+
+
+document.getElementById("callBtn").href = "tel:" + PHONE;
+document.getElementById("locationBtn").href = LOCATION;
+document.getElementById("year").textContent = new Date().getFullYear();
+
+function renderCategories(){
+  categories.innerHTML = "";
+  MENU.forEach((cat, index)=>{
+    const btn = document.createElement("button");
+    btn.className = "category";
+    btn.type = "button";
+
+    if(cat.image){
+      const img = document.createElement("img");
+      img.src = cat.image;
+      img.alt = cat.name;
+      btn.appendChild(img);
+    }else{
+      const ph = document.createElement("div");
+      ph.className = "placeholder";
+      ph.textContent = "ADD CATEGORY PHOTO";
+      btn.appendChild(ph);
+    }
+
+    const label = document.createElement("span");
+    label.className = "label";
+    label.textContent = cat.name;
+    btn.appendChild(label);
+
+    btn.addEventListener("click", ()=>openCategory(index));
+    categories.appendChild(btn);
+  });
+}
+
+const DRINK_CATEGORIES = new Set([
+  "SOFT DRINKS",
+  "FRUIT JUICE",
+  "LAGER BEER & OTHER DRINKS",
+  "GIN",
+  "WHISKY",
+  "LIQUOR",
+  "BRANDY",
+  "APERITIFS",
+  "BITTERS",
+  "MINERAL WATER",
+  "OTHERS"
+]);
+
+function instantScrollTo(y){
+  const root = document.documentElement;
+  const previous = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+  window.scrollTo(0, y);
+  return previous;
+}
+
+let homeScrollY = 0;
+
+function slug(text){
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function openCategory(index){
+  const cat = MENU[index];
+
+  /* Remember exactly where the user was on the category page. */
+  homeScrollY = window.scrollY;
+
+  const root = document.documentElement;
+  const previousScrollBehavior = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+
+  /* Remove old animation classes before rebuilding the view. */
+  home.classList.remove("menu-return");
+  categoryView.classList.remove("menu-enter");
+
+  /* Prepare the category content while the old view is still hidden. */
+  if(cat.isDrink){
+    document.getElementById("page").classList.add("drink-mode");
+  }else{
+    document.getElementById("page").classList.remove("drink-mode");
+  }
+
+  title.textContent = cat.name;
+  items.innerHTML = "";
+
+  cat.items.forEach((item, itemIndex)=>{
+    const card = document.createElement("article");
+    card.className = cat.isDrink
+      ? "item drink-item menu-item-enter"
+      : "item menu-item-enter";
+
+    card.style.animationDelay = `${Math.min(itemIndex * 0.11, 1.65)}s`;
+
+    const info = document.createElement("div");
+    info.className = "item-info";
+
+    const row = document.createElement("div");
+    row.className = "item-row";
+
+    const name = document.createElement("div");
+    name.className = "item-name";
+    name.textContent = item.name;
+
+    const price = document.createElement("div");
+    price.className = "item-price";
+    price.textContent = item.price;
+
+    row.appendChild(name);
+    row.appendChild(price);
+    info.appendChild(row);
+
+    if(item.desc){
+      const desc = document.createElement("p");
+      desc.className = "item-desc";
+      desc.textContent = item.desc;
+      info.appendChild(desc);
+    }
+
+    if(cat.isDrink){
+      card.appendChild(info);
+    }else{
+      const photo = document.createElement("div");
+      photo.className = "item-photo";
+
+      if(item.image){
+        const img = document.createElement("img");
+        img.src = item.image;
+        img.alt = item.name;
+        img.loading = "lazy";
+        img.addEventListener("click",(event)=>{
+          event.preventDefault();
+          event.stopPropagation();
+          openImagePreview(img.currentSrc || img.src,item.name);
+        });
+        photo.addEventListener("click",(event)=>{
+          if(event.target !== img){
+            event.preventDefault();
+            event.stopPropagation();
+            openImagePreview(img.currentSrc || img.src,item.name);
+          }
         });
         photo.appendChild(img);
       }else{
