@@ -877,6 +877,7 @@ const tablesDB =
 
 let categories = [];
 let menuItems = [];
+let restaurantSettings = null;
 
 
 /* =========================================================
@@ -1035,6 +1036,143 @@ async function showAdminScreen(){
   await loadData();
 }
 
+  /* =========================================================
+   RESTAURANT SETTINGS
+========================================================= */
+
+async function loadRestaurantSettings(){
+
+  try{
+
+    const rows =
+      await getAllRows(
+        APPWRITE_SETTINGS_TABLE
+      );
+
+    restaurantSettings =
+      rows.length ? rows[0] : null;
+
+    document.getElementById(
+      "restaurantName"
+    ).value =
+      restaurantSettings?.restaurantName || "";
+
+    document.getElementById(
+      "restaurantPhone"
+    ).value =
+      restaurantSettings?.phone || "";
+
+    document.getElementById(
+      "restaurantLocation"
+    ).value =
+      restaurantSettings?.location || "";
+
+    document.getElementById(
+      "restaurantDescription"
+    ).value =
+      restaurantSettings?.description || "";
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message ||
+      "Could not load restaurant settings.",
+      "error"
+    );
+  }
+}
+
+
+async function saveRestaurantSettings(){
+
+  const data = {
+
+    restaurantName:
+      document.getElementById(
+        "restaurantName"
+      ).value.trim(),
+
+    phone:
+      document.getElementById(
+        "restaurantPhone"
+      ).value.trim(),
+
+    location:
+      document.getElementById(
+        "restaurantLocation"
+      ).value.trim(),
+
+    description:
+      document.getElementById(
+        "restaurantDescription"
+      ).value.trim()
+
+  };
+
+  try{
+
+    if(restaurantSettings?.$id){
+
+      await tablesDB.updateRow({
+
+        databaseId:
+          APPWRITE_DATABASE_ID,
+
+        tableId:
+          APPWRITE_SETTINGS_TABLE,
+
+        rowId:
+          restaurantSettings.$id,
+
+        data:
+          data
+      });
+
+      showMessage(
+        "Restaurant settings updated successfully."
+      );
+
+    }else{
+
+      const response =
+        await tablesDB.createRow({
+
+          databaseId:
+            APPWRITE_DATABASE_ID,
+
+          tableId:
+            APPWRITE_SETTINGS_TABLE,
+
+          rowId:
+            Appwrite.ID.unique(),
+
+          data:
+            data
+        });
+
+      restaurantSettings =
+        response;
+
+      showMessage(
+        "Restaurant settings saved successfully."
+      );
+    }
+
+    await loadRestaurantSettings();
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message ||
+      "Could not save restaurant settings.",
+      "error"
+    );
+  }
+}
 
 /* =========================================================
    LOAD DATA
@@ -1053,6 +1191,8 @@ async function loadData(){
       await getAllRows(
         APPWRITE_MENU_ITEMS_TABLE
       );
+
+    await loadRestaurantSettings();
 
     categories.sort(
       (a,b) =>
