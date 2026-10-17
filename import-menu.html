@@ -593,29 +593,27 @@ importButton.addEventListener(
           categoryIndex;
 
 
-        const categoryData = {
+     const categoryData = {
 
-          name:
-            category.name || "Unnamed Category",
+  name:
+    category.name || "Unnamed Category",
 
-          image:
-            category.image || "",
+  image:
+    category.image || "",
 
-          description:
-            category.description || "",
+  description:
+    category.description || "",
 
-          sortOrder:
-            categoryIndex,
+  sortOrder:
+    categoryIndex,
 
-          isVisible:
-            true,
+  invisible:
+    false,
 
-          isDrink:
-            !!category.isDrink
+  isDrink:
+    !!category.isDrink
 
-        };
-
-
+};
         const categoryResult =
           await createRowIfMissing(
             CATEGORIES_TABLE,
