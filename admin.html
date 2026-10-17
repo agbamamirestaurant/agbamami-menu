@@ -607,6 +607,17 @@
       ></textarea>
     </div>
 
+    <div>
+  <label for="restaurantLogo">
+    Logo URL
+  </label>
+  <input
+    type="text"
+    id="restaurantLogo"
+    placeholder="images/logo.png"
+  >
+</div>
+
 
     <button
       type="button"
@@ -1072,6 +1083,11 @@ async function loadRestaurantSettings(){
     ).value =
       restaurantSettings?.description || "";
 
+    document.getElementById(
+  "restaurantLogo"
+).value =
+  restaurantSettings?.logo || "";
+
   }catch(error){
 
     console.error(error);
@@ -1104,12 +1120,17 @@ async function saveRestaurantSettings(){
         "restaurantLocation"
       ).value.trim(),
 
-    description:
-      document.getElementById(
-        "restaurantDescription"
-      ).value.trim()
+   description:
+  document.getElementById(
+    "restaurantDescription"
+  ).value.trim(),
 
-  };
+logo:
+  document.getElementById(
+    "restaurantLogo"
+  ).value.trim()
+
+};
 
   try{
 
