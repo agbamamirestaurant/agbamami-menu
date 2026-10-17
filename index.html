@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=Oswald:wght@400;500;600&family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
+<script src="https://cdn.jsdelivr.net/npm/appwrite@28.3.0"></script>
 <style>
 :root{
   --page-bg:#fff7e8;
@@ -559,7 +560,7 @@ const LOGO = "";
    Add as many categories and items as you want.
    Each item can have its OWN photo.
 */
-const MENU = [
+const LOCAL_MENU = [
   {
     name:"SOUPS",
     image:"images/categories/soups.png",
@@ -1316,6 +1317,8 @@ const MENU = [
   }
 ];
 
+let MENU = LOCAL_MENU;
+
 /* Apply visual settings */
 document.documentElement.style.setProperty("--font-family", `'${FONT_FAMILY}', Arial, Helvetica, sans-serif`);
 document.documentElement.style.setProperty("--page-bg", BACKGROUND_COLOR);
@@ -1349,6 +1352,229 @@ const home = document.getElementById("home");
 const categoryView = document.getElementById("categoryView");
 const title = document.getElementById("categoryTitle");
 const items = document.getElementById("items");
+
+/* =========================================================
+   APPWRITE MENU CONNECTION
+========================================================= */
+
+const APPWRITE_ENDPOINT =
+  "https://fra.cloud.appwrite.io/v1";
+
+const APPWRITE_PROJECT_ID =
+  "6ad2ca49001034ba372a";
+
+const APPWRITE_DATABASE_ID =
+  "agbamami_menu";
+
+const APPWRITE_CATEGORIES_TABLE =
+  "categories";
+
+const APPWRITE_MENU_ITEMS_TABLE =
+  "menu_items";
+
+
+const appwriteClient =
+  new Appwrite.Client();
+
+appwriteClient
+  .setEndpoint(APPWRITE_ENDPOINT)
+  .setProject(APPWRITE_PROJECT_ID);
+
+
+const appwriteTablesDB =
+  new Appwrite.TablesDB(appwriteClient);
+
+
+/* =========================================================
+   GET ALL APPWRITE ROWS
+========================================================= */
+
+async function getAllAppwriteRows(tableId){
+
+  let allRows = [];
+  let offset = 0;
+
+  while(true){
+
+    const response =
+      await appwriteTablesDB.listRows({
+
+        databaseId:
+          APPWRITE_DATABASE_ID,
+
+        tableId:
+          tableId,
+
+        queries: [
+          Appwrite.Query.limit(500),
+          Appwrite.Query.offset(offset)
+        ]
+
+      });
+
+    allRows =
+      allRows.concat(response.rows);
+
+    if(response.rows.length < 500){
+      break;
+    }
+
+    offset += 500;
+
+  }
+
+  return allRows;
+}
+
+
+/* =========================================================
+   LOAD MENU FROM APPWRITE
+========================================================= */
+
+async function loadMenuFromAppwrite(){
+
+  try{
+
+    const categoryRows =
+      await getAllAppwriteRows(
+        APPWRITE_CATEGORIES_TABLE
+      );
+
+
+    const itemRows =
+      await getAllAppwriteRows(
+        APPWRITE_MENU_ITEMS_TABLE
+      );
+
+
+    /*
+      Convert Appwrite categories into
+      the exact structure your existing
+      customer menu already understands.
+    */
+
+    const visibleCategories =
+      categoryRows
+
+        .filter(category =>
+          category.invisible !== true
+        )
+
+        .sort(
+          (a,b) =>
+            (a.sortOrder || 0) -
+            (b.sortOrder || 0)
+        );
+
+
+    const appwriteMenu =
+      visibleCategories.map(category => {
+
+        const categoryItems =
+          itemRows
+
+            .filter(item =>
+              item.categoryId === category.$id
+            )
+
+            .filter(item =>
+              item.isAvailable !== false
+            )
+
+            .sort(
+              (a,b) =>
+                (a.sortOrder || 0) -
+                (b.sortOrder || 0)
+            );
+
+
+        return {
+
+          name:
+            category.name || "",
+
+          image:
+            category.image || "",
+
+          isDrink:
+            category.isDrink === true,
+
+          items:
+            categoryItems.map(item => ({
+
+              name:
+                item.name || "",
+
+              price:
+                item.price || "",
+
+              desc:
+                item.description || "",
+
+              image:
+                item.image || ""
+
+            }))
+
+        };
+
+      });
+
+
+    /*
+      Only replace the local menu if Appwrite
+      actually returned usable data.
+    */
+
+    if(
+      Array.isArray(appwriteMenu) &&
+      appwriteMenu.length > 0
+    ){
+
+      MENU = appwriteMenu;
+
+      renderCategories();
+
+      /*
+        If the page somehow loaded with a
+        category hash, keep the normal
+        home state for now.
+      */
+
+      console.log(
+        "Agbamami menu loaded from Appwrite.",
+        MENU
+      );
+
+    }else{
+
+      console.warn(
+        "Appwrite returned no menu. Using local menu."
+      );
+
+    }
+
+
+  }catch(error){
+
+    /*
+      VERY IMPORTANT:
+
+      If Appwrite is temporarily unavailable,
+      your existing LOCAL_MENU continues
+      working normally.
+    */
+
+    console.warn(
+      "Could not load menu from Appwrite. " +
+      "Using local menu instead.",
+      error
+    );
+
+  }
+
+}
+
 
 const imageLightbox = document.getElementById("imageLightbox");
 const imageLightboxImg = document.getElementById("imageLightboxImg");
@@ -1601,6 +1827,13 @@ document.getElementById("backBtn").addEventListener("click",()=>{
 });
   
 renderCategories();
+
+/*
+  Load the latest menu from Appwrite.
+  The local menu is already displayed while
+  Appwrite is being contacted.
+*/
+loadMenuFromAppwrite();
 
 </script>
 </body>
