@@ -1,1202 +1,1837 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+
   <title>Agbamami Admin</title>
 
   <script src="https://cdn.jsdelivr.net/npm/appwrite@28.3.0"></script>
 
   <style>
-    <style>
 
-  /* =========================================================
-     AGbamami ADMIN — MODERN UI
-  ========================================================= */
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap');
 
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
-
-  *{
-    box-sizing:border-box;
-  }
-
-  html{
-    scroll-behavior:smooth;
-  }
-
-  body{
-    margin:0;
-    font-family:"Nunito",Arial,sans-serif;
-    background:#f7f3ed;
-    color:#292522;
-    -webkit-font-smoothing:antialiased;
-  }
-
-  button,
-  input,
-  textarea,
-  select{
-    font:inherit;
-  }
-
-  button{
-    border:0;
-    border-radius:10px;
-    padding:10px 16px;
-    cursor:pointer;
-    font-weight:700;
-    transition:
-      transform .18s ease,
-      box-shadow .18s ease,
-      background .18s ease,
-      opacity .18s ease;
-  }
-
-  button:hover{
-    transform:translateY(-1px);
-  }
-
-  button:active{
-    transform:translateY(0);
-  }
-
-  button:disabled{
-    opacity:.55;
-    cursor:not-allowed;
-    transform:none;
-  }
-
-  .container{
-    width:min(1100px,94%);
-    margin:0 auto;
-  }
-
-
-  /* =========================================================
-     LOGIN
-  ========================================================= */
-
-  #loginScreen{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-    background:
-      radial-gradient(
-        circle at top left,
-        rgba(181,107,42,.10),
-        transparent 35%
-      ),
-      #f7f3ed;
-  }
-
-  .login-box{
-    width:100%;
-    max-width:430px;
-    background:rgba(255,255,255,.96);
-    padding:38px;
-    border-radius:24px;
-    border:1px solid rgba(181,107,42,.10);
-    box-shadow:
-      0 20px 60px rgba(60,45,30,.10);
-    animation:fadeUp .55s ease both;
-  }
-
-  .login-box h1{
-    margin:0 0 8px;
-    text-align:center;
-    font-size:30px;
-    font-weight:800;
-    letter-spacing:-.5px;
-    color:#3a2a1f;
-  }
-
-  .login-box p{
-    text-align:center;
-    color:#81776d;
-    margin:0 0 28px;
-    font-size:15px;
-  }
-
-
-  /* =========================================================
-     GENERAL APP
-  ========================================================= */
-
-  #adminScreen{
-    display:none;
-    padding-bottom:60px;
-    animation:fadeIn .35s ease both;
-  }
-
-  header{
-    background:rgba(255,255,255,.94);
-    border-bottom:1px solid rgba(80,60,40,.09);
-    position:sticky;
-    top:0;
-    z-index:20;
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-  }
-
-  .header-inner{
-    min-height:72px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-  }
-
-  .brand{
-    font-size:23px;
-    font-weight:800;
-    color:#4a321f;
-    letter-spacing:-.3px;
-  }
-
-  .header-actions{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-  }
-
-  .dashboard{
-    padding:30px 0;
-  }
-
-  .toolbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    margin-bottom:24px;
-    flex-wrap:wrap;
-  }
-
-  .toolbar h2{
-    margin:0;
-    font-size:28px;
-    font-weight:800;
-    letter-spacing:-.5px;
-    color:#34271f;
-  }
-
-
-  /* =========================================================
-     SECTIONS / CARDS
-  ========================================================= */
-
-  .section{
-    background:#fff;
-    border-radius:20px;
-    padding:23px;
-    margin-bottom:24px;
-    border:1px solid rgba(80,60,40,.07);
-    box-shadow:
-      0 5px 20px rgba(70,50,30,.045);
-    transition:
-      box-shadow .25s ease,
-      transform .25s ease;
-  }
-
-  .section:hover{
-    box-shadow:
-      0 9px 28px rgba(70,50,30,.07);
-  }
-
-  .section-title{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    margin-bottom:18px;
-  }
-
-  .section-title h3{
-    margin:0;
-    font-size:19px;
-    font-weight:800;
-    color:#382b22;
-  }
-
-
-  /* =========================================================
-     FORMS
-  ========================================================= */
-
-  label{
-    display:block;
-    font-weight:700;
-    margin-bottom:7px;
-    color:#40342c;
-    font-size:14px;
-  }
-
-  input,
-  textarea,
-  select{
-    width:100%;
-    border:1px solid #ddd5cc;
-    border-radius:11px;
-    padding:12px 13px;
-    outline:none;
-    background:#fff;
-    color:#292522;
-    transition:
-      border-color .2s ease,
-      box-shadow .2s ease,
-      background .2s ease;
-  }
-
-  input:hover,
-  textarea:hover,
-  select:hover{
-    border-color:#cfc3b7;
-  }
-
-  input:focus,
-  textarea:focus,
-  select:focus{
-    border-color:#b56b2a;
-    box-shadow:
-      0 0 0 3px rgba(181,107,42,.11);
-    background:#fffdfb;
-  }
-
-  textarea{
-    min-height:90px;
-    resize:vertical;
-  }
-
-  .form-grid{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:16px;
-  }
-
-  .full{
-    grid-column:1/-1;
-  }
-
-  .form-actions{
-    display:flex;
-    gap:10px;
-    justify-content:flex-end;
-    margin-top:18px;
-    flex-wrap:wrap;
-  }
-
-
-  /* =========================================================
-     BUTTONS
-  ========================================================= */
-
-  .primary{
-    background:#b56b2a;
-    color:#fff;
-    box-shadow:
-      0 4px 10px rgba(181,107,42,.16);
-  }
-
-  .primary:hover{
-    background:#a45f24;
-    box-shadow:
-      0 6px 16px rgba(181,107,42,.22);
-  }
-
-  .secondary{
-    background:#f1eeea;
-    color:#3d352f;
-  }
-
-  .secondary:hover{
-    background:#e7e1da;
-  }
-
-  .danger{
-    background:#c62828;
-    color:#fff;
-  }
-
-  .danger:hover{
-    background:#b52020;
-    box-shadow:
-      0 5px 13px rgba(198,40,40,.18);
-  }
-
-  .success{
-    background:#2e7d32;
-    color:#fff;
-  }
-
-  .success:hover{
-    background:#276b2b;
-  }
-
-  .warning{
-    background:#e99418;
-    color:#fff;
-  }
-
-  .warning:hover{
-    background:#d9850e;
-  }
-
-
-  /* =========================================================
-     CATEGORIES
-  ========================================================= */
-
-  .category-list{
-    display:grid;
-    gap:11px;
-  }
-
-  .category-row{
-    border:1px solid #e5dfd8;
-    border-radius:14px;
-    padding:15px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    background:#fff;
-    transition:
-      transform .2s ease,
-      box-shadow .2s ease,
-      border-color .2s ease;
-  }
-
-  .category-row:hover{
-    transform:translateY(-1px);
-    border-color:#d9c9ba;
-    box-shadow:
-      0 5px 16px rgba(70,50,30,.06);
-  }
-
-  .category-info{
-    min-width:0;
-  }
-
-  .category-name{
-    font-weight:800;
-    font-size:17px;
-    color:#352a23;
-  }
-
-  .category-meta{
-    color:#81776d;
-    font-size:13px;
-    margin-top:5px;
-  }
-
-  .category-actions{
-    display:flex;
-    gap:7px;
-    flex-wrap:wrap;
-    justify-content:flex-end;
-  }
-
-  .hidden-category{
-    opacity:.55;
-  }
-
-
-  /* =========================================================
-     ITEMS
-  ========================================================= */
-
-  .item-list{
-    display:grid;
-    gap:11px;
-  }
-
-  .item-row{
-    border:1px solid #e5dfd8;
-    border-radius:14px;
-    padding:15px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    background:#fff;
-    transition:
-      transform .2s ease,
-      box-shadow .2s ease,
-      border-color .2s ease;
-  }
-
-  .item-row:hover{
-    transform:translateY(-1px);
-    border-color:#d9c9ba;
-    box-shadow:
-      0 5px 16px rgba(70,50,30,.06);
-  }
-
-  .item-info{
-    min-width:0;
-  }
-
-  .item-name{
-    font-weight:800;
-    font-size:16px;
-    color:#352a23;
-  }
-
-  .item-price{
-    color:#b56b2a;
-    font-weight:800;
-    margin-top:4px;
-  }
-
-  .item-description{
-    color:#81776d;
-    font-size:13px;
-    margin-top:5px;
-    line-height:1.45;
-  }
-
-  .item-status{
-    display:inline-block;
-    margin-top:8px;
-    font-size:12px;
-    font-weight:800;
-    padding:4px 9px;
-    border-radius:20px;
-  }
-
-  .available{
-    background:#e8f5e9;
-    color:#2e7d32;
-  }
-
-  .unavailable{
-    background:#ffebee;
-    color:#c62828;
-  }
-
-  .item-actions{
-    display:flex;
-    gap:7px;
-    flex-wrap:wrap;
-    justify-content:flex-end;
-  }
-
-
-  /* =========================================================
-     MODALS
-  ========================================================= */
-
-  .modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(35,27,21,.58);
-    z-index:100;
-    padding:20px;
-    overflow:auto;
-    animation:fadeIn .2s ease both;
-  }
-
-  .modal-content{
-    width:min(650px,100%);
-    background:#fff;
-    border-radius:22px;
-    padding:24px;
-    margin:40px auto;
-    box-shadow:
-      0 25px 70px rgba(0,0,0,.18);
-    animation:modalUp .28s ease both;
-  }
-
-  .modal-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom:20px;
-  }
-
-  .modal-header h3{
-    margin:0;
-    font-size:21px;
-    font-weight:800;
-    color:#382b22;
-  }
-
-  .close{
-    background:#f0ece8;
-    color:#4b4038;
-    border-radius:50%;
-    width:38px;
-    height:38px;
-    padding:0;
-    font-size:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-
-  .close:hover{
-    background:#e6dfd8;
-  }
-
-
-  /* =========================================================
-     FILE INPUTS
-  ========================================================= */
-
-  input[type="file"]{
-    padding:9px;
-    background:#faf8f5;
-    cursor:pointer;
-  }
-
-  input[type="file"]::file-selector-button{
-    border:0;
-    border-radius:8px;
-    padding:8px 12px;
-    margin-right:10px;
-    background:#eee8e1;
-    color:#40362f;
-    font-family:inherit;
-    font-weight:700;
-    cursor:pointer;
-    transition:background .18s ease;
-  }
-
-  input[type="file"]::file-selector-button:hover{
-    background:#e3dbd2;
-  }
-
-
-  /* =========================================================
-     MESSAGE
-  ========================================================= */
-
-  #message{
-    position:fixed;
-    right:20px;
-    bottom:20px;
-    z-index:200;
-    max-width:350px;
-    display:none;
-    padding:14px 18px;
-    border-radius:12px;
-    color:#fff;
-    font-weight:700;
-    box-shadow:
-      0 8px 25px rgba(0,0,0,.18);
-    animation:messageIn .3s ease both;
-  }
-
-  #message.success-message{
-    background:#2e7d32;
-  }
-
-  #message.error-message{
-    background:#c62828;
-  }
-
-
-  /* =========================================================
-     EMPTY / LOADING
-  ========================================================= */
-
-  .empty{
-    color:#81776d;
-    padding:18px 0;
-    text-align:center;
-  }
-
-  .loading{
-    color:#81776d;
-    padding:14px 0;
-  }
-
-
-  /* =========================================================
-     ANIMATIONS
-  ========================================================= */
-
-  @keyframes fadeIn{
-    from{
-      opacity:0;
+    *{
+      box-sizing:border-box;
     }
 
-    to{
-      opacity:1;
-    }
-  }
-
-  @keyframes fadeUp{
-    from{
-      opacity:0;
-      transform:translateY(12px);
+    html{
+      scroll-behavior:smooth;
     }
 
-    to{
-      opacity:1;
+    body{
+      margin:0;
+      font-family:"Nunito",Arial,sans-serif;
+      background:#f8f5f0;
+      color:#302b27;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    button,
+    input,
+    textarea,
+    select{
+      font:inherit;
+    }
+
+    button{
+      border:0;
+      border-radius:9px;
+      padding:9px 14px;
+      cursor:pointer;
+      font-weight:600;
+      transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        background .18s ease,
+        opacity .18s ease;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+    }
+
+    button:active{
       transform:translateY(0);
     }
-  }
 
-  @keyframes modalUp{
-    from{
-      opacity:0;
-      transform:translateY(18px) scale(.985);
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      transform:none;
     }
-
-    to{
-      opacity:1;
-      transform:translateY(0) scale(1);
-    }
-  }
-
-  @keyframes messageIn{
-    from{
-      opacity:0;
-      transform:translateY(10px);
-    }
-
-    to{
-      opacity:1;
-      transform:translateY(0);
-    }
-  }
-
-
-  /* =========================================================
-     MOBILE
-  ========================================================= */
-
-  @media(max-width:700px){
 
     .container{
-      width:min(94%,1100px);
+      width:min(1120px,94%);
+      margin:0 auto;
     }
 
-    .dashboard{
-      padding:22px 0 45px;
+
+    /* =====================================================
+       LOGIN
+    ===================================================== */
+
+    #loginScreen{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+
+      background:
+        radial-gradient(
+          circle at top left,
+          rgba(181,107,42,.08),
+          transparent 36%
+        ),
+        #f8f5f0;
     }
 
-    .toolbar{
-      align-items:flex-start;
-    }
-
-    .toolbar h2{
-      font-size:24px;
-    }
-
-    .section{
-      padding:17px;
-      border-radius:17px;
-    }
-
-    .form-grid{
-      grid-template-columns:1fr;
-    }
-
-    .full{
-      grid-column:auto;
-    }
-
-    .category-row,
-    .item-row{
-      flex-direction:column;
-      align-items:flex-start;
-    }
-
-    .category-actions,
-    .item-actions{
-      justify-content:flex-start;
+    .login-box{
       width:100%;
+      max-width:400px;
+      background:#fff;
+      padding:34px;
+      border-radius:20px;
+      border:1px solid #ebe4dc;
+      box-shadow:0 18px 55px rgba(60,45,30,.08);
+      animation:fadeUp .45s ease both;
     }
 
-    .category-actions button,
-    .item-actions button{
-      flex:1;
+    .login-box h1{
+      margin:0 0 7px;
+      text-align:center;
+      font-size:28px;
+      font-weight:600;
+      letter-spacing:-.3px;
+      color:#49382c;
+    }
+
+    .login-box p{
+      text-align:center;
+      color:#8a8178;
+      margin:0 0 26px;
+      font-size:14px;
+      font-weight:400;
+    }
+
+
+    /* =====================================================
+       ADMIN
+    ===================================================== */
+
+    #adminScreen{
+      display:none;
+      padding-bottom:60px;
+      animation:fadeIn .35s ease both;
+    }
+
+    header{
+      background:rgba(255,255,255,.94);
+      border-bottom:1px solid #ebe5de;
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
     }
 
     .header-inner{
-      padding:12px 0;
-      align-items:flex-start;
-      flex-direction:column;
+      min-height:68px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+    }
+
+    .brand{
+      font-size:21px;
+      font-weight:600;
+      color:#4b3729;
+      letter-spacing:-.2px;
     }
 
     .header-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .dashboard{
+      padding:26px 0 50px;
+    }
+
+
+    /* =====================================================
+       TOP AREA
+    ===================================================== */
+
+    .dashboard-heading{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:20px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
+    }
+
+    .dashboard-heading h2{
+      margin:0;
+      font-size:25px;
+      font-weight:600;
+      letter-spacing:-.3px;
+      color:#3b3028;
+    }
+
+    .dashboard-heading p{
+      margin:5px 0 0;
+      color:#8b8178;
+      font-size:14px;
+    }
+
+    .heading-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+
+    /* =====================================================
+       SECTIONS
+    ===================================================== */
+
+    .section{
+      background:#fff;
+      border:1px solid #e9e2da;
+      border-radius:18px;
+      padding:21px;
+      margin-bottom:20px;
+      box-shadow:0 4px 18px rgba(70,50,30,.035);
+    }
+
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:17px;
+      flex-wrap:wrap;
+    }
+
+    .section-title h3{
+      margin:0;
+      font-size:18px;
+      font-weight:600;
+      color:#41342b;
+    }
+
+    .section-subtitle{
+      margin:4px 0 0;
+      color:#91877e;
+      font-size:13px;
+    }
+
+
+    /* =====================================================
+       RESTAURANT SETTINGS
+    ===================================================== */
+
+    .settings-layout{
+      display:grid;
+      grid-template-columns:180px minmax(0,1fr);
+      gap:24px;
+      align-items:start;
+    }
+
+    .logo-preview-area{
+      text-align:center;
+    }
+
+    .logo-preview{
+      width:150px;
+      height:150px;
+      margin:0 auto 10px;
+      border-radius:16px;
+      border:1px solid #e7dfd6;
+      background:#faf8f5;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      color:#aaa098;
+      font-size:12px;
+    }
+
+    .logo-preview img{
       width:100%;
+      height:100%;
+      object-fit:contain;
+      padding:10px;
     }
 
-    .header-actions button{
-      flex:1;
+    .logo-preview-note{
+      color:#948a81;
+      font-size:12px;
+      line-height:1.4;
     }
 
-    .modal{
+    .settings-form{
+      display:grid;
+      gap:15px;
+    }
+
+
+    /* =====================================================
+       SEARCH
+    ===================================================== */
+
+    .search-area{
+      margin-bottom:20px;
+    }
+
+    .search-box{
+      position:relative;
+    }
+
+    .search-icon{
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      color:#9b9188;
+      font-size:16px;
+      pointer-events:none;
+    }
+
+    #menuSearch{
+      padding-left:40px;
+      height:46px;
+      border-radius:12px;
+      background:#fff;
+      font-size:14px;
+    }
+
+    .search-results-note{
+      color:#91877e;
+      font-size:12px;
+      margin-top:7px;
+      min-height:17px;
+    }
+
+
+    /* =====================================================
+       CATEGORY GRID
+    ===================================================== */
+
+    .category-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(205px,1fr));
+      gap:14px;
+    }
+
+    .category-card{
+      border:1px solid #e7dfd7;
+      border-radius:15px;
+      overflow:hidden;
+      background:#fff;
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+    }
+
+    .category-card:hover{
+      transform:translateY(-2px);
+      border-color:#d8cabc;
+      box-shadow:0 8px 22px rgba(70,50,30,.07);
+    }
+
+    .category-card.hidden-category{
+      opacity:.58;
+    }
+
+    .category-photo{
+      width:100%;
+      height:105px;
+      background:#f4f0eb;
+      overflow:hidden;
+    }
+
+    .category-photo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transition:transform .3s ease;
+    }
+
+    .category-card:hover .category-photo img{
+      transform:scale(1.035);
+    }
+
+    .category-photo-placeholder{
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#a39a92;
+      font-size:12px;
+    }
+
+    .category-card-body{
       padding:12px;
     }
 
-    .modal-content{
-      margin:15px auto;
-      padding:18px;
-      border-radius:18px;
+    .category-card-name{
+      font-size:15px;
+      font-weight:600;
+      color:#3d3027;
+      line-height:1.25;
     }
+
+    .category-card-meta{
+      color:#91877e;
+      font-size:12px;
+      margin-top:4px;
+      line-height:1.4;
+    }
+
+    .category-card-actions{
+      display:flex;
+      gap:5px;
+      margin-top:11px;
+      flex-wrap:wrap;
+    }
+
+    .category-card-actions button{
+      font-size:12px;
+      padding:7px 9px;
+    }
+
+
+    /* =====================================================
+       CATEGORY GROUPS / MENU ITEMS
+    ===================================================== */
+
+    .menu-groups{
+      display:grid;
+      gap:22px;
+    }
+
+    .menu-group{
+      border:1px solid #e7dfd7;
+      border-radius:17px;
+      overflow:hidden;
+      background:#fff;
+    }
+
+    .menu-group-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      background:#faf8f5;
+      border-bottom:1px solid #ebe4dc;
+    }
+
+    .menu-group-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .menu-group-title h4{
+      margin:0;
+      font-size:16px;
+      font-weight:600;
+      color:#403229;
+    }
+
+    .menu-group-count{
+      color:#978d84;
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    .menu-group-actions{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+
+    .menu-group-actions button{
+      font-size:12px;
+      padding:7px 10px;
+    }
+
+    .item-list{
+      display:grid;
+    }
+
+    .item-row{
+      display:grid;
+      grid-template-columns:62px minmax(0,1fr) auto;
+      align-items:center;
+      gap:13px;
+      padding:12px 15px;
+      border-bottom:1px solid #f0ebe5;
+      transition:background .18s ease;
+    }
+
+    .item-row:last-child{
+      border-bottom:0;
+    }
+
+    .item-row:hover{
+      background:#fdfbf9;
+    }
+
+    .item-photo{
+      width:62px;
+      height:62px;
+      border-radius:11px;
+      overflow:hidden;
+      background:#f3eee8;
+      border:1px solid #e8e0d8;
+      flex-shrink:0;
+    }
+
+    .item-photo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .item-photo-placeholder{
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#aaa097;
+      font-size:10px;
+      text-align:center;
+      padding:4px;
+    }
+
+    .item-info{
+      min-width:0;
+    }
+
+    .item-name{
+      font-size:15px;
+      font-weight:600;
+      color:#392e27;
+      line-height:1.3;
+    }
+
+    .item-price{
+      color:#b56b2a;
+      font-size:13px;
+      font-weight:600;
+      margin-top:3px;
+    }
+
+    .item-description{
+      color:#8d837a;
+      font-size:12px;
+      margin-top:4px;
+      line-height:1.4;
+    }
+
+    .item-status{
+      display:inline-block;
+      margin-top:6px;
+      font-size:10px;
+      font-weight:600;
+      padding:3px 7px;
+      border-radius:20px;
+    }
+
+    .available{
+      background:#edf7ee;
+      color:#39743d;
+    }
+
+    .unavailable{
+      background:#fceff0;
+      color:#b44a4a;
+    }
+
+    .item-actions{
+      display:flex;
+      gap:5px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .item-actions button{
+      font-size:11px;
+      padding:7px 9px;
+    }
+
+    .empty-group{
+      padding:18px;
+      color:#928880;
+      font-size:13px;
+      text-align:center;
+    }
+
+
+    /* =====================================================
+       FORMS
+    ===================================================== */
+
+    label{
+      display:block;
+      font-weight:500;
+      margin-bottom:6px;
+      color:#4a3c33;
+      font-size:13px;
+    }
+
+    input,
+    textarea,
+    select{
+      width:100%;
+      border:1px solid #ded6ce;
+      border-radius:10px;
+      padding:11px 12px;
+      outline:none;
+      background:#fff;
+      color:#302b27;
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+    }
+
+    input:hover,
+    textarea:hover,
+    select:hover{
+      border-color:#cfc4b9;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus{
+      border-color:#b56b2a;
+      box-shadow:0 0 0 3px rgba(181,107,42,.09);
+      background:#fffdfb;
+    }
+
+    textarea{
+      min-height:90px;
+      resize:vertical;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:15px;
+    }
+
+    .full{
+      grid-column:1/-1;
+    }
+
+    .form-actions{
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+      margin-top:17px;
+      flex-wrap:wrap;
+    }
+
+
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
+
+    .primary{
+      background:#b56b2a;
+      color:#fff;
+      box-shadow:0 3px 9px rgba(181,107,42,.13);
+    }
+
+    .primary:hover{
+      background:#a86126;
+    }
+
+    .secondary{
+      background:#f1ede8;
+      color:#4a4039;
+    }
+
+    .secondary:hover{
+      background:#e8e1da;
+    }
+
+    .danger{
+      background:#c94a4a;
+      color:#fff;
+    }
+
+    .danger:hover{
+      background:#b83d3d;
+    }
+
+    .success{
+      background:#4d8b52;
+      color:#fff;
+    }
+
+    .success:hover{
+      background:#417846;
+    }
+
+    .warning{
+      background:#d58a27;
+      color:#fff;
+    }
+
+    .warning:hover{
+      background:#c47b1c;
+    }
+
+
+    /* =====================================================
+       FILE INPUT
+    ===================================================== */
+
+    input[type="file"]{
+      padding:8px;
+      background:#faf8f5;
+      cursor:pointer;
+    }
+
+    input[type="file"]::file-selector-button{
+      border:0;
+      border-radius:7px;
+      padding:7px 10px;
+      margin-right:9px;
+      background:#ebe5de;
+      color:#4b4038;
+      font-family:inherit;
+      font-weight:500;
+      cursor:pointer;
+    }
+
+
+    /* =====================================================
+       MODALS
+    ===================================================== */
+
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(35,27,21,.52);
+      z-index:100;
+      padding:18px;
+      overflow:auto;
+      animation:fadeIn .18s ease both;
+    }
+
+    .modal-content{
+      width:min(650px,100%);
+      background:#fff;
+      border-radius:19px;
+      padding:22px;
+      margin:35px auto;
+      box-shadow:0 25px 70px rgba(0,0,0,.17);
+      animation:modalUp .25s ease both;
+    }
+
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:19px;
+    }
+
+    .modal-header h3{
+      margin:0;
+      font-size:19px;
+      font-weight:600;
+      color:#403229;
+    }
+
+    .close{
+      background:#f0ece7;
+      color:#4b4038;
+      border-radius:50%;
+      width:36px;
+      height:36px;
+      padding:0;
+      font-size:19px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+
+    /* =====================================================
+       MESSAGE
+    ===================================================== */
 
     #message{
-      left:15px;
-      right:15px;
-      bottom:15px;
-      max-width:none;
-    }
-  }
-
-
-  /* =========================================================
-     REDUCED MOTION ACCESSIBILITY
-  ========================================================= */
-
-  @media(prefers-reduced-motion:reduce){
-
-    *,
-    *::before,
-    *::after{
-      animation-duration:.01ms !important;
-      animation-iteration-count:1 !important;
-      transition-duration:.01ms !important;
-      scroll-behavior:auto !important;
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      z-index:200;
+      max-width:350px;
+      display:none;
+      padding:12px 16px;
+      border-radius:10px;
+      color:#fff;
+      font-size:13px;
+      font-weight:600;
+      box-shadow:0 8px 25px rgba(0,0,0,.16);
+      animation:messageIn .25s ease both;
     }
 
-  }
+    #message.success-message{
+      background:#4d8b52;
+    }
 
-</style>
-   </head>
+    #message.error-message{
+      background:#c94a4a;
+    }
+
+
+    /* =====================================================
+       EMPTY / LOADING
+    ===================================================== */
+
+    .empty{
+      color:#928880;
+      padding:20px 0;
+      text-align:center;
+      font-size:13px;
+    }
+
+    .loading{
+      color:#928880;
+      padding:15px 0;
+      font-size:13px;
+    }
+
+
+    /* =====================================================
+       ANIMATIONS
+    ===================================================== */
+
+    @keyframes fadeIn{
+      from{opacity:0;}
+      to{opacity:1;}
+    }
+
+    @keyframes fadeUp{
+      from{
+        opacity:0;
+        transform:translateY(10px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    @keyframes modalUp{
+      from{
+        opacity:0;
+        transform:translateY(15px) scale(.99);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+      }
+    }
+
+    @keyframes messageIn{
+      from{
+        opacity:0;
+        transform:translateY(8px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media(max-width:760px){
+
+      .container{
+        width:94%;
+      }
+
+      .dashboard{
+        padding-top:20px;
+      }
+
+      .dashboard-heading{
+        align-items:flex-start;
+      }
+
+      .heading-actions{
+        width:100%;
+      }
+
+      .heading-actions button{
+        flex:1;
+      }
+
+      .settings-layout{
+        grid-template-columns:1fr;
+      }
+
+      .logo-preview-area{
+        text-align:left;
+      }
+
+      .logo-preview{
+        margin:0 0 8px;
+      }
+
+      .category-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+
+      .item-row{
+        grid-template-columns:54px minmax(0,1fr);
+      }
+
+      .item-photo{
+        width:54px;
+        height:54px;
+      }
+
+      .item-actions{
+        grid-column:1/-1;
+        justify-content:flex-start;
+      }
+
+      .item-actions button{
+        flex:1;
+      }
+
+      .menu-group-header{
+        align-items:flex-start;
+      }
+
+      .menu-group-actions{
+        width:100%;
+      }
+
+      .menu-group-actions button{
+        flex:1;
+      }
+
+      .form-grid{
+        grid-template-columns:1fr;
+      }
+
+      .full{
+        grid-column:auto;
+      }
+
+      .header-inner{
+        padding:10px 0;
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .header-actions{
+        width:100%;
+      }
+
+      .header-actions button{
+        flex:1;
+      }
+    }
+
+    @media(max-width:450px){
+
+      .section{
+        padding:16px;
+        border-radius:15px;
+      }
+
+      .category-grid{
+        grid-template-columns:1fr 1fr;
+        gap:9px;
+      }
+
+      .category-photo{
+        height:82px;
+      }
+
+      .category-card-body{
+        padding:9px;
+      }
+
+      .category-card-name{
+        font-size:13px;
+      }
+
+      .category-card-meta{
+        font-size:11px;
+      }
+
+      .category-card-actions{
+        gap:4px;
+      }
+
+      .category-card-actions button{
+        flex:1;
+        padding:6px 5px;
+        font-size:10px;
+      }
+
+      .modal{
+        padding:10px;
+      }
+
+      .modal-content{
+        margin:12px auto;
+        padding:17px;
+        border-radius:17px;
+      }
+
+      #message{
+        left:12px;
+        right:12px;
+        bottom:12px;
+        max-width:none;
+      }
+    }
+
+
+    /* =====================================================
+       REDUCED MOTION
+    ===================================================== */
+
+    @media(prefers-reduced-motion:reduce){
+
+      *,
+      *::before,
+      *::after{
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.01ms !important;
+        scroll-behavior:auto !important;
+      }
+
+    }
+
+  </style>
+
+</head>
 
 <body>
 
-  <!-- LOGIN -->
+
+  <!-- =====================================================
+       LOGIN
+  ===================================================== -->
+
   <section id="loginScreen">
+
     <div class="login-box">
+
       <h1>Agbamami Admin</h1>
-      <p>Sign in to manage your restaurant menu.</p>
+
+      <p>
+        Sign in to manage your restaurant menu.
+      </p>
 
       <form id="loginForm">
+
         <div style="margin-bottom:15px;">
-          <label for="loginEmail">Email</label>
+
+          <label for="loginEmail">
+            Email
+          </label>
+
           <input
             id="loginEmail"
             type="email"
             autocomplete="username"
             required
           >
+
         </div>
 
         <div style="margin-bottom:15px;">
-          <label for="loginPassword">Password</label>
+
+          <label for="loginPassword">
+            Password
+          </label>
+
           <input
             id="loginPassword"
             type="password"
             autocomplete="current-password"
             required
           >
+
         </div>
 
-        <button class="primary" type="submit" style="width:100%;">
+        <button
+          class="primary"
+          type="submit"
+          style="width:100%;"
+        >
           Log in
         </button>
+
       </form>
+
     </div>
+
   </section>
 
 
-  <!-- ADMIN -->
+  <!-- =====================================================
+       ADMIN
+  ===================================================== -->
+
   <section id="adminScreen">
 
     <header>
+
       <div class="container header-inner">
-        <div class="brand">Agbamami Admin</div>
+
+        <div class="brand">
+          Agbamami Admin
+        </div>
 
         <div class="header-actions">
-          <button class="secondary" onclick="openCustomerMenu()">
+
+          <button
+            class="secondary"
+            onclick="openCustomerMenu()"
+          >
             View Menu
           </button>
 
-          <button class="danger" onclick="logout()">
+          <button
+            class="danger"
+            onclick="logout()"
+          >
             Log out
           </button>
+
         </div>
+
       </div>
+
     </header>
+
 
     <main class="container dashboard">
 
-      <div class="toolbar">
+
+      <!-- =================================================
+           DASHBOARD HEADING
+      ================================================== -->
+
+      <div class="dashboard-heading">
+
         <div>
-          <h2>Menu Management</h2>
-          <div style="color:#777;margin-top:4px;">
-            Manage your categories and menu items.
-          </div>
+
+          <h2>
+            Menu Management
+          </h2>
+
+          <p>
+            Manage your restaurant information, categories and menu items.
+          </p>
+
         </div>
 
-        <button class="primary" onclick="openAddItemModal()">
-          + Add Menu Item
-        </button>
+        <div class="heading-actions">
+
+          <button
+            class="secondary"
+            onclick="openAddCategoryModal()"
+          >
+            + Category
+          </button>
+
+          <button
+            class="primary"
+            onclick="openAddItemModal()"
+          >
+            + Menu Item
+          </button>
+
+        </div>
+
       </div>
 
 
-      <!-- CATEGORIES -->
+      <!-- =================================================
+           RESTAURANT SETTINGS — FIRST
+      ================================================== -->
+
       <section class="section">
 
         <div class="section-title">
-          <h3>Categories</h3>
 
-          <button class="primary" onclick="openAddCategoryModal()">
-            + Add Category
-          </button>
+          <div>
+
+            <h3>
+              Restaurant Settings
+            </h3>
+
+            <div class="section-subtitle">
+              Update the information customers see on your menu.
+            </div>
+
+          </div>
+
         </div>
 
-        <div id="categoryList" class="category-list">
-          <div class="loading">Loading categories...</div>
+
+        <div class="settings-layout">
+
+
+          <!-- LOGO PREVIEW -->
+
+          <div class="logo-preview-area">
+
+            <div
+              id="logoPreview"
+              class="logo-preview"
+            >
+              No logo
+            </div>
+
+            <div class="logo-preview-note">
+              Current restaurant logo
+            </div>
+
+          </div>
+
+
+          <!-- SETTINGS FORM -->
+
+          <div class="settings-form">
+
+            <div>
+
+              <label for="restaurantName">
+                Restaurant Name
+              </label>
+
+              <input
+                type="text"
+                id="restaurantName"
+                placeholder="Agbamami"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label for="restaurantPhone">
+                Phone Number
+              </label>
+
+              <input
+                type="text"
+                id="restaurantPhone"
+                placeholder="+233..."
+              >
+
+            </div>
+
+
+            <div>
+
+              <label for="restaurantLocation">
+                Location
+              </label>
+
+              <input
+                type="text"
+                id="restaurantLocation"
+                placeholder="Google Maps link"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label for="restaurantDescription">
+                Restaurant Information
+              </label>
+
+              <textarea
+                id="restaurantDescription"
+                rows="4"
+                placeholder="Tell customers about your restaurant..."
+              ></textarea>
+
+            </div>
+
+
+            <div>
+
+              <label for="restaurantLogoFile">
+                Change Restaurant Logo
+              </label>
+
+              <input
+                type="file"
+                id="restaurantLogoFile"
+                accept="image/*"
+              >
+
+              <div
+                id="logoUploadStatus"
+                style="color:#91877e;margin-top:6px;font-size:12px;"
+              ></div>
+
+            </div>
+
+
+            <div>
+
+              <button
+                type="button"
+                class="primary"
+                onclick="saveRestaurantSettings()"
+              >
+                Save Restaurant Settings
+              </button>
+
+            </div>
+
+
+            <div
+              id="settingsMessage"
+              style="color:#91877e;font-size:12px;"
+            ></div>
+
+          </div>
+
         </div>
 
       </section>
 
 
-      <!-- ITEMS -->
+      <!-- =================================================
+           SEARCH
+      ================================================== -->
+
+      <div class="search-area">
+
+        <div class="search-box">
+
+          <span class="search-icon">
+            🔎
+          </span>
+
+          <input
+            type="search"
+            id="menuSearch"
+            placeholder="Search categories or menu items..."
+            autocomplete="off"
+          >
+
+        </div>
+
+        <div
+          id="searchResultsNote"
+          class="search-results-note"
+        ></div>
+
+      </div>
+
+
+      <!-- =================================================
+           CATEGORY PREVIEWS
+      ================================================== -->
+
       <section class="section">
 
         <div class="section-title">
-          <h3>Menu Items</h3>
+
+          <div>
+
+            <h3>
+              Categories
+            </h3>
+
+            <div class="section-subtitle">
+              Your categories in the same order used by the menu.
+            </div>
+
+          </div>
+
+          <button
+            class="primary"
+            onclick="openAddCategoryModal()"
+          >
+            + Add Category
+          </button>
+
         </div>
 
-        <div id="itemList" class="item-list">
-          <div class="loading">Loading menu items...</div>
+
+        <div
+          id="categoryList"
+          class="category-grid"
+        >
+
+          <div class="loading">
+            Loading categories...
+          </div>
+
         </div>
 
-  </section>
+      </section>
 
 
-      <!-- =========================================================
-           RESTAURANT SETTINGS
-      ========================================================= -->
+      <!-- =================================================
+           MENU ITEMS BY CATEGORY
+      ================================================== -->
 
-  <section class="section">
+      <section class="section">
 
-  <div class="section-title">
-    <div>
-      <h3>Restaurant Settings</h3>
-      <div style="color:#777;margin-top:4px;">
-        Manage your restaurant information.
-      </div>
-    </div>
-  </div>
+        <div class="section-title">
 
-  <div style="display:grid;gap:16px;max-width:700px;">
+          <div>
 
-    <div>
-      <label for="restaurantName">
-        Restaurant Name
-      </label>
+            <h3>
+              Menu Items
+            </h3>
 
-      <input
-        type="text"
-        id="restaurantName"
-        placeholder="Agbamami"
-      >
-    </div>
+            <div class="section-subtitle">
+              Items are grouped under their respective categories.
+            </div>
 
+          </div>
 
-    <div>
-      <label for="restaurantPhone">
-        Phone Number
-      </label>
+          <button
+            class="primary"
+            onclick="openAddItemModal()"
+          >
+            + Add Menu Item
+          </button>
 
-      <input
-        type="text"
-        id="restaurantPhone"
-        placeholder="+233..."
-      >
-    </div>
+        </div>
 
 
-    <div>
-      <label for="restaurantLocation">
-        Location
-      </label>
+        <div
+          id="itemList"
+          class="menu-groups"
+        >
 
-      <input
-        type="text"
-        id="restaurantLocation"
-        placeholder="Google Maps link"
-      >
-    </div>
+          <div class="loading">
+            Loading menu items...
+          </div>
 
+        </div>
 
-    <div>
-      <label for="restaurantDescription">
-        Restaurant Information
-      </label>
+      </section>
 
-      <textarea
-        id="restaurantDescription"
-        rows="5"
-        placeholder="Tell customers about your restaurant..."
-      ></textarea>
-    </div>
-
-<div>
-  <label for="restaurantLogoFile">
-    Restaurant Logo
-  </label>
-
-  <input
-    type="file"
-    id="restaurantLogoFile"
-    accept="image/*"
-  >
-
-  <div
-    id="logoUploadStatus"
-    style="color:#777;margin-top:6px;"
-  ></div>
-</div>
-
-
-    <button
-      type="button"
-      class="primary"
-      onclick="saveRestaurantSettings()"
-    >
-      Save Restaurant Settings
-    </button>
-
-
-    <div
-      id="settingsMessage"
-      style="color:#777;"
-    ></div>
-
-    </div>
-
-</section>
 
     </main>
 
 
-  <!-- CATEGORY MODAL -->
-  <div id="categoryModal" class="modal">
+    <!-- ===================================================
+         CATEGORY MODAL
+    ==================================================== -->
 
-    <div class="modal-content">
+    <div
+      id="categoryModal"
+      class="modal"
+    >
 
-      <div class="modal-header">
-        <h3 id="categoryModalTitle">Add Category</h3>
-        <button class="close" onclick="closeCategoryModal()">×</button>
-      </div>
+      <div class="modal-content">
 
-      <form id="categoryForm">
+        <div class="modal-header">
 
-        <input type="hidden" id="categoryId">
+          <h3 id="categoryModalTitle">
+            Add Category
+          </h3>
 
-        <div class="form-grid">
-
-          <div>
-            <label for="categoryName">Category Name</label>
-            <input id="categoryName" required maxlength="100">
-          </div>
-
-          <div>
-            <label for="categorySortOrder">Sort Order</label>
-            <input
-              id="categorySortOrder"
-              type="number"
-              min="0"
-              max="1000"
-              value="0"
-              required
-            >
-          </div>
-
-<div class="full">
-  <label for="categoryImageFile">Category Photo</label>
-
-  <input
-    type="file"
-    id="categoryImageFile"
-    accept="image/*"
-  >
-
-  <div
-    id="categoryImageUploadStatus"
-    style="color:#777;margin-top:6px;"
-  ></div>
-</div>
-
-          <div class="full">
-            <label for="categoryDescription">Description</label>
-            <textarea id="categoryDescription"></textarea>
-          </div>
-
-          <div>
-            <label>
-              <input
-                id="categoryIsDrink"
-                type="checkbox"
-                style="width:auto;margin-right:7px;"
-              >
-              Drink-style category
-            </label>
-          </div>
-
-        </div>
-
-        <div class="form-actions">
           <button
-            type="button"
-            class="secondary"
+            class="close"
             onclick="closeCategoryModal()"
           >
-            Cancel
+            ×
           </button>
 
-          <button type="submit" class="primary">
-            Save Category
-          </button>
         </div>
 
-      </form>
 
-    </div>
-  </div>
+        <form id="categoryForm">
+
+          <input
+            type="hidden"
+            id="categoryId"
+          >
 
 
-  <!-- ITEM MODAL -->
-  <div id="itemModal" class="modal">
+          <div class="form-grid">
 
-    <div class="modal-content">
 
-      <div class="modal-header">
-        <h3 id="itemModalTitle">Add Menu Item</h3>
-        <button class="close" onclick="closeItemModal()">×</button>
+            <div>
+
+              <label for="categoryName">
+                Category Name
+              </label>
+
+              <input
+                id="categoryName"
+                required
+                maxlength="100"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label for="categorySortOrder">
+                Sort Order
+              </label>
+
+              <input
+                id="categorySortOrder"
+                type="number"
+                min="0"
+                max="1000"
+                value="0"
+                required
+              >
+
+            </div>
+
+
+            <div class="full">
+
+              <label for="categoryImageFile">
+                Category Photo
+              </label>
+
+              <input
+                type="file"
+                id="categoryImageFile"
+                accept="image/*"
+              >
+
+              <div
+                id="categoryImageUploadStatus"
+                style="color:#91877e;margin-top:6px;font-size:12px;"
+              ></div>
+
+            </div>
+
+
+            <div class="full">
+
+              <label for="categoryDescription">
+                Description
+              </label>
+
+              <textarea
+                id="categoryDescription"
+              ></textarea>
+
+            </div>
+
+
+            <div>
+
+              <label>
+
+                <input
+                  id="categoryIsDrink"
+                  type="checkbox"
+                  style="width:auto;margin-right:7px;"
+                >
+
+                Drink-style category
+
+              </label>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="form-actions">
+
+            <button
+              type="button"
+              class="secondary"
+              onclick="closeCategoryModal()"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              class="primary"
+            >
+              Save Category
+            </button>
+
+          </div>
+
+
+        </form>
+
       </div>
 
-      <form id="itemForm">
+    </div>
 
-        <input type="hidden" id="itemId">
 
-        <div class="form-grid">
+    <!-- ===================================================
+         ITEM MODAL
+    ==================================================== -->
 
-          <div class="full">
-            <label for="itemName">Item Name</label>
-            <input id="itemName" maxlength="150" required>
-          </div>
+    <div
+      id="itemModal"
+      class="modal"
+    >
 
-          <div>
-            <label for="itemPrice">Price</label>
-            <input
-              id="itemPrice"
-              maxlength="50"
-              placeholder="GH₵ 100"
-              required
-            >
-          </div>
+      <div class="modal-content">
 
-          <div>
-            <label for="itemCategory">Category</label>
-            <select id="itemCategory" required></select>
-          </div>
+        <div class="modal-header">
 
-        <div class="full">
-        <label for="itemImageFile">Item Photo</label>
-
-        <input
-        type="file"
-        id="itemImageFile"
-        accept="image/*"
-        >
-
-        <div
-        id="itemImageUploadStatus"
-        style="color:#777;margin-top:6px;"
-        ></div>
-        </div>
-
-          <div class="full">
-            <label for="itemDescription">Description</label>
-            <textarea id="itemDescription"></textarea>
-          </div>
-
-          <div>
-            <label for="itemSortOrder">Sort Order</label>
-            <input
-              id="itemSortOrder"
-              type="number"
-              min="0"
-              max="10000"
-              value="0"
-              required
-            >
-          </div>
-
-          <div>
-            <label for="itemType">Item Type</label>
-            <input
-              id="itemType"
-              maxlength="30"
-              placeholder="e.g. drink"
-            >
-          </div>
-
-          <div>
-            <label>
-              <input
-                id="itemAvailable"
-                type="checkbox"
-                checked
-                style="width:auto;margin-right:7px;"
-              >
-              Available
-            </label>
-          </div>
-
-          <div>
-            <label>
-              <input
-                id="itemFeatured"
-                type="checkbox"
-                style="width:auto;margin-right:7px;"
-              >
-              Featured
-            </label>
-          </div>
-
-        </div>
-
-        <div class="form-actions">
+          <h3 id="itemModalTitle">
+            Add Menu Item
+          </h3>
 
           <button
-            type="button"
-            class="secondary"
+            class="close"
             onclick="closeItemModal()"
           >
-            Cancel
-          </button>
-
-          <button type="submit" class="primary">
-            Save Item
+            ×
           </button>
 
         </div>
 
-      </form>
+
+        <form id="itemForm">
+
+          <input
+            type="hidden"
+            id="itemId"
+          >
+
+
+          <div class="form-grid">
+
+
+            <div class="full">
+
+              <label for="itemName">
+                Item Name
+              </label>
+
+              <input
+                id="itemName"
+                maxlength="150"
+                required
+              >
+
+            </div>
+
+
+            <div>
+
+              <label for="itemPrice">
+                Price
+              </label>
+
+              <input
+                id="itemPrice"
+                maxlength="50"
+                placeholder="GH₵ 100"
+                required
+              >
+
+            </div>
+
+
+            <div>
+
+              <label for="itemCategory">
+                Category
+              </label>
+
+              <select
+                id="itemCategory"
+                required
+              ></select>
+
+            </div>
+
+
+            <div class="full">
+
+              <label for="itemImageFile">
+                Item Photo
+              </label>
+
+              <input
+                type="file"
+                id="itemImageFile"
+                accept="image/*"
+              >
+
+              <div
+                id="itemImageUploadStatus"
+                style="color:#91877e;margin-top:6px;font-size:12px;"
+              ></div>
+
+            </div>
+
+
+            <div class="full">
+
+              <label for="itemDescription">
+                Description
+              </label>
+
+              <textarea
+                id="itemDescription"
+              ></textarea>
+
+            </div>
+
+
+            <div>
+
+              <label for="itemSortOrder">
+                Sort Order
+              </label>
+
+              <input
+                id="itemSortOrder"
+                type="number"
+                min="0"
+                max="10000"
+                value="0"
+                required
+              >
+
+            </div>
+
+
+            <div>
+
+              <label for="itemType">
+                Item Type
+              </label>
+
+              <input
+                id="itemType"
+                maxlength="30"
+                placeholder="e.g. drink"
+              >
+
+            </div>
+
+
+            <div>
+
+              <label>
+
+                <input
+                  id="itemAvailable"
+                  type="checkbox"
+                  checked
+                  style="width:auto;margin-right:7px;"
+                >
+
+                Available
+
+              </label>
+
+            </div>
+
+
+            <div>
+
+              <label>
+
+                <input
+                  id="itemFeatured"
+                  type="checkbox"
+                  style="width:auto;margin-right:7px;"
+                >
+
+                Featured
+
+              </label>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="form-actions">
+
+            <button
+              type="button"
+              class="secondary"
+              onclick="closeItemModal()"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              class="primary"
+            >
+              Save Item
+            </button>
+
+          </div>
+
+
+        </form>
+
+      </div>
 
     </div>
-  </div>
 
 
-  <div id="message"></div>
+    <div id="message"></div>
+
+
+  </section>
 
 
 <script>
+
+
 /* =========================================================
    APPWRITE CONFIGURATION
 ========================================================= */
@@ -1227,20 +1862,28 @@ const APPWRITE_STORAGE_BUCKET_ID =
    APPWRITE INITIALIZATION
 ========================================================= */
 
-const appwriteClient = new Appwrite.Client();
+const appwriteClient =
+  new Appwrite.Client();
 
 appwriteClient
   .setEndpoint(APPWRITE_ENDPOINT)
   .setProject(APPWRITE_PROJECT_ID);
 
 const account =
-  new Appwrite.Account(appwriteClient);
+  new Appwrite.Account(
+    appwriteClient
+  );
 
 const tablesDB =
-  new Appwrite.TablesDB(appwriteClient);
+  new Appwrite.TablesDB(
+    appwriteClient
+  );
 
 const storage =
-  new Appwrite.Storage(appwriteClient);
+  new Appwrite.Storage(
+    appwriteClient
+  );
+
 
 /* =========================================================
    LOCAL STATE
@@ -1249,38 +1892,52 @@ const storage =
 let categories = [];
 let menuItems = [];
 let restaurantSettings = null;
+let currentSearch = "";
 
 
 /* =========================================================
    GENERAL HELPERS
 ========================================================= */
 
-function showMessage(text, type = "success"){
-  const message =
-    document.getElementById("message");
+function showMessage(
+  text,
+  type = "success"
+){
 
-  message.textContent = text;
+  const message =
+    document.getElementById(
+      "message"
+    );
+
+  message.textContent =
+    text;
 
   message.className =
     type === "error"
       ? "error-message"
       : "success-message";
 
-  message.style.display = "block";
+  message.style.display =
+    "block";
 
   setTimeout(() => {
-    message.style.display = "none";
-  }, 3500);
+
+    message.style.display =
+      "none";
+
+  },3500);
 }
 
 
 function escapeHTML(value){
+
   return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
 }
 
 
@@ -1288,7 +1945,9 @@ function escapeHTML(value){
    GET ALL ROWS
 ========================================================= */
 
-async function getAllRows(tableId){
+async function getAllRows(
+  tableId
+){
 
   let allRows = [];
   let offset = 0;
@@ -1297,29 +1956,37 @@ async function getAllRows(tableId){
 
     const response =
       await tablesDB.listRows({
+
         databaseId:
           APPWRITE_DATABASE_ID,
 
         tableId:
           tableId,
 
-        queries: [
+        queries:[
           Appwrite.Query.limit(500),
           Appwrite.Query.offset(offset)
         ]
+
       });
 
     allRows =
-      allRows.concat(response.rows);
+      allRows.concat(
+        response.rows
+      );
 
-    if(response.rows.length < 500){
+    if(
+      response.rows.length < 500
+    ){
       break;
     }
 
     offset += 500;
+
   }
 
   return allRows;
+
 }
 
 
@@ -1340,19 +2007,30 @@ async function checkExistingSession(){
     showLoginScreen();
 
   }
+
 }
 
 
-async function login(email, password){
+async function login(
+  email,
+  password
+){
 
   try{
 
     await account.createEmailPasswordSession({
-      email: email,
-      password: password
+
+      email:
+        email,
+
+      password:
+        password
+
     });
 
-    showMessage("Login successful.");
+    showMessage(
+      "Login successful."
+    );
 
     showAdminScreen();
 
@@ -1361,10 +2039,13 @@ async function login(email, password){
     console.error(error);
 
     showMessage(
-      error.message || "Login failed.",
+      error.message ||
+      "Login failed.",
       "error"
     );
+
   }
+
 }
 
 
@@ -1373,7 +2054,7 @@ async function logout(){
   try{
 
     await account.deleteSession({
-      sessionId: "current"
+      sessionId:"current"
     });
 
   }catch(error){
@@ -1383,31 +2064,43 @@ async function logout(){
   }
 
   showLoginScreen();
+
 }
 
 
 function showLoginScreen(){
 
-  document.getElementById("loginScreen").style.display =
+  document.getElementById(
+    "loginScreen"
+  ).style.display =
     "flex";
 
-  document.getElementById("adminScreen").style.display =
+  document.getElementById(
+    "adminScreen"
+  ).style.display =
     "none";
+
 }
 
 
 async function showAdminScreen(){
 
-  document.getElementById("loginScreen").style.display =
+  document.getElementById(
+    "loginScreen"
+  ).style.display =
     "none";
 
-  document.getElementById("adminScreen").style.display =
+  document.getElementById(
+    "adminScreen"
+  ).style.display =
     "block";
 
   await loadData();
+
 }
 
-  /* =========================================================
+
+/* =========================================================
    RESTAURANT SETTINGS
 ========================================================= */
 
@@ -1421,27 +2114,40 @@ async function loadRestaurantSettings(){
       );
 
     restaurantSettings =
-      rows.length ? rows[0] : null;
+      rows.length
+        ? rows[0]
+        : null;
+
 
     document.getElementById(
       "restaurantName"
     ).value =
-      restaurantSettings?.restaurantName || "";
+      restaurantSettings?.restaurantName ||
+      "";
+
 
     document.getElementById(
       "restaurantPhone"
     ).value =
-      restaurantSettings?.phone || "";
+      restaurantSettings?.phone ||
+      "";
+
 
     document.getElementById(
       "restaurantLocation"
     ).value =
-      restaurantSettings?.location || "";
+      restaurantSettings?.location ||
+      "";
+
 
     document.getElementById(
       "restaurantDescription"
     ).value =
-      restaurantSettings?.description || "";
+      restaurantSettings?.description ||
+      "";
+
+
+    updateLogoPreview();
 
 
   }catch(error){
@@ -1453,8 +2159,38 @@ async function loadRestaurantSettings(){
       "Could not load restaurant settings.",
       "error"
     );
+
   }
+
 }
+
+
+function updateLogoPreview(){
+
+  const box =
+    document.getElementById(
+      "logoPreview"
+    );
+
+  if(
+    restaurantSettings?.logo
+  ){
+
+    box.innerHTML =
+      `<img
+        src="${escapeHTML(restaurantSettings.logo)}"
+        alt="Restaurant logo"
+      >`;
+
+  }else{
+
+    box.textContent =
+      "No logo";
+
+  }
+
+}
+
 
 async function uploadRestaurantLogo(){
 
@@ -1472,7 +2208,9 @@ async function uploadRestaurantLogo(){
     fileInput.files[0];
 
   if(!file){
+
     return null;
+
   }
 
   try{
@@ -1494,13 +2232,16 @@ async function uploadRestaurantLogo(){
 
       });
 
+
     const fileUrl =
       `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
+
 
     status.textContent =
       "Logo uploaded successfully.";
 
     return fileUrl;
+
 
   }catch(error){
 
@@ -1511,133 +2252,19 @@ async function uploadRestaurantLogo(){
       "Could not upload logo.";
 
     return null;
+
   }
+
 }
 
-async function uploadMenuItemImage(){
 
-  const fileInput =
-    document.getElementById(
-      "itemImageFile"
-    );
-
-  const status =
-    document.getElementById(
-      "itemImageUploadStatus"
-    );
-
-  const file =
-    fileInput.files[0];
-
-  if(!file){
-    return null;
-  }
-
-  try{
-
-    status.textContent =
-      "Uploading image...";
-
-    const response =
-      await storage.createFile({
-
-        bucketId:
-          APPWRITE_STORAGE_BUCKET_ID,
-
-        fileId:
-          Appwrite.ID.unique(),
-
-        file:
-          file
-
-      });
-
-  
-    const fileUrl =
-      `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
-
-    status.textContent =
-      "Image uploaded successfully.";
-
-    return fileUrl;
-
-  }catch(error){
-
-    console.error(error);
-
-    status.textContent =
-      error.message ||
-      "Could not upload image.";
-
-    return null;
-  }
-}
-
-  async function uploadCategoryImage(){
-
-  const fileInput =
-    document.getElementById(
-      "categoryImageFile"
-    );
-
-  const status =
-    document.getElementById(
-      "categoryImageUploadStatus"
-    );
-
-  const file =
-    fileInput.files[0];
-
-  if(!file){
-    return null;
-  }
-
-  try{
-
-    status.textContent =
-      "Uploading image...";
-
-    const response =
-      await storage.createFile({
-
-        bucketId:
-          APPWRITE_STORAGE_BUCKET_ID,
-
-        fileId:
-          Appwrite.ID.unique(),
-
-        file:
-          file
-
-      });
-
-    const fileUrl =
-      `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
-
-    status.textContent =
-      "Image uploaded successfully.";
-
-    return fileUrl;
-
-  }catch(error){
-
-    console.error(error);
-
-    status.textContent =
-      error.message ||
-      "Could not upload image.";
-
-    return null;
-  }
-}
-    
-  
 async function saveRestaurantSettings(){
 
   try{
 
     const uploadedLogoUrl =
       await uploadRestaurantLogo();
+
 
     const data = {
 
@@ -1668,7 +2295,10 @@ async function saveRestaurantSettings(){
 
     };
 
-    if(restaurantSettings?.$id){
+
+    if(
+      restaurantSettings?.$id
+    ){
 
       await tablesDB.updateRow({
 
@@ -1683,11 +2313,13 @@ async function saveRestaurantSettings(){
 
         data:
           data
+
       });
 
       showMessage(
         "Restaurant settings updated successfully."
       );
+
 
     }else{
 
@@ -1705,6 +2337,7 @@ async function saveRestaurantSettings(){
 
           data:
             data
+
         });
 
       restaurantSettings =
@@ -1713,13 +2346,17 @@ async function saveRestaurantSettings(){
       showMessage(
         "Restaurant settings saved successfully."
       );
+
     }
 
+
     await loadRestaurantSettings();
+
 
     document.getElementById(
       "restaurantLogoFile"
     ).value = "";
+
 
   }catch(error){
 
@@ -1730,8 +2367,149 @@ async function saveRestaurantSettings(){
       "Could not save restaurant settings.",
       "error"
     );
+
   }
+
 }
+
+
+/* =========================================================
+   IMAGE UPLOADS
+========================================================= */
+
+async function uploadMenuItemImage(){
+
+  const fileInput =
+    document.getElementById(
+      "itemImageFile"
+    );
+
+  const status =
+    document.getElementById(
+      "itemImageUploadStatus"
+    );
+
+  const file =
+    fileInput.files[0];
+
+  if(!file){
+
+    return null;
+
+  }
+
+  try{
+
+    status.textContent =
+      "Uploading image...";
+
+
+    const response =
+      await storage.createFile({
+
+        bucketId:
+          APPWRITE_STORAGE_BUCKET_ID,
+
+        fileId:
+          Appwrite.ID.unique(),
+
+        file:
+          file
+
+      });
+
+
+    const fileUrl =
+      `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
+
+
+    status.textContent =
+      "Image uploaded successfully.";
+
+    return fileUrl;
+
+
+  }catch(error){
+
+    console.error(error);
+
+    status.textContent =
+      error.message ||
+      "Could not upload image.";
+
+    return null;
+
+  }
+
+}
+
+
+async function uploadCategoryImage(){
+
+  const fileInput =
+    document.getElementById(
+      "categoryImageFile"
+    );
+
+  const status =
+    document.getElementById(
+      "categoryImageUploadStatus"
+    );
+
+  const file =
+    fileInput.files[0];
+
+  if(!file){
+
+    return null;
+
+  }
+
+  try{
+
+    status.textContent =
+      "Uploading image...";
+
+
+    const response =
+      await storage.createFile({
+
+        bucketId:
+          APPWRITE_STORAGE_BUCKET_ID,
+
+        fileId:
+          Appwrite.ID.unique(),
+
+        file:
+          file
+
+      });
+
+
+    const fileUrl =
+      `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
+
+
+    status.textContent =
+      "Image uploaded successfully.";
+
+    return fileUrl;
+
+
+  }catch(error){
+
+    console.error(error);
+
+    status.textContent =
+      error.message ||
+      "Could not upload image.";
+
+    return null;
+
+  }
+
+}
+
 
 /* =========================================================
    LOAD DATA
@@ -1746,12 +2524,15 @@ async function loadData(){
         APPWRITE_CATEGORIES_TABLE
       );
 
+
     menuItems =
       await getAllRows(
         APPWRITE_MENU_ITEMS_TABLE
       );
 
+
     await loadRestaurantSettings();
+
 
     categories.sort(
       (a,b) =>
@@ -1759,15 +2540,18 @@ async function loadData(){
         (b.sortOrder || 0)
     );
 
+
     menuItems.sort(
       (a,b) =>
         (a.sortOrder || 0) -
         (b.sortOrder || 0)
     );
 
+
     renderCategories();
     renderItems();
     populateCategorySelect();
+
 
   }catch(error){
 
@@ -1778,7 +2562,133 @@ async function loadData(){
       "Could not load Appwrite data.",
       "error"
     );
+
   }
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function getSearchTerm(){
+
+  return currentSearch
+    .trim()
+    .toLowerCase();
+
+}
+
+
+function categoryMatchesSearch(
+  category
+){
+
+  const term =
+    getSearchTerm();
+
+  if(!term){
+
+    return true;
+
+  }
+
+  return (
+    String(category.name || "")
+      .toLowerCase()
+      .includes(term)
+    ||
+    String(category.description || "")
+      .toLowerCase()
+      .includes(term)
+  );
+
+}
+
+
+function itemMatchesSearch(
+  item
+){
+
+  const term =
+    getSearchTerm();
+
+  if(!term){
+
+    return true;
+
+  }
+
+  const category =
+    categories.find(
+      cat =>
+        cat.$id === item.categoryId
+    );
+
+  return (
+    String(item.name || "")
+      .toLowerCase()
+      .includes(term)
+    ||
+    String(item.description || "")
+      .toLowerCase()
+      .includes(term)
+    ||
+    String(item.price || "")
+      .toLowerCase()
+      .includes(term)
+    ||
+    String(category?.name || "")
+      .toLowerCase()
+      .includes(term)
+  );
+
+}
+
+
+function updateSearchNote(){
+
+  const note =
+    document.getElementById(
+      "searchResultsNote"
+    );
+
+  const term =
+    getSearchTerm();
+
+  if(!term){
+
+    note.textContent =
+      "";
+
+    return;
+
+  }
+
+  const matchingCategories =
+    categories.filter(
+      categoryMatchesSearch
+    ).length;
+
+
+  const matchingItems =
+    menuItems.filter(
+      itemMatchesSearch
+    ).length;
+
+
+  note.textContent =
+    `${matchingCategories} categor${
+      matchingCategories === 1
+        ? "y"
+        : "ies"
+    } · ${matchingItems} menu item${
+      matchingItems === 1
+        ? ""
+        : "s"
+    } found`;
+
 }
 
 
@@ -1789,185 +2699,501 @@ async function loadData(){
 function renderCategories(){
 
   const container =
-    document.getElementById("categoryList");
+    document.getElementById(
+      "categoryList"
+    );
 
-  if(!categories.length){
+
+  const visibleCategories =
+    categories.filter(
+      categoryMatchesSearch
+    );
+
+
+  updateSearchNote();
+
+
+  if(!visibleCategories.length){
 
     container.innerHTML =
-      '<div class="empty">No categories found.</div>';
+      currentSearch
+        ? '<div class="empty">No matching categories found.</div>'
+        : '<div class="empty">No categories found.</div>';
 
     return;
+
   }
 
+
   container.innerHTML =
-    categories.map(category => {
+    visibleCategories.map(
+      category => {
 
-      const categoryItemCount =
-        menuItems.filter(
-          item =>
-            item.categoryId === category.$id
-        ).length;
+        const categoryItemCount =
+          menuItems.filter(
+            item =>
+              item.categoryId ===
+              category.$id
+          ).length;
 
-      const hidden =
-        category.invisible === true;
 
-      return `
-        <div class="category-row ${hidden ? "hidden-category" : ""}">
+        const hidden =
+          category.invisible === true;
 
-          <div class="category-info">
 
-            <div class="category-name">
-              ${escapeHTML(category.name)}
+        const image =
+          category.image || "";
+
+
+        return `
+
+          <div
+            class="category-card ${
+              hidden
+                ? "hidden-category"
+                : ""
+            }"
+          >
+
+            <div class="category-photo">
+
+              ${
+                image
+                  ? `
+                    <img
+                      src="${escapeHTML(image)}"
+                      alt="${escapeHTML(category.name)}"
+                    >
+                  `
+                  : `
+                    <div class="category-photo-placeholder">
+                      No photo
+                    </div>
+                  `
+              }
+
             </div>
 
-            <div class="category-meta">
-              ${categoryItemCount} item(s)
-              · Sort order: ${category.sortOrder || 0}
-              · ${hidden ? "Hidden" : "Visible"}
+
+            <div class="category-card-body">
+
+              <div class="category-card-name">
+                ${escapeHTML(category.name)}
+              </div>
+
+
+              <div class="category-card-meta">
+
+                ${categoryItemCount}
+                item${
+                  categoryItemCount === 1
+                    ? ""
+                    : "s"
+                }
+
+                ·
+
+                ${
+                  hidden
+                    ? "Hidden"
+                    : "Visible"
+                }
+
+              </div>
+
+
+              <div class="category-card-actions">
+
+                <button
+                  class="secondary"
+                  onclick="editCategory('${category.$id}')"
+                >
+                  Edit
+                </button>
+
+
+                <button
+                  class="${
+                    hidden
+                      ? "success"
+                      : "warning"
+                  }"
+                  onclick="toggleCategoryVisibility('${category.$id}')"
+                >
+                  ${
+                    hidden
+                      ? "Show"
+                      : "Hide"
+                  }
+                </button>
+
+
+                <button
+                  class="danger"
+                  onclick="deleteCategory('${category.$id}')"
+                >
+                  Delete
+                </button>
+
+              </div>
+
             </div>
 
           </div>
 
-          <div class="category-actions">
+        `;
 
-            <button
-              class="secondary"
-              onclick="editCategory('${category.$id}')"
-            >
-              Edit
-            </button>
+      }
+    ).join("");
 
-            <button
-              class="${hidden ? "success" : "warning"}"
-              onclick="toggleCategoryVisibility('${category.$id}')"
-            >
-              ${hidden ? "Show" : "Hide"}
-            </button>
-
-            <button
-              class="danger"
-              onclick="deleteCategory('${category.$id}')"
-            >
-              Delete
-            </button>
-
-          </div>
-
-        </div>
-      `;
-
-    }).join("");
 }
 
 
 /* =========================================================
-   RENDER ITEMS
+   RENDER ITEMS — GROUPED BY CATEGORY
 ========================================================= */
 
 function renderItems(){
 
   const container =
-    document.getElementById("itemList");
+    document.getElementById(
+      "itemList"
+    );
 
-  if(!menuItems.length){
 
-    container.innerHTML =
-      '<div class="empty">No menu items found.</div>';
+  const groups = [];
 
-    return;
-  }
 
-  container.innerHTML =
-    menuItems.map(item => {
+  categories.forEach(
+    category => {
 
-      const category =
-        categories.find(
-          cat =>
-            cat.$id === item.categoryId
-        );
+      const matchingItems =
+        menuItems.filter(
+          item => {
 
-      const categoryName =
-        category
-          ? category.name
-          : "Unknown category";
+            if(
+              item.categoryId !==
+              category.$id
+            ){
 
-      const available =
-        item.isAvailable !== false;
+              return false;
 
-      return `
-        <div class="item-row">
-
-          <div class="item-info">
-
-            <div class="item-name">
-              ${escapeHTML(item.name)}
-            </div>
-
-            <div class="item-price">
-              ${escapeHTML(item.price)}
-            </div>
-
-            <div class="category-meta">
-              ${escapeHTML(categoryName)}
-            </div>
-
-            ${
-              item.description
-                ? `
-                  <div class="item-description">
-                    ${escapeHTML(item.description)}
-                  </div>
-                `
-                : ""
             }
 
-            <span class="item-status ${
-              available
-                ? "available"
-                : "unavailable"
-            }">
+            return itemMatchesSearch(
+              item
+            );
+
+          }
+        );
+
+
+      const categoryMatches =
+        categoryMatchesSearch(
+          category
+        );
+
+
+      if(
+        matchingItems.length ||
+        categoryMatches
+      ){
+
+        groups.push({
+          category:
+            category,
+
+          items:
+            matchingItems
+
+        });
+
+      }
+
+    }
+  );
+
+
+  /*
+    Catch items whose category no longer exists.
+  */
+
+  const unknownItems =
+    menuItems.filter(
+      item => {
+
+        const exists =
+          categories.some(
+            category =>
+              category.$id ===
+              item.categoryId
+          );
+
+        return (
+          !exists &&
+          itemMatchesSearch(item)
+        );
+
+      }
+    );
+
+
+  if(unknownItems.length){
+
+    groups.push({
+
+      category:{
+        $id:"unknown",
+        name:"Unassigned Items",
+        image:"",
+        invisible:false
+      },
+
+      items:
+        unknownItems
+
+    });
+
+  }
+
+
+  if(!groups.length){
+
+    container.innerHTML =
+      currentSearch
+        ? '<div class="empty">No matching menu items found.</div>'
+        : '<div class="empty">No menu items found.</div>';
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    groups.map(
+      group => {
+
+        const category =
+          group.category;
+
+        const hidden =
+          category.invisible === true;
+
+
+        return `
+
+          <div class="menu-group">
+
+            <div class="menu-group-header">
+
+              <div class="menu-group-title">
+
+                <h4>
+                  ${escapeHTML(category.name)}
+                </h4>
+
+                <span class="menu-group-count">
+                  ${
+                    group.items.length
+                  }
+                  item${
+                    group.items.length === 1
+                      ? ""
+                      : "s"
+                  }
+                </span>
+
+              </div>
+
+
               ${
-                available
-                  ? "Available"
-                  : "Unavailable"
+                category.$id !== "unknown"
+                  ? `
+                    <div class="menu-group-actions">
+
+                      <button
+                        class="secondary"
+                        onclick="editCategory('${category.$id}')"
+                      >
+                        Edit Category
+                      </button>
+
+                      <button
+                        class="${
+                          hidden
+                            ? "success"
+                            : "warning"
+                        }"
+                        onclick="toggleCategoryVisibility('${category.$id}')"
+                      >
+                        ${
+                          hidden
+                            ? "Show"
+                            : "Hide"
+                        }
+                      </button>
+
+                    </div>
+                  `
+                  : ""
               }
-            </span>
+
+            </div>
+
+
+            <div class="item-list">
+
+              ${
+                group.items.length
+
+                  ? group.items.map(
+                      renderSingleItem
+                    ).join("")
+
+                  : `
+                    <div class="empty-group">
+                      No menu items in this category.
+                    </div>
+                  `
+              }
+
+            </div>
 
           </div>
 
-          <div class="item-actions">
+        `;
 
-            <button
-              class="secondary"
-              onclick="editItem('${item.$id}')"
-            >
-              Edit
-            </button>
+      }
+    ).join("");
 
-            <button
-              class="${available ? "warning" : "success"}"
-              onclick="toggleItemAvailability('${item.$id}')"
-            >
-              ${
-                available
-                  ? "Mark Unavailable"
-                  : "Mark Available"
-              }
-            </button>
+}
 
-            <button
-              class="danger"
-              onclick="deleteItem('${item.$id}')"
-            >
-              Delete
-            </button>
 
-          </div>
+function renderSingleItem(
+  item
+){
 
+  const available =
+    item.isAvailable !== false;
+
+
+  const image =
+    item.image || "";
+
+
+  return `
+
+    <div class="item-row">
+
+
+      <div class="item-photo">
+
+        ${
+          image
+
+            ? `
+              <img
+                src="${escapeHTML(image)}"
+                alt="${escapeHTML(item.name)}"
+              >
+            `
+
+            : `
+              <div class="item-photo-placeholder">
+                No photo
+              </div>
+            `
+        }
+
+      </div>
+
+
+      <div class="item-info">
+
+        <div class="item-name">
+          ${escapeHTML(item.name)}
         </div>
-      `;
 
-    }).join("");
+
+        <div class="item-price">
+          ${escapeHTML(item.price)}
+        </div>
+
+
+        ${
+          item.description
+
+            ? `
+              <div class="item-description">
+                ${escapeHTML(item.description)}
+              </div>
+            `
+
+            : ""
+        }
+
+
+        <span
+          class="item-status ${
+            available
+              ? "available"
+              : "unavailable"
+          }"
+        >
+
+          ${
+            available
+              ? "Available"
+              : "Unavailable"
+          }
+
+        </span>
+
+      </div>
+
+
+      <div class="item-actions">
+
+        <button
+          class="secondary"
+          onclick="editItem('${item.$id}')"
+        >
+          Edit
+        </button>
+
+
+        <button
+          class="${
+            available
+              ? "warning"
+              : "success"
+          }"
+          onclick="toggleItemAvailability('${item.$id}')"
+        >
+
+          ${
+            available
+              ? "Unavailable"
+              : "Available"
+          }
+
+        </button>
+
+
+        <button
+          class="danger"
+          onclick="deleteItem('${item.$id}')"
+        >
+          Delete
+        </button>
+
+      </div>
+
+
+    </div>
+
+  `;
+
 }
 
 
@@ -1978,19 +3204,49 @@ function renderItems(){
 function populateCategorySelect(){
 
   const select =
-    document.getElementById("itemCategory");
+    document.getElementById(
+      "itemCategory"
+    );
+
 
   select.innerHTML =
-    categories.map(category => {
+    categories.map(
+      category => {
 
-      return `
-        <option value="${escapeHTML(category.$id)}">
-          ${escapeHTML(category.name)}
-        </option>
-      `;
+        return `
 
-    }).join("");
+          <option
+            value="${escapeHTML(category.$id)}"
+          >
+            ${escapeHTML(category.name)}
+          </option>
+
+        `;
+
+      }
+    ).join("");
+
 }
+
+
+/* =========================================================
+   SEARCH LISTENER
+========================================================= */
+
+document.getElementById(
+  "menuSearch"
+).addEventListener(
+  "input",
+  function(){
+
+    currentSearch =
+      this.value;
+
+    renderCategories();
+    renderItems();
+
+  }
+);
 
 
 /* =========================================================
@@ -2001,39 +3257,57 @@ function openAddCategoryModal(){
 
   document.getElementById(
     "categoryModalTitle"
-  ).textContent = "Add Category";
+  ).textContent =
+    "Add Category";
+
 
   document.getElementById(
     "categoryId"
-  ).value = "";
+  ).value =
+    "";
+
 
   document.getElementById(
     "categoryName"
-  ).value = "";
+  ).value =
+    "";
 
- document.getElementById(
-  "categoryImageFile"
-).value = "";
 
-document.getElementById(
-  "categoryImageUploadStatus"
-).textContent = "";
-  
+  document.getElementById(
+    "categoryImageFile"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "categoryImageUploadStatus"
+  ).textContent =
+    "";
+
+
   document.getElementById(
     "categoryDescription"
-  ).value = "";
+  ).value =
+    "";
+
 
   document.getElementById(
     "categorySortOrder"
-  ).value = categories.length;
+  ).value =
+    categories.length;
+
 
   document.getElementById(
     "categoryIsDrink"
-  ).checked = false;
+  ).checked =
+    false;
+
 
   document.getElementById(
     "categoryModal"
-  ).style.display = "block";
+  ).style.display =
+    "block";
+
 }
 
 
@@ -2041,7 +3315,9 @@ function closeCategoryModal(){
 
   document.getElementById(
     "categoryModal"
-  ).style.display = "none";
+  ).style.display =
+    "none";
+
 }
 
 
@@ -2049,49 +3325,71 @@ function editCategory(id){
 
   const category =
     categories.find(
-      cat => cat.$id === id
+      cat =>
+        cat.$id === id
     );
 
-  if(!category) return;
+
+  if(!category){
+
+    return;
+
+  }
+
 
   document.getElementById(
     "categoryModalTitle"
-  ).textContent = "Edit Category";
+  ).textContent =
+    "Edit Category";
+
 
   document.getElementById(
     "categoryId"
-  ).value = category.$id;
+  ).value =
+    category.$id;
+
 
   document.getElementById(
     "categoryName"
-  ).value = category.name || "";
+  ).value =
+    category.name || "";
+
 
   document.getElementById(
-  "categoryImageFile"
-).value = "";
+    "categoryImageFile"
+  ).value =
+    "";
 
-document.getElementById(
-  "categoryImageUploadStatus"
-).textContent = "";
-  
+
+  document.getElementById(
+    "categoryImageUploadStatus"
+  ).textContent =
+    "";
+
+
   document.getElementById(
     "categoryDescription"
   ).value =
     category.description || "";
+
 
   document.getElementById(
     "categorySortOrder"
   ).value =
     category.sortOrder || 0;
 
+
   document.getElementById(
     "categoryIsDrink"
   ).checked =
     category.isDrink === true;
 
+
   document.getElementById(
     "categoryModal"
-  ).style.display = "block";
+  ).style.display =
+    "block";
+
 }
 
 
@@ -2103,67 +3401,78 @@ document.getElementById(
 
     event.preventDefault();
 
+
     const id =
       document.getElementById(
         "categoryId"
       ).value.trim();
 
-  const uploadedCategoryImageUrl =
-  await uploadCategoryImage();
 
-const existingCategory =
-  id
-    ? categories.find(
-        row => row.$id === id
-      )
-    : null;
+    const uploadedCategoryImageUrl =
+      await uploadCategoryImage();
 
-const categoryImageUrl =
-  uploadedCategoryImageUrl ||
-  existingCategory?.image ||
-  "";
 
-const data = {
+    const existingCategory =
+      id
+        ? categories.find(
+            row =>
+              row.$id === id
+          )
+        : null;
 
-  name:
-    document.getElementById(
-      "categoryName"
-    ).value.trim(),
 
-  image:
-    categoryImageUrl,
+    const categoryImageUrl =
+      uploadedCategoryImageUrl ||
+      existingCategory?.image ||
+      "";
 
-  description:
-    document.getElementById(
-      "categoryDescription"
-    ).value.trim(),
 
-  sortOrder:
-    Number(
-      document.getElementById(
-        "categorySortOrder"
-      ).value
-    ),
+    const data = {
 
-  isDrink:
-    document.getElementById(
-      "categoryIsDrink"
-    ).checked,
+      name:
+        document.getElementById(
+          "categoryName"
+        ).value.trim(),
 
-  invisible:
-    id
-      ? (
-          categories.find(
-            cat => cat.$id === id
-          )?.invisible === true
-        )
-      : false
-};
+      image:
+        categoryImageUrl,
+
+      description:
+        document.getElementById(
+          "categoryDescription"
+        ).value.trim(),
+
+      sortOrder:
+        Number(
+          document.getElementById(
+            "categorySortOrder"
+          ).value
+        ),
+
+      isDrink:
+        document.getElementById(
+          "categoryIsDrink"
+        ).checked,
+
+      invisible:
+        id
+          ? (
+              categories.find(
+                cat =>
+                  cat.$id === id
+              )?.invisible === true
+            )
+          : false
+
+    };
+
+
     try{
 
       if(id){
 
         await tablesDB.updateRow({
+
           databaseId:
             APPWRITE_DATABASE_ID,
 
@@ -2175,15 +3484,19 @@ const data = {
 
           data:
             data
+
         });
+
 
         showMessage(
           "Category updated successfully."
         );
 
+
       }else{
 
         await tablesDB.createRow({
+
           databaseId:
             APPWRITE_DATABASE_ID,
 
@@ -2195,16 +3508,21 @@ const data = {
 
           data:
             data
+
         });
+
 
         showMessage(
           "Category added successfully."
         );
+
       }
+
 
       closeCategoryModal();
 
       await loadData();
+
 
     }catch(error){
 
@@ -2215,6 +3533,7 @@ const data = {
         "Could not save category.",
         "error"
       );
+
     }
 
   }
@@ -2225,14 +3544,23 @@ const data = {
    CATEGORY VISIBILITY
 ========================================================= */
 
-async function toggleCategoryVisibility(id){
+async function toggleCategoryVisibility(
+  id
+){
 
   const category =
     categories.find(
-      cat => cat.$id === id
+      cat =>
+        cat.$id === id
     );
 
-  if(!category) return;
+
+  if(!category){
+
+    return;
+
+  }
+
 
   try{
 
@@ -2254,13 +3582,16 @@ async function toggleCategoryVisibility(id){
 
     });
 
+
     showMessage(
       category.invisible === true
         ? "Category shown."
         : "Category hidden."
     );
 
+
     await loadData();
+
 
   }catch(error){
 
@@ -2271,7 +3602,9 @@ async function toggleCategoryVisibility(id){
       "Could not change category visibility.",
       "error"
     );
+
   }
+
 }
 
 
@@ -2279,20 +3612,30 @@ async function toggleCategoryVisibility(id){
    DELETE CATEGORY
 ========================================================= */
 
-async function deleteCategory(id){
+async function deleteCategory(
+  id
+){
 
   const category =
     categories.find(
-      cat => cat.$id === id
+      cat =>
+        cat.$id === id
     );
 
-  if(!category) return;
+
+  if(!category){
+
+    return;
+
+  }
+
 
   const items =
     menuItems.filter(
       item =>
         item.categoryId === id
     );
+
 
   if(items.length){
 
@@ -2301,14 +3644,22 @@ async function deleteCategory(id){
     );
 
     return;
+
   }
+
 
   const confirmed =
     confirm(
       `Delete the category "${category.name}"?`
     );
 
-  if(!confirmed) return;
+
+  if(!confirmed){
+
+    return;
+
+  }
+
 
   try{
 
@@ -2322,13 +3673,17 @@ async function deleteCategory(id){
 
       rowId:
         id
+
     });
+
 
     showMessage(
       "Category deleted."
     );
 
+
     await loadData();
+
 
   }catch(error){
 
@@ -2339,7 +3694,9 @@ async function deleteCategory(id){
       "Could not delete category.",
       "error"
     );
+
   }
+
 }
 
 
@@ -2357,60 +3714,87 @@ function openAddItemModal(){
     );
 
     return;
+
   }
+
 
   document.getElementById(
     "itemModalTitle"
-  ).textContent = "Add Menu Item";
+  ).textContent =
+    "Add Menu Item";
+
 
   document.getElementById(
     "itemId"
-  ).value = "";
+  ).value =
+    "";
+
 
   document.getElementById(
     "itemName"
-  ).value = "";
+  ).value =
+    "";
+
 
   document.getElementById(
     "itemPrice"
-  ).value = "";
+  ).value =
+    "";
+
 
   document.getElementById(
     "itemDescription"
-  ).value = "";
+  ).value =
+    "";
+
 
   document.getElementById(
     "itemSortOrder"
-  ).value = menuItems.length;
+  ).value =
+    menuItems.length;
+
 
   document.getElementById(
     "itemType"
-  ).value = "";
+  ).value =
+    "";
+
 
   document.getElementById(
     "itemAvailable"
-  ).checked = true;
+  ).checked =
+    true;
+
 
   document.getElementById(
     "itemFeatured"
-  ).checked = false;
+  ).checked =
+    false;
+
 
   document.getElementById(
     "itemCategory"
   ).value =
     categories[0].$id;
 
-  document.getElementById(
-  "itemImageFile"
-).value = "";
 
-document.getElementById(
-  "itemImageUploadStatus"
-).textContent = "";
+  document.getElementById(
+    "itemImageFile"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "itemImageUploadStatus"
+  ).textContent =
+    "";
+
 
   document.getElementById(
     "itemModal"
-  ).style.display = "block";
+  ).style.display =
+    "block";
+
 }
 
 
@@ -2418,7 +3802,9 @@ function closeItemModal(){
 
   document.getElementById(
     "itemModal"
-  ).style.display = "none";
+  ).style.display =
+    "none";
+
 }
 
 
@@ -2426,68 +3812,94 @@ function editItem(id){
 
   const item =
     menuItems.find(
-      row => row.$id === id
+      row =>
+        row.$id === id
     );
 
-  if(!item) return;
+
+  if(!item){
+
+    return;
+
+  }
+
 
   document.getElementById(
     "itemModalTitle"
-  ).textContent = "Edit Menu Item";
+  ).textContent =
+    "Edit Menu Item";
+
 
   document.getElementById(
     "itemId"
-  ).value = item.$id;
+  ).value =
+    item.$id;
+
 
   document.getElementById(
     "itemName"
-  ).value = item.name || "";
+  ).value =
+    item.name || "";
+
 
   document.getElementById(
     "itemPrice"
-  ).value = item.price || "";
+  ).value =
+    item.price || "";
+
 
   document.getElementById(
     "itemDescription"
   ).value =
     item.description || "";
 
+
   document.getElementById(
     "itemSortOrder"
   ).value =
     item.sortOrder || 0;
+
 
   document.getElementById(
     "itemType"
   ).value =
     item.itemType || "";
 
+
   document.getElementById(
     "itemAvailable"
   ).checked =
     item.isAvailable !== false;
+
 
   document.getElementById(
     "itemFeatured"
   ).checked =
     item.isFeatured === true;
 
-document.getElementById(
-  "itemCategory"
-).value =
-  item.categoryId;
 
-document.getElementById(
-  "itemImageFile"
-).value = "";
+  document.getElementById(
+    "itemCategory"
+  ).value =
+    item.categoryId;
 
-document.getElementById(
-  "itemImageUploadStatus"
-).textContent = "";
 
-document.getElementById(
-  "itemModal"
-).style.display = "block";
+  document.getElementById(
+    "itemImageFile"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "itemImageUploadStatus"
+  ).textContent =
+    "";
+
+
+  document.getElementById(
+    "itemModal"
+  ).style.display =
+    "block";
 
 }
 
@@ -2500,32 +3912,38 @@ document.getElementById(
 
     event.preventDefault();
 
+
     const id =
       document.getElementById(
         "itemId"
       ).value.trim();
 
-  const uploadedImageUrl =
-  await uploadMenuItemImage();
 
-const existingItem =
-  id
-    ? menuItems.find(
-        row => row.$id === id
-      )
-    : null;
+    const uploadedImageUrl =
+      await uploadMenuItemImage();
 
-const imageUrl =
-  uploadedImageUrl ||
-  existingItem?.image ||
-  "";
 
-const data = {
+    const existingItem =
+      id
+        ? menuItems.find(
+            row =>
+              row.$id === id
+          )
+        : null;
 
-  name:
-    document.getElementById(
-      "itemName"
-    ).value.trim(),
+
+    const imageUrl =
+      uploadedImageUrl ||
+      existingItem?.image ||
+      "";
+
+
+    const data = {
+
+      name:
+        document.getElementById(
+          "itemName"
+        ).value.trim(),
 
       price:
         document.getElementById(
@@ -2542,9 +3960,9 @@ const data = {
           "itemCategory"
         ).value,
 
-       image:
+      image:
         imageUrl,
-      
+
       isAvailable:
         document.getElementById(
           "itemAvailable"
@@ -2569,6 +3987,7 @@ const data = {
 
     };
 
+
     try{
 
       if(id){
@@ -2586,11 +4005,14 @@ const data = {
 
           data:
             data
+
         });
+
 
         showMessage(
           "Menu item updated successfully."
         );
+
 
       }else{
 
@@ -2607,16 +4029,21 @@ const data = {
 
           data:
             data
+
         });
+
 
         showMessage(
           "Menu item added successfully."
         );
+
       }
+
 
       closeItemModal();
 
       await loadData();
+
 
     }catch(error){
 
@@ -2627,6 +4054,7 @@ const data = {
         "Could not save menu item.",
         "error"
       );
+
     }
 
   }
@@ -2637,14 +4065,23 @@ const data = {
    ITEM AVAILABILITY
 ========================================================= */
 
-async function toggleItemAvailability(id){
+async function toggleItemAvailability(
+  id
+){
 
   const item =
     menuItems.find(
-      row => row.$id === id
+      row =>
+        row.$id === id
     );
 
-  if(!item) return;
+
+  if(!item){
+
+    return;
+
+  }
+
 
   try{
 
@@ -2666,13 +4103,16 @@ async function toggleItemAvailability(id){
 
     });
 
+
     showMessage(
       item.isAvailable === false
         ? "Item marked available."
         : "Item marked unavailable."
     );
 
+
     await loadData();
+
 
   }catch(error){
 
@@ -2683,7 +4123,9 @@ async function toggleItemAvailability(id){
       "Could not change item availability.",
       "error"
     );
+
   }
+
 }
 
 
@@ -2691,21 +4133,36 @@ async function toggleItemAvailability(id){
    DELETE ITEM
 ========================================================= */
 
-async function deleteItem(id){
+async function deleteItem(
+  id
+){
 
   const item =
     menuItems.find(
-      row => row.$id === id
+      row =>
+        row.$id === id
     );
 
-  if(!item) return;
+
+  if(!item){
+
+    return;
+
+  }
+
 
   const confirmed =
     confirm(
       `Delete "${item.name}"? This cannot be undone.`
     );
 
-  if(!confirmed) return;
+
+  if(!confirmed){
+
+    return;
+
+  }
+
 
   try{
 
@@ -2719,13 +4176,17 @@ async function deleteItem(id){
 
       rowId:
         id
+
     });
+
 
     showMessage(
       "Menu item deleted."
     );
 
+
     await loadData();
+
 
   }catch(error){
 
@@ -2736,7 +4197,9 @@ async function deleteItem(id){
       "Could not delete menu item.",
       "error"
     );
+
   }
+
 }
 
 
@@ -2750,26 +4213,43 @@ function openCustomerMenu(){
     "index.html",
     "_blank"
   );
+
 }
+
 
 /* =========================================================
    LOGIN FORM
 ========================================================= */
 
-document.getElementById("loginForm").addEventListener(
+document.getElementById(
+  "loginForm"
+).addEventListener(
   "submit",
   async function(event){
+
     event.preventDefault();
 
+
     const email =
-      document.getElementById("loginEmail").value.trim();
+      document.getElementById(
+        "loginEmail"
+      ).value.trim();
+
 
     const password =
-      document.getElementById("loginPassword").value;
+      document.getElementById(
+        "loginPassword"
+      ).value;
 
-    await login(email, password);
+
+    await login(
+      email,
+      password
+    );
+
   }
 );
+
 
 /* =========================================================
    FORM / MODAL BEHAVIOUR
@@ -2784,17 +4264,30 @@ window.addEventListener(
         "categoryModal"
       );
 
+
     const itemModal =
       document.getElementById(
         "itemModal"
       );
 
-    if(event.target === categoryModal){
+
+    if(
+      event.target ===
+      categoryModal
+    ){
+
       closeCategoryModal();
+
     }
 
-    if(event.target === itemModal){
+
+    if(
+      event.target ===
+      itemModal
+    ){
+
       closeItemModal();
+
     }
 
   }
@@ -2811,3 +4304,4 @@ checkExistingSession();
 
 </body>
 </html>
+```
