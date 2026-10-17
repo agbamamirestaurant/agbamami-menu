@@ -1397,7 +1397,6 @@ const appwriteTablesDB =
 /* =========================================================
    GET ALL APPWRITE ROWS
 ========================================================= */
-
 async function getAllAppwriteRows(tableId){
 
   let allRows = [];
@@ -1420,49 +1419,6 @@ async function getAllAppwriteRows(tableId){
         ]
 
       });
-    async function loadRestaurantSettingsFromAppwrite(){
-
-  try{
-
-    const rows =
-      await getAllAppwriteRows(
-        APPWRITE_SETTINGS_TABLE
-      );
-
-    if(!rows.length){
-      return;
-    }
-
-    const settings = rows[0];
-
-    RESTAURANT_SETTINGS = {
-      restaurantName:
-        settings.restaurantName ||
-        "Agbamami",
-
-      phone:
-        settings.phone ||
-        PHONE,
-
-      location:
-        settings.location ||
-        LOCATION,
-
-      description:
-        settings.description ||
-        ""
-    };
-
-  }catch(error){
-
-    console.error(
-      "Could not load restaurant settings:",
-      error
-    );
-
-  }
-
-}
 
     allRows =
       allRows.concat(response.rows);
@@ -1479,6 +1435,55 @@ async function getAllAppwriteRows(tableId){
 }
 
 
+/* =========================================================
+   LOAD RESTAURANT SETTINGS FROM APPWRITE
+========================================================= */
+
+async function loadRestaurantSettingsFromAppwrite(){
+
+  try{
+
+    const rows =
+      await getAllAppwriteRows(
+        APPWRITE_SETTINGS_TABLE
+      );
+
+    if(!rows.length){
+      return;
+    }
+
+    const settings = rows[0];
+
+    RESTAURANT_SETTINGS = {
+
+      restaurantName:
+        settings.restaurantName ||
+        "Agbamami",
+
+      phone:
+        settings.phone ||
+        PHONE,
+
+      location:
+        settings.location ||
+        LOCATION,
+
+      description:
+        settings.description ||
+        ""
+
+    };
+
+  }catch(error){
+
+    console.error(
+      "Could not load restaurant settings:",
+      error
+    );
+
+  }
+
+}
 /* =========================================================
    LOAD MENU FROM APPWRITE
 ========================================================= */
@@ -1666,12 +1671,6 @@ document.addEventListener("keydown",event=>{
   }
 });
 
-
-document.getElementById("callBtn").href =
-  "tel:" + RESTAURANT_SETTINGS.phone;
-
-document.getElementById("locationBtn").href =
-  RESTAURANT_SETTINGS.location;
 
 document.getElementById("year").textContent =
   new Date().getFullYear();
@@ -1884,10 +1883,17 @@ document.getElementById("backBtn").addEventListener("click",()=>{
 });
   
 loadRestaurantSettingsFromAppwrite().then(() => {
+
+  document.getElementById("callBtn").href =
+    "tel:" + RESTAURANT_SETTINGS.phone;
+
+  document.getElementById("locationBtn").href =
+    RESTAURANT_SETTINGS.location;
+
   renderCategories();
   loadMenuFromAppwrite();
-});
 
+});
 </script>
 </body>
 </html>
