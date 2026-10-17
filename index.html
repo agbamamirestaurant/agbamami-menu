@@ -1884,8 +1884,17 @@ document.getElementById("backBtn").addEventListener("click",()=>{
   
 loadRestaurantSettingsFromAppwrite().then(() => {
 
-  document.getElementById("callBtn").href =
-    "tel:" + RESTAURANT_SETTINGS.phone;
+ document.getElementById("callBtn").onclick = function(event){
+
+  event.preventDefault();
+
+  const phone =
+    RESTAURANT_SETTINGS.phone;
+
+  window.location.href =
+    "tel:" + phone;
+
+};
 
   document.getElementById("locationBtn").href =
     RESTAURANT_SETTINGS.location;
