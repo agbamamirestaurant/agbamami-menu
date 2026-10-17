@@ -762,14 +762,20 @@
             <select id="itemCategory" required></select>
           </div>
 
-          <div class="full">
-            <label for="itemImage">Image</label>
-            <input
-              id="itemImage"
-              maxlength="500"
-              placeholder="images/food.jpg"
-            >
-          </div>
+        <div class="full">
+        <label for="itemImageFile">Item Photo</label>
+
+        <input
+        type="file"
+        id="itemImageFile"
+        accept="image/*"
+        >
+
+        <div
+        id="itemImageUploadStatus"
+        style="color:#777;margin-top:6px;"
+        ></div>
+        </div>
 
           <div class="full">
             <label for="itemDescription">Description</label>
@@ -1165,6 +1171,64 @@ async function uploadRestaurantLogo(){
   }
 }
 
+async function uploadMenuItemImage(){
+
+  const fileInput =
+    document.getElementById(
+      "itemImageFile"
+    );
+
+  const status =
+    document.getElementById(
+      "itemImageUploadStatus"
+    );
+
+  const file =
+    fileInput.files[0];
+
+  if(!file){
+    return null;
+  }
+
+  try{
+
+    status.textContent =
+      "Uploading image...";
+
+    const response =
+      await storage.createFile({
+
+        bucketId:
+          APPWRITE_STORAGE_BUCKET_ID,
+
+        fileId:
+          Appwrite.ID.unique(),
+
+        file:
+          file
+
+      });
+
+    const fileUrl =
+      `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
+
+    status.textContent =
+      "Image uploaded successfully.";
+
+    return fileUrl;
+
+  }catch(error){
+
+    console.error(error);
+
+    status.textContent =
+      error.message ||
+      "Could not upload image.";
+
+    return null;
+  }
+}
+  
 async function saveRestaurantSettings(){
 
   try{
@@ -1893,10 +1957,6 @@ function openAddItemModal(){
   ).value = "";
 
   document.getElementById(
-    "itemImage"
-  ).value = "";
-
-  document.getElementById(
     "itemSortOrder"
   ).value = menuItems.length;
 
@@ -1916,6 +1976,14 @@ function openAddItemModal(){
     "itemCategory"
   ).value =
     categories[0].$id;
+
+  document.getElementById(
+  "itemImageFile"
+).value = "";
+
+document.getElementById(
+  "itemImageUploadStatus"
+).textContent = "";
 
   document.getElementById(
     "itemModal"
@@ -1962,11 +2030,6 @@ function editItem(id){
     item.description || "";
 
   document.getElementById(
-    "itemImage"
-  ).value =
-    item.image || "";
-
-  document.getElementById(
     "itemSortOrder"
   ).value =
     item.sortOrder || 0;
@@ -1986,14 +2049,23 @@ function editItem(id){
   ).checked =
     item.isFeatured === true;
 
-  document.getElementById(
-    "itemCategory"
-  ).value =
-    item.categoryId;
+document.getElementById(
+  "itemCategory"
+).value =
+  item.categoryId;
 
-  document.getElementById(
-    "itemModal"
-  ).style.display = "block";
+document.getElementById(
+  "itemImageFile"
+).value = "";
+
+document.getElementById(
+  "itemImageUploadStatus"
+).textContent = "";
+
+document.getElementById(
+  "itemModal"
+).style.display = "block";
+
 }
 
 
@@ -2010,12 +2082,27 @@ document.getElementById(
         "itemId"
       ).value.trim();
 
-    const data = {
+  const uploadedImageUrl =
+  await uploadMenuItemImage();
 
-      name:
-        document.getElementById(
-          "itemName"
-        ).value.trim(),
+const existingItem =
+  id
+    ? menuItems.find(
+        row => row.$id === id
+      )
+    : null;
+
+const imageUrl =
+  uploadedImageUrl ||
+  existingItem?.image ||
+  "";
+
+const data = {
+
+  name:
+    document.getElementById(
+      "itemName"
+    ).value.trim(),
 
       price:
         document.getElementById(
@@ -2032,11 +2119,9 @@ document.getElementById(
           "itemCategory"
         ).value,
 
-      image:
-        document.getElementById(
-          "itemImage"
-        ).value.trim(),
-
+       image:
+        imageUrl,
+      
       isAvailable:
         document.getElementById(
           "itemAvailable"
