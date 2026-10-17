@@ -1474,9 +1474,13 @@ async function loadRestaurantSettingsFromAppwrite(){
         settings.location ||
         LOCATION,
 
-      description:
-        settings.description ||
-        ""
+    description:
+    settings.description ||
+    "",
+
+    logo:
+     settings.logo ||
+      ""
 
     };
 
@@ -1896,12 +1900,26 @@ loadRestaurantSettingsFromAppwrite().then(() => {
   document.getElementById("locationBtn").href =
     RESTAURANT_SETTINGS.location;
 
- document.getElementById("restaurantNameDisplay").textContent =
-  RESTAURANT_SETTINGS.restaurantName;
+  document.getElementById("restaurantNameDisplay").textContent =
+    RESTAURANT_SETTINGS.restaurantName;
 
   document.getElementById("restaurantDescriptionDisplay").textContent =
     RESTAURANT_SETTINGS.description ||
     "Explore our menu";
+
+  const logoBox =
+    document.getElementById("logoBox");
+
+  if(RESTAURANT_SETTINGS.logo){
+
+    logoBox.innerHTML =
+      `<img src="${RESTAURANT_SETTINGS.logo}" alt="Agbamami logo">`;
+
+  }else{
+
+    logoBox.textContent = "ADD LOGO";
+
+  }
 
   renderCategories();
   loadMenuFromAppwrite();
