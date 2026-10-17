@@ -607,15 +607,21 @@
       ></textarea>
     </div>
 
-    <div>
-  <label for="restaurantLogo">
-    Logo URL
+<div>
+  <label for="restaurantLogoFile">
+    Restaurant Logo
   </label>
+
   <input
-    type="text"
-    id="restaurantLogo"
-    placeholder="images/logo.png"
+    type="file"
+    id="restaurantLogoFile"
+    accept="image/*"
   >
+
+  <div
+    id="logoUploadStatus"
+    style="color:#777;margin-top:6px;"
+  ></div>
 </div>
 
 
@@ -884,6 +890,8 @@ const account =
 const tablesDB =
   new Appwrite.TablesDB(appwriteClient);
 
+const storage =
+  new Appwrite.Storage(appwriteClient);
 
 /* =========================================================
    LOCAL STATE
@@ -1086,10 +1094,6 @@ async function loadRestaurantSettings(){
     ).value =
       restaurantSettings?.description || "";
 
-    document.getElementById(
-  "restaurantLogo"
-).value =
-  restaurantSettings?.logo || "";
 
   }catch(error){
 
@@ -1103,39 +1107,99 @@ async function loadRestaurantSettings(){
   }
 }
 
+async function uploadRestaurantLogo(){
+
+  const fileInput =
+    document.getElementById(
+      "restaurantLogoFile"
+    );
+
+  const status =
+    document.getElementById(
+      "logoUploadStatus"
+    );
+
+  const file =
+    fileInput.files[0];
+
+  if(!file){
+    return null;
+  }
+
+  try{
+
+    status.textContent =
+      "Uploading logo...";
+
+    const response =
+      await storage.createFile({
+
+        bucketId:
+          APPWRITE_STORAGE_BUCKET_ID,
+
+        fileId:
+          Appwrite.ID.unique(),
+
+        file:
+          file
+
+      });
+
+    const fileUrl =
+      `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
+
+    status.textContent =
+      "Logo uploaded successfully.";
+
+    return fileUrl;
+
+  }catch(error){
+
+    console.error(error);
+
+    status.textContent =
+      error.message ||
+      "Could not upload logo.";
+
+    return null;
+  }
+}
 
 async function saveRestaurantSettings(){
 
-  const data = {
-
-    restaurantName:
-      document.getElementById(
-        "restaurantName"
-      ).value.trim(),
-
-    phone:
-      document.getElementById(
-        "restaurantPhone"
-      ).value.trim(),
-
-    location:
-      document.getElementById(
-        "restaurantLocation"
-      ).value.trim(),
-
-   description:
-  document.getElementById(
-    "restaurantDescription"
-  ).value.trim(),
-
-logo:
-  document.getElementById(
-    "restaurantLogo"
-  ).value.trim()
-
-};
-
   try{
+
+    const uploadedLogoUrl =
+      await uploadRestaurantLogo();
+
+    const data = {
+
+      restaurantName:
+        document.getElementById(
+          "restaurantName"
+        ).value.trim(),
+
+      phone:
+        document.getElementById(
+          "restaurantPhone"
+        ).value.trim(),
+
+      location:
+        document.getElementById(
+          "restaurantLocation"
+        ).value.trim(),
+
+      description:
+        document.getElementById(
+          "restaurantDescription"
+        ).value.trim(),
+
+      logo:
+        uploadedLogoUrl ||
+        restaurantSettings?.logo ||
+        ""
+
+    };
 
     if(restaurantSettings?.$id){
 
@@ -1185,6 +1249,10 @@ logo:
     }
 
     await loadRestaurantSettings();
+
+    document.getElementById(
+      "restaurantLogoFile"
+    ).value = "";
 
   }catch(error){
 
