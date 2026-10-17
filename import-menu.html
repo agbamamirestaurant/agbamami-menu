@@ -1,1 +1,914 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Agbamami Menu Importer</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@28.3.0"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      color: #222;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.08);
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      margin: 7px 0 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #b56b2a;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    #importSection {
+      display: none;
+      margin-top: 25px;
+    }
+
+    #log {
+      margin-top: 20px;
+      background: #111;
+      color: #eee;
+      padding: 15px;
+      border-radius: 8px;
+      min-height: 150px;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .success {
+      color: #16803c;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #c62828;
+      font-weight: bold;
+    }
+
+    .warning {
+      background: #fff4d6;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+
+    .stats {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f1f1f1;
+      border-radius: 8px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Agbamami Menu Importer</h1>
+
+  <p>
+    This temporary page imports the menu from your existing
+    <strong>index.html</strong> into Appwrite.
+  </p>
+
+  <div class="warning">
+    <strong>Important:</strong>
+    This page is only for importing your existing menu.
+    Do not share your Appwrite login details with anyone.
+  </div>
+
+  <div id="loginSection">
+
+    <label>Admin Email</label>
+    <input
+      type="email"
+      id="email"
+      placeholder="Enter your Appwrite admin email"
+      autocomplete="username"
+    >
+
+    <label>Admin Password</label>
+    <input
+      type="password"
+      id="password"
+      placeholder="Enter your Appwrite password"
+      autocomplete="current-password"
+    >
+
+    <button id="loginButton">
+      Login to Appwrite
+    </button>
+
+  </div>
+
+  <div id="importSection">
+
+    <p class="success">
+      ✓ Successfully logged in to Appwrite.
+    </p>
+
+    <button id="importButton">
+      Import My Current Menu
+    </button>
+
+    <button id="logoutButton" style="background:#555;">
+      Logout
+    </button>
+
+    <div class="stats" id="stats">
+      Ready to import.
+    </div>
+
+  </div>
+
+  <div id="log">Waiting...</div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   APPWRITE SETTINGS
+========================================================= */
+
+const ENDPOINT =
+  "https://fra.cloud.appwrite.io/v1";
+
+const PROJECT_ID =
+  "6ad2ca49001034ba372a";
+
+const DATABASE_ID =
+  "agbamami_menu";
+
+const CATEGORIES_TABLE =
+  "categories";
+
+const MENU_ITEMS_TABLE =
+  "menu_items";
+
+
+/* =========================================================
+   INITIALIZE APPWRITE
+========================================================= */
+
+const client = new Appwrite.Client();
+
+client
+  .setEndpoint(ENDPOINT)
+  .setProject(PROJECT_ID);
+
+const account =
+  new Appwrite.Account(client);
+
+const tablesDB =
+  new Appwrite.TablesDB(client);
+
+
+/* =========================================================
+   PAGE ELEMENTS
+========================================================= */
+
+const loginSection =
+  document.getElementById("loginSection");
+
+const importSection =
+  document.getElementById("importSection");
+
+const loginButton =
+  document.getElementById("loginButton");
+
+const importButton =
+  document.getElementById("importButton");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+const logBox =
+  document.getElementById("log");
+
+const statsBox =
+  document.getElementById("stats");
+
+
+/* =========================================================
+   LOGGING
+========================================================= */
+
+function log(message) {
+
+  logBox.textContent += "\n" + message;
+
+  logBox.scrollTop =
+    logBox.scrollHeight;
+}
+
+
+function clearLog() {
+
+  logBox.textContent = "";
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+loginButton.addEventListener("click", async () => {
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  if (!email || !password) {
+
+    alert("Please enter your email and password.");
+
+    return;
+  }
+
+  loginButton.disabled = true;
+
+  clearLog();
+
+  log("Logging in to Appwrite...");
+
+  try {
+
+    /*
+      Remove any old current session first.
+      This prevents conflicts if the browser
+      already has an old session.
+    */
+
+    try {
+      await account.deleteSession("current");
+    } catch (e) {
+      // No active session. That's fine.
+    }
+
+
+    await account.createEmailPasswordSession({
+      email: email,
+      password: password
+    });
+
+
+    const user =
+      await account.get();
+
+    log("Login successful.");
+    log("Logged in as: " + user.email);
+
+
+    loginSection.style.display =
+      "none";
+
+    importSection.style.display =
+      "block";
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    log(
+      "LOGIN ERROR: " +
+      (error.message || error)
+    );
+
+    alert(
+      "Login failed.\n\n" +
+      (error.message || "Please check your email and password.")
+    );
+
+  } finally {
+
+    loginButton.disabled = false;
+
+  }
+
+});
+
+
+/* =========================================================
+   EXTRACT MENU FROM EXISTING INDEX.HTML
+========================================================= */
+
+async function getCurrentMenu() {
+
+  log("Reading your existing index.html...");
+
+
+  const response =
+    await fetch(
+      "index.html",
+      {
+        cache: "no-store"
+      }
+    );
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      "Could not load index.html. HTTP " +
+      response.status
+    );
+
+  }
+
+
+  const html =
+    await response.text();
+
+
+  /*
+    Your current index.html has:
+
+    const MENU = [
+      ...
+    ];
+
+    followed by:
+
+    /* Apply visual settings *\/
+
+    We use those markers to extract
+    only the MENU array.
+  */
+
+  const match =
+    html.match(
+      /const\s+MENU\s*=\s*(\[[\s\S]*?\]);\s*\/\*\s*Apply visual settings\s*\*\//
+    );
+
+
+  if (!match) {
+
+    throw new Error(
+      "Could not find the MENU array inside index.html."
+    );
+
+  }
+
+
+  let menu;
+
+  try {
+
+    /*
+      Convert the MENU text into JavaScript data.
+
+      This is safe for this temporary importer
+      because the source is your own index.html.
+    */
+
+    menu =
+      Function(
+        '"use strict"; return (' +
+        match[1] +
+        ')'
+      )();
+
+  } catch (error) {
+
+    throw new Error(
+      "The MENU data in index.html could not be read.\n\n" +
+      error.message
+    );
+
+  }
+
+
+  if (!Array.isArray(menu)) {
+
+    throw new Error(
+      "The MENU data is not a valid array."
+    );
+
+  }
+
+
+  log(
+    "Found " +
+    menu.length +
+    " categories."
+  );
+
+
+  return menu;
+}
+
+
+/* =========================================================
+   CREATE ROW IF IT DOES NOT ALREADY EXIST
+========================================================= */
+
+async function createRowIfMissing(
+  tableId,
+  rowId,
+  data
+) {
+
+  try {
+
+    const result =
+      await tablesDB.createRow({
+
+        databaseId:
+          DATABASE_ID,
+
+        tableId:
+          tableId,
+
+        rowId:
+          rowId,
+
+        data:
+          data
+
+      });
+
+
+    return {
+      created: true,
+      result: result
+    };
+
+
+  } catch (error) {
+
+    /*
+      409 means the row already exists.
+
+      This allows you to safely run the importer
+      again without creating duplicate rows.
+    */
+
+    if (
+      error &&
+      (
+        error.code === 409 ||
+        /already exists|duplicate/i.test(
+          error.message || ""
+        )
+      )
+    ) {
+
+      return {
+        created: false,
+        result: null
+      };
+
+    }
+
+
+    throw error;
+
+  }
+
+}
+
+
+/* =========================================================
+   IMPORT MENU
+========================================================= */
+
+importButton.addEventListener(
+  "click",
+  async () => {
+
+    importButton.disabled = true;
+
+    clearLog();
+
+    statsBox.textContent =
+      "Importing...";
+
+
+    let categoryCount = 0;
+    let itemCount = 0;
+    let existingCategories = 0;
+    let existingItems = 0;
+
+
+    try {
+
+      /*
+        Make sure the Appwrite session
+        is still active.
+      */
+
+      await account.get();
+
+
+      /*
+        Read MENU directly from index.html.
+      */
+
+      const MENU =
+        await getCurrentMenu();
+
+
+      log("");
+      log(
+        "Starting import..."
+      );
+      log("");
+
+
+      /* ==============================================
+         CATEGORIES
+      ============================================== */
+
+      for (
+        let categoryIndex = 0;
+        categoryIndex < MENU.length;
+        categoryIndex++
+      ) {
+
+        const category =
+          MENU[categoryIndex];
+
+
+        /*
+          Deterministic ID.
+
+          Example:
+
+          category-0
+          category-1
+          category-2
+        */
+
+        const categoryId =
+          "category-" +
+          categoryIndex;
+
+
+        const categoryData = {
+
+          name:
+            category.name || "Unnamed Category",
+
+          image:
+            category.image || "",
+
+          description:
+            category.description || "",
+
+          sortOrder:
+            categoryIndex,
+
+          isVisible:
+            true,
+
+          isDrink:
+            !!category.isDrink
+
+        };
+
+
+        const categoryResult =
+          await createRowIfMissing(
+            CATEGORIES_TABLE,
+            categoryId,
+            categoryData
+          );
+
+
+        if (categoryResult.created) {
+
+          categoryCount++;
+
+          log(
+            "✓ Category added: " +
+            category.name
+          );
+
+        } else {
+
+          existingCategories++;
+
+          log(
+            "↻ Category already exists: " +
+            category.name
+          );
+
+        }
+
+
+        /* ==========================================
+           ITEMS INSIDE THIS CATEGORY
+        ========================================== */
+
+        const items =
+          Array.isArray(category.items)
+            ? category.items
+            : [];
+
+
+        for (
+          let itemIndex = 0;
+          itemIndex < items.length;
+          itemIndex++
+        ) {
+
+          const item =
+            items[itemIndex];
+
+
+          /*
+            Deterministic item ID.
+
+            Example:
+
+            item-0-0
+            item-0-1
+            item-1-0
+          */
+
+          const itemId =
+            "item-" +
+            categoryIndex +
+            "-" +
+            itemIndex;
+
+
+          const itemData = {
+
+            name:
+              item.name || "Unnamed Item",
+
+            price:
+              item.price || "",
+
+            description:
+              item.desc || "",
+
+            categoryId:
+              categoryId,
+
+            image:
+              item.image || "",
+
+            isAvailable:
+              true,
+
+            sortOrder:
+              itemIndex,
+
+            itemType:
+              category.isDrink
+                ? "drink"
+                : "food",
+
+            isFeatured:
+              false
+
+          };
+
+
+          const itemResult =
+            await createRowIfMissing(
+              MENU_ITEMS_TABLE,
+              itemId,
+              itemData
+            );
+
+
+          if (itemResult.created) {
+
+            itemCount++;
+
+            log(
+              "  ✓ Item added: " +
+              item.name
+            );
+
+          } else {
+
+            existingItems++;
+
+            log(
+              "  ↻ Item already exists: " +
+              item.name
+            );
+
+          }
+
+        }
+
+      }
+
+
+      /* ==============================================
+         COMPLETE
+      ============================================== */
+
+      log("");
+      log(
+        "================================"
+      );
+      log(
+        "IMPORT COMPLETE"
+      );
+      log(
+        "================================"
+      );
+
+
+      statsBox.innerHTML =
+
+        "<strong>Import complete!</strong><br><br>" +
+
+        "New categories: " +
+        categoryCount +
+        "<br>" +
+
+        "Existing categories skipped: " +
+        existingCategories +
+        "<br>" +
+
+        "New menu items: " +
+        itemCount +
+        "<br>" +
+
+        "Existing items skipped: " +
+        existingItems;
+
+
+      alert(
+        "Menu import completed successfully!"
+      );
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      log("");
+      log(
+        "================================"
+      );
+      log(
+        "IMPORT ERROR"
+      );
+      log(
+        "================================"
+      );
+      log(
+        error.message || error
+      );
+
+
+      statsBox.innerHTML =
+        '<span class="error">' +
+        "Import failed. Check the log below." +
+        "</span>";
+
+
+      alert(
+        "Import failed.\n\n" +
+        (error.message || error)
+      );
+
+
+    } finally {
+
+      importButton.disabled = false;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+logoutButton.addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      await account.deleteSession(
+        "current"
+      );
+
+    } catch (error) {
+      // Ignore logout errors.
+    }
+
+
+    importSection.style.display =
+      "none";
+
+    loginSection.style.display =
+      "block";
+
+    clearLog();
+
+    log(
+      "Logged out."
+    );
+
+  }
+);
+
+
+/* =========================================================
+   CHECK FOR EXISTING SESSION
+========================================================= */
+
+(async function checkExistingSession() {
+
+  try {
+
+    const user =
+      await account.get();
+
+
+    if (user) {
+
+      loginSection.style.display =
+        "none";
+
+      importSection.style.display =
+        "block";
+
+      log(
+        "Existing Appwrite session detected."
+      );
+
+      log(
+        "Logged in as: " +
+        user.email
+      );
+
+    }
+
+  } catch (error) {
+
+    /*
+      No existing session.
+      User can log in normally.
+    */
+
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
