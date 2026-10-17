@@ -536,10 +536,97 @@
           <div class="loading">Loading menu items...</div>
         </div>
 
-      </section>
+  </section>
+
+
+      <!-- =========================================================
+           RESTAURANT SETTINGS
+      ========================================================= -->
+
+  <section class="section">
+
+  <div class="section-title">
+    <div>
+      <h3>Restaurant Settings</h3>
+      <div style="color:#777;margin-top:4px;">
+        Manage your restaurant information.
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;gap:16px;max-width:700px;">
+
+    <div>
+      <label for="restaurantName">
+        Restaurant Name
+      </label>
+
+      <input
+        type="text"
+        id="restaurantName"
+        placeholder="Agbamami"
+      >
+    </div>
+
+
+    <div>
+      <label for="restaurantPhone">
+        Phone Number
+      </label>
+
+      <input
+        type="text"
+        id="restaurantPhone"
+        placeholder="+233..."
+      >
+    </div>
+
+
+    <div>
+      <label for="restaurantLocation">
+        Location
+      </label>
+
+      <input
+        type="text"
+        id="restaurantLocation"
+        placeholder="Google Maps link"
+      >
+    </div>
+
+
+    <div>
+      <label for="restaurantDescription">
+        Restaurant Information
+      </label>
+
+      <textarea
+        id="restaurantDescription"
+        rows="5"
+        placeholder="Tell customers about your restaurant..."
+      ></textarea>
+    </div>
+
+
+    <button
+      type="button"
+      class="primary"
+      onclick="saveRestaurantSettings()"
+    >
+      Save Restaurant Settings
+    </button>
+
+
+    <div
+      id="settingsMessage"
+      style="color:#777;"
+    ></div>
+
+    </div>
+
+</section>
 
     </main>
-  </section>
 
 
   <!-- CATEGORY MODAL -->
