@@ -1892,8 +1892,9 @@ loadRestaurantSettingsFromAppwrite().then(() => {
 
 document.getElementById("callBtn").href =
   "tel:" + RESTAURANT_SETTINGS.phone;
-  document.getElementById("locationBtn").href =
-    RESTAURANT_SETTINGS.location;
+
+document.getElementById("locationBtn").href =
+  RESTAURANT_SETTINGS.location;
 
   renderCategories();
   loadMenuFromAppwrite();
