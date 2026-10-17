@@ -1925,6 +1925,24 @@ function openCustomerMenu(){
   );
 }
 
+/* =========================================================
+   LOGIN FORM
+========================================================= */
+
+document.getElementById("loginForm").addEventListener(
+  "submit",
+  async function(event){
+    event.preventDefault();
+
+    const email =
+      document.getElementById("loginEmail").value.trim();
+
+    const password =
+      document.getElementById("loginPassword").value;
+
+    await login(email, password);
+  }
+);
 
 /* =========================================================
    FORM / MODAL BEHAVIOUR
