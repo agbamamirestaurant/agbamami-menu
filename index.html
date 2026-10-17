@@ -458,11 +458,11 @@ body.lightbox-open{overflow:hidden}
       </a>
     </div>
 
-    <div class="brand">
-      <div class="logo-placeholder" id="logoBox">ADD LOGO</div>
-      <h1>Agbamami Restaurant Menu</h1>
-      <p class="subtitle">Explore our menu</p>
-    </div>
+  <div class="brand">
+  <div class="logo-placeholder" id="logoBox">ADD LOGO</div>
+  <h1 id="restaurantNameDisplay">Agbamami Restaurant Menu</h1>
+  <p class="subtitle" id="restaurantDescriptionDisplay">Explore our menu</p>
+</div>
 
     <div id="categories" class="categories"></div>
     <p class="small-note">Tap a category to view the menu.</p>
@@ -1890,16 +1890,24 @@ document.getElementById("backBtn").addEventListener("click",()=>{
   
 loadRestaurantSettingsFromAppwrite().then(() => {
 
-document.getElementById("callBtn").href =
-  "tel:" + RESTAURANT_SETTINGS.phone;
+  document.getElementById("callBtn").href =
+    "tel:" + RESTAURANT_SETTINGS.phone;
 
-document.getElementById("locationBtn").href =
-  RESTAURANT_SETTINGS.location;
+  document.getElementById("locationBtn").href =
+    RESTAURANT_SETTINGS.location;
+
+  document.getElementById("restaurantNameDisplay").textContent =
+    RESTAURANT_SETTINGS.restaurantName + " Restaurant Menu";
+
+  document.getElementById("restaurantDescriptionDisplay").textContent =
+    RESTAURANT_SETTINGS.description ||
+    "Explore our menu";
 
   renderCategories();
   loadMenuFromAppwrite();
 
 });
+
 </script>
 </body>
 </html>
