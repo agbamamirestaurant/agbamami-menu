@@ -1,0 +1,1968 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Agbamami Admin</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@28.3.0"></script>
+
+  <style>
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:#f5f5f5;
+      color:#222;
+    }
+
+    button,
+    input,
+    textarea,
+    select{
+      font:inherit;
+    }
+
+    .container{
+      width:min(1100px,94%);
+      margin:0 auto;
+    }
+
+    /* LOGIN */
+
+    #loginScreen{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .login-box{
+      width:100%;
+      max-width:420px;
+      background:#fff;
+      padding:30px;
+      border-radius:18px;
+      box-shadow:0 8px 30px rgba(0,0,0,.08);
+    }
+
+    .login-box h1{
+      margin:0 0 8px;
+      text-align:center;
+    }
+
+    .login-box p{
+      text-align:center;
+      color:#777;
+      margin-bottom:25px;
+    }
+
+    /* APP */
+
+    #adminScreen{
+      display:none;
+      padding-bottom:50px;
+    }
+
+    header{
+      background:#fff;
+      border-bottom:1px solid #ddd;
+      position:sticky;
+      top:0;
+      z-index:20;
+    }
+
+    .header-inner{
+      min-height:70px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+    }
+
+    .brand{
+      font-size:22px;
+      font-weight:700;
+    }
+
+    .header-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .dashboard{
+      padding:25px 0;
+    }
+
+    .toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
+    }
+
+    .toolbar h2{
+      margin:0;
+    }
+
+    .section{
+      background:#fff;
+      border-radius:16px;
+      padding:20px;
+      margin-bottom:22px;
+      box-shadow:0 3px 15px rgba(0,0,0,.05);
+    }
+
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:15px;
+    }
+
+    .section-title h3{
+      margin:0;
+    }
+
+    /* FORMS */
+
+    label{
+      display:block;
+      font-weight:600;
+      margin-bottom:6px;
+    }
+
+    input,
+    textarea,
+    select{
+      width:100%;
+      border:1px solid #ccc;
+      border-radius:10px;
+      padding:11px 12px;
+      outline:none;
+      background:#fff;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus{
+      border-color:#b56b2a;
+    }
+
+    textarea{
+      min-height:90px;
+      resize:vertical;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:15px;
+    }
+
+    .full{
+      grid-column:1/-1;
+    }
+
+    .form-actions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top:15px;
+      flex-wrap:wrap;
+    }
+
+    /* BUTTONS */
+
+    button{
+      border:0;
+      border-radius:9px;
+      padding:10px 15px;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    .primary{
+      background:#b56b2a;
+      color:#fff;
+    }
+
+    .secondary{
+      background:#eee;
+      color:#222;
+    }
+
+    .danger{
+      background:#c62828;
+      color:#fff;
+    }
+
+    .success{
+      background:#2e7d32;
+      color:#fff;
+    }
+
+    .warning{
+      background:#ef9b18;
+      color:#fff;
+    }
+
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    /* CATEGORIES */
+
+    .category-list{
+      display:grid;
+      gap:12px;
+    }
+
+    .category-row{
+      border:1px solid #ddd;
+      border-radius:12px;
+      padding:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+    }
+
+    .category-info{
+      min-width:0;
+    }
+
+    .category-name{
+      font-weight:700;
+      font-size:17px;
+    }
+
+    .category-meta{
+      color:#777;
+      font-size:13px;
+      margin-top:4px;
+    }
+
+    .category-actions{
+      display:flex;
+      gap:7px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .hidden-category{
+      opacity:.55;
+    }
+
+    /* ITEMS */
+
+    .item-list{
+      display:grid;
+      gap:12px;
+    }
+
+    .item-row{
+      border:1px solid #ddd;
+      border-radius:12px;
+      padding:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+    }
+
+    .item-info{
+      min-width:0;
+    }
+
+    .item-name{
+      font-weight:700;
+      font-size:16px;
+    }
+
+    .item-price{
+      color:#b56b2a;
+      font-weight:700;
+      margin-top:4px;
+    }
+
+    .item-description{
+      color:#777;
+      font-size:13px;
+      margin-top:5px;
+    }
+
+    .item-status{
+      display:inline-block;
+      margin-top:7px;
+      font-size:12px;
+      font-weight:700;
+      padding:4px 8px;
+      border-radius:20px;
+    }
+
+    .available{
+      background:#e8f5e9;
+      color:#2e7d32;
+    }
+
+    .unavailable{
+      background:#ffebee;
+      color:#c62828;
+    }
+
+    .item-actions{
+      display:flex;
+      gap:7px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    /* MODAL */
+
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:100;
+      padding:20px;
+      overflow:auto;
+    }
+
+    .modal-content{
+      width:min(650px,100%);
+      background:#fff;
+      border-radius:18px;
+      padding:22px;
+      margin:40px auto;
+    }
+
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:18px;
+    }
+
+    .modal-header h3{
+      margin:0;
+    }
+
+    .close{
+      background:#eee;
+      border-radius:50%;
+      width:38px;
+      height:38px;
+      padding:0;
+      font-size:20px;
+    }
+
+    /* MESSAGE */
+
+    #message{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      z-index:200;
+      max-width:350px;
+      display:none;
+      padding:14px 18px;
+      border-radius:10px;
+      color:#fff;
+      box-shadow:0 5px 20px rgba(0,0,0,.2);
+    }
+
+    #message.success-message{
+      background:#2e7d32;
+    }
+
+    #message.error-message{
+      background:#c62828;
+    }
+
+    .empty{
+      color:#777;
+      padding:15px 0;
+    }
+
+    .loading{
+      color:#777;
+      padding:10px 0;
+    }
+
+    @media(max-width:700px){
+      .form-grid{
+        grid-template-columns:1fr;
+      }
+
+      .full{
+        grid-column:auto;
+      }
+
+      .category-row,
+      .item-row{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .category-actions,
+      .item-actions{
+        justify-content:flex-start;
+        width:100%;
+      }
+
+      .header-inner{
+        padding:12px 0;
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .header-actions{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+  <section id="loginScreen">
+    <div class="login-box">
+      <h1>Agbamami Admin</h1>
+      <p>Sign in to manage your restaurant menu.</p>
+
+      <form id="loginForm">
+        <div style="margin-bottom:15px;">
+          <label for="loginEmail">Email</label>
+          <input
+            id="loginEmail"
+            type="email"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div style="margin-bottom:15px;">
+          <label for="loginPassword">Password</label>
+          <input
+            id="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <button class="primary" type="submit" style="width:100%;">
+          Log in
+        </button>
+      </form>
+    </div>
+  </section>
+
+
+  <!-- ADMIN -->
+  <section id="adminScreen">
+
+    <header>
+      <div class="container header-inner">
+        <div class="brand">Agbamami Admin</div>
+
+        <div class="header-actions">
+          <button class="secondary" onclick="openCustomerMenu()">
+            View Menu
+          </button>
+
+          <button class="danger" onclick="logout()">
+            Log out
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container dashboard">
+
+      <div class="toolbar">
+        <div>
+          <h2>Menu Management</h2>
+          <div style="color:#777;margin-top:4px;">
+            Manage your categories and menu items.
+          </div>
+        </div>
+
+        <button class="primary" onclick="openAddItemModal()">
+          + Add Menu Item
+        </button>
+      </div>
+
+
+      <!-- CATEGORIES -->
+      <section class="section">
+
+        <div class="section-title">
+          <h3>Categories</h3>
+
+          <button class="primary" onclick="openAddCategoryModal()">
+            + Add Category
+          </button>
+        </div>
+
+        <div id="categoryList" class="category-list">
+          <div class="loading">Loading categories...</div>
+        </div>
+
+      </section>
+
+
+      <!-- ITEMS -->
+      <section class="section">
+
+        <div class="section-title">
+          <h3>Menu Items</h3>
+        </div>
+
+        <div id="itemList" class="item-list">
+          <div class="loading">Loading menu items...</div>
+        </div>
+
+      </section>
+
+    </main>
+  </section>
+
+
+  <!-- CATEGORY MODAL -->
+  <div id="categoryModal" class="modal">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h3 id="categoryModalTitle">Add Category</h3>
+        <button class="close" onclick="closeCategoryModal()">×</button>
+      </div>
+
+      <form id="categoryForm">
+
+        <input type="hidden" id="categoryId">
+
+        <div class="form-grid">
+
+          <div>
+            <label for="categoryName">Category Name</label>
+            <input id="categoryName" required maxlength="100">
+          </div>
+
+          <div>
+            <label for="categorySortOrder">Sort Order</label>
+            <input
+              id="categorySortOrder"
+              type="number"
+              min="0"
+              max="1000"
+              value="0"
+              required
+            >
+          </div>
+
+          <div class="full">
+            <label for="categoryImage">Category Image</label>
+            <input
+              id="categoryImage"
+              maxlength="500"
+              placeholder="images/categories/soups.png"
+            >
+          </div>
+
+          <div class="full">
+            <label for="categoryDescription">Description</label>
+            <textarea id="categoryDescription"></textarea>
+          </div>
+
+          <div>
+            <label>
+              <input
+                id="categoryIsDrink"
+                type="checkbox"
+                style="width:auto;margin-right:7px;"
+              >
+              Drink-style category
+            </label>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="secondary"
+            onclick="closeCategoryModal()"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="primary">
+            Save Category
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+
+  <!-- ITEM MODAL -->
+  <div id="itemModal" class="modal">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h3 id="itemModalTitle">Add Menu Item</h3>
+        <button class="close" onclick="closeItemModal()">×</button>
+      </div>
+
+      <form id="itemForm">
+
+        <input type="hidden" id="itemId">
+
+        <div class="form-grid">
+
+          <div class="full">
+            <label for="itemName">Item Name</label>
+            <input id="itemName" maxlength="150" required>
+          </div>
+
+          <div>
+            <label for="itemPrice">Price</label>
+            <input
+              id="itemPrice"
+              maxlength="50"
+              placeholder="GH₵ 100"
+              required
+            >
+          </div>
+
+          <div>
+            <label for="itemCategory">Category</label>
+            <select id="itemCategory" required></select>
+          </div>
+
+          <div class="full">
+            <label for="itemImage">Image</label>
+            <input
+              id="itemImage"
+              maxlength="500"
+              placeholder="images/food.jpg"
+            >
+          </div>
+
+          <div class="full">
+            <label for="itemDescription">Description</label>
+            <textarea id="itemDescription"></textarea>
+          </div>
+
+          <div>
+            <label for="itemSortOrder">Sort Order</label>
+            <input
+              id="itemSortOrder"
+              type="number"
+              min="0"
+              max="10000"
+              value="0"
+              required
+            >
+          </div>
+
+          <div>
+            <label for="itemType">Item Type</label>
+            <input
+              id="itemType"
+              maxlength="30"
+              placeholder="e.g. drink"
+            >
+          </div>
+
+          <div>
+            <label>
+              <input
+                id="itemAvailable"
+                type="checkbox"
+                checked
+                style="width:auto;margin-right:7px;"
+              >
+              Available
+            </label>
+          </div>
+
+          <div>
+            <label>
+              <input
+                id="itemFeatured"
+                type="checkbox"
+                style="width:auto;margin-right:7px;"
+              >
+              Featured
+            </label>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="secondary"
+            onclick="closeItemModal()"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="primary">
+            Save Item
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+
+  <div id="message"></div>
+
+
+<script>
+/* =========================================================
+   APPWRITE CONFIGURATION
+========================================================= */
+
+const APPWRITE_ENDPOINT =
+  "https://fra.cloud.appwrite.io/v1";
+
+const APPWRITE_PROJECT_ID =
+  "6ad2ca49001034ba372a";
+
+const APPWRITE_DATABASE_ID =
+  "agbamami_menu";
+
+const APPWRITE_CATEGORIES_TABLE =
+  "categories";
+
+const APPWRITE_MENU_ITEMS_TABLE =
+  "menu_items";
+
+const APPWRITE_SETTINGS_TABLE =
+  "restaurant_settings";
+
+
+/* =========================================================
+   APPWRITE INITIALIZATION
+========================================================= */
+
+const appwriteClient = new Appwrite.Client();
+
+appwriteClient
+  .setEndpoint(APPWRITE_ENDPOINT)
+  .setProject(APPWRITE_PROJECT_ID);
+
+const account =
+  new Appwrite.Account(appwriteClient);
+
+const tablesDB =
+  new Appwrite.TablesDB(appwriteClient);
+
+
+/* =========================================================
+   LOCAL STATE
+========================================================= */
+
+let categories = [];
+let menuItems = [];
+
+
+/* =========================================================
+   GENERAL HELPERS
+========================================================= */
+
+function showMessage(text, type = "success"){
+  const message =
+    document.getElementById("message");
+
+  message.textContent = text;
+
+  message.className =
+    type === "error"
+      ? "error-message"
+      : "success-message";
+
+  message.style.display = "block";
+
+  setTimeout(() => {
+    message.style.display = "none";
+  }, 3500);
+}
+
+
+function escapeHTML(value){
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   GET ALL ROWS
+========================================================= */
+
+async function getAllRows(tableId){
+
+  let allRows = [];
+  let offset = 0;
+
+  while(true){
+
+    const response =
+      await tablesDB.listRows({
+        databaseId:
+          APPWRITE_DATABASE_ID,
+
+        tableId:
+          tableId,
+
+        queries: [
+          Appwrite.Query.limit(500),
+          Appwrite.Query.offset(offset)
+        ]
+      });
+
+    allRows =
+      allRows.concat(response.rows);
+
+    if(response.rows.length < 500){
+      break;
+    }
+
+    offset += 500;
+  }
+
+  return allRows;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function checkExistingSession(){
+
+  try{
+
+    await account.get();
+
+    showAdminScreen();
+
+  }catch(error){
+
+    showLoginScreen();
+
+  }
+}
+
+
+async function login(email, password){
+
+  try{
+
+    await account.createEmailPasswordSession({
+      email: email,
+      password: password
+    });
+
+    showMessage("Login successful.");
+
+    showAdminScreen();
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message || "Login failed.",
+      "error"
+    );
+  }
+}
+
+
+async function logout(){
+
+  try{
+
+    await account.deleteSession({
+      sessionId: "current"
+    });
+
+  }catch(error){
+
+    console.warn(error);
+
+  }
+
+  showLoginScreen();
+}
+
+
+function showLoginScreen(){
+
+  document.getElementById("loginScreen").style.display =
+    "flex";
+
+  document.getElementById("adminScreen").style.display =
+    "none";
+}
+
+
+async function showAdminScreen(){
+
+  document.getElementById("loginScreen").style.display =
+    "none";
+
+  document.getElementById("adminScreen").style.display =
+    "block";
+
+  await loadData();
+}
+
+
+/* =========================================================
+   LOAD DATA
+========================================================= */
+
+async function loadData(){
+
+  try{
+
+    categories =
+      await getAllRows(
+        APPWRITE_CATEGORIES_TABLE
+      );
+
+    menuItems =
+      await getAllRows(
+        APPWRITE_MENU_ITEMS_TABLE
+      );
+
+    categories.sort(
+      (a,b) =>
+        (a.sortOrder || 0) -
+        (b.sortOrder || 0)
+    );
+
+    menuItems.sort(
+      (a,b) =>
+        (a.sortOrder || 0) -
+        (b.sortOrder || 0)
+    );
+
+    renderCategories();
+    renderItems();
+    populateCategorySelect();
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message ||
+      "Could not load Appwrite data.",
+      "error"
+    );
+  }
+}
+
+
+/* =========================================================
+   RENDER CATEGORIES
+========================================================= */
+
+function renderCategories(){
+
+  const container =
+    document.getElementById("categoryList");
+
+  if(!categories.length){
+
+    container.innerHTML =
+      '<div class="empty">No categories found.</div>';
+
+    return;
+  }
+
+  container.innerHTML =
+    categories.map(category => {
+
+      const categoryItemCount =
+        menuItems.filter(
+          item =>
+            item.categoryId === category.$id
+        ).length;
+
+      const hidden =
+        category.invisible === true;
+
+      return `
+        <div class="category-row ${hidden ? "hidden-category" : ""}">
+
+          <div class="category-info">
+
+            <div class="category-name">
+              ${escapeHTML(category.name)}
+            </div>
+
+            <div class="category-meta">
+              ${categoryItemCount} item(s)
+              · Sort order: ${category.sortOrder || 0}
+              · ${hidden ? "Hidden" : "Visible"}
+            </div>
+
+          </div>
+
+          <div class="category-actions">
+
+            <button
+              class="secondary"
+              onclick="editCategory('${category.$id}')"
+            >
+              Edit
+            </button>
+
+            <button
+              class="${hidden ? "success" : "warning"}"
+              onclick="toggleCategoryVisibility('${category.$id}')"
+            >
+              ${hidden ? "Show" : "Hide"}
+            </button>
+
+            <button
+              class="danger"
+              onclick="deleteCategory('${category.$id}')"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+
+/* =========================================================
+   RENDER ITEMS
+========================================================= */
+
+function renderItems(){
+
+  const container =
+    document.getElementById("itemList");
+
+  if(!menuItems.length){
+
+    container.innerHTML =
+      '<div class="empty">No menu items found.</div>';
+
+    return;
+  }
+
+  container.innerHTML =
+    menuItems.map(item => {
+
+      const category =
+        categories.find(
+          cat =>
+            cat.$id === item.categoryId
+        );
+
+      const categoryName =
+        category
+          ? category.name
+          : "Unknown category";
+
+      const available =
+        item.isAvailable !== false;
+
+      return `
+        <div class="item-row">
+
+          <div class="item-info">
+
+            <div class="item-name">
+              ${escapeHTML(item.name)}
+            </div>
+
+            <div class="item-price">
+              ${escapeHTML(item.price)}
+            </div>
+
+            <div class="category-meta">
+              ${escapeHTML(categoryName)}
+            </div>
+
+            ${
+              item.description
+                ? `
+                  <div class="item-description">
+                    ${escapeHTML(item.description)}
+                  </div>
+                `
+                : ""
+            }
+
+            <span class="item-status ${
+              available
+                ? "available"
+                : "unavailable"
+            }">
+              ${
+                available
+                  ? "Available"
+                  : "Unavailable"
+              }
+            </span>
+
+          </div>
+
+          <div class="item-actions">
+
+            <button
+              class="secondary"
+              onclick="editItem('${item.$id}')"
+            >
+              Edit
+            </button>
+
+            <button
+              class="${available ? "warning" : "success"}"
+              onclick="toggleItemAvailability('${item.$id}')"
+            >
+              ${
+                available
+                  ? "Mark Unavailable"
+                  : "Mark Available"
+              }
+            </button>
+
+            <button
+              class="danger"
+              onclick="deleteItem('${item.$id}')"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+
+/* =========================================================
+   CATEGORY SELECT
+========================================================= */
+
+function populateCategorySelect(){
+
+  const select =
+    document.getElementById("itemCategory");
+
+  select.innerHTML =
+    categories.map(category => {
+
+      return `
+        <option value="${escapeHTML(category.$id)}">
+          ${escapeHTML(category.name)}
+        </option>
+      `;
+
+    }).join("");
+}
+
+
+/* =========================================================
+   CATEGORY MODAL
+========================================================= */
+
+function openAddCategoryModal(){
+
+  document.getElementById(
+    "categoryModalTitle"
+  ).textContent = "Add Category";
+
+  document.getElementById(
+    "categoryId"
+  ).value = "";
+
+  document.getElementById(
+    "categoryName"
+  ).value = "";
+
+  document.getElementById(
+    "categoryImage"
+  ).value = "";
+
+  document.getElementById(
+    "categoryDescription"
+  ).value = "";
+
+  document.getElementById(
+    "categorySortOrder"
+  ).value = categories.length;
+
+  document.getElementById(
+    "categoryIsDrink"
+  ).checked = false;
+
+  document.getElementById(
+    "categoryModal"
+  ).style.display = "block";
+}
+
+
+function closeCategoryModal(){
+
+  document.getElementById(
+    "categoryModal"
+  ).style.display = "none";
+}
+
+
+function editCategory(id){
+
+  const category =
+    categories.find(
+      cat => cat.$id === id
+    );
+
+  if(!category) return;
+
+  document.getElementById(
+    "categoryModalTitle"
+  ).textContent = "Edit Category";
+
+  document.getElementById(
+    "categoryId"
+  ).value = category.$id;
+
+  document.getElementById(
+    "categoryName"
+  ).value = category.name || "";
+
+  document.getElementById(
+    "categoryImage"
+  ).value = category.image || "";
+
+  document.getElementById(
+    "categoryDescription"
+  ).value =
+    category.description || "";
+
+  document.getElementById(
+    "categorySortOrder"
+  ).value =
+    category.sortOrder || 0;
+
+  document.getElementById(
+    "categoryIsDrink"
+  ).checked =
+    category.isDrink === true;
+
+  document.getElementById(
+    "categoryModal"
+  ).style.display = "block";
+}
+
+
+document.getElementById(
+  "categoryForm"
+).addEventListener(
+  "submit",
+  async function(event){
+
+    event.preventDefault();
+
+    const id =
+      document.getElementById(
+        "categoryId"
+      ).value.trim();
+
+    const data = {
+
+      name:
+        document.getElementById(
+          "categoryName"
+        ).value.trim(),
+
+      image:
+        document.getElementById(
+          "categoryImage"
+        ).value.trim(),
+
+      description:
+        document.getElementById(
+          "categoryDescription"
+        ).value.trim(),
+
+      sortOrder:
+        Number(
+          document.getElementById(
+            "categorySortOrder"
+          ).value
+        ),
+
+      isDrink:
+        document.getElementById(
+          "categoryIsDrink"
+        ).checked,
+
+      invisible:
+        id
+          ? (
+              categories.find(
+                cat => cat.$id === id
+              )?.invisible === true
+            )
+          : false
+    };
+
+    try{
+
+      if(id){
+
+        await tablesDB.updateRow({
+          databaseId:
+            APPWRITE_DATABASE_ID,
+
+          tableId:
+            APPWRITE_CATEGORIES_TABLE,
+
+          rowId:
+            id,
+
+          data:
+            data
+        });
+
+        showMessage(
+          "Category updated successfully."
+        );
+
+      }else{
+
+        await tablesDB.createRow({
+          databaseId:
+            APPWRITE_DATABASE_ID,
+
+          tableId:
+            APPWRITE_CATEGORIES_TABLE,
+
+          rowId:
+            Appwrite.ID.unique(),
+
+          data:
+            data
+        });
+
+        showMessage(
+          "Category added successfully."
+        );
+      }
+
+      closeCategoryModal();
+
+      await loadData();
+
+    }catch(error){
+
+      console.error(error);
+
+      showMessage(
+        error.message ||
+        "Could not save category.",
+        "error"
+      );
+    }
+
+  }
+);
+
+
+/* =========================================================
+   CATEGORY VISIBILITY
+========================================================= */
+
+async function toggleCategoryVisibility(id){
+
+  const category =
+    categories.find(
+      cat => cat.$id === id
+    );
+
+  if(!category) return;
+
+  try{
+
+    await tablesDB.updateRow({
+
+      databaseId:
+        APPWRITE_DATABASE_ID,
+
+      tableId:
+        APPWRITE_CATEGORIES_TABLE,
+
+      rowId:
+        id,
+
+      data:{
+        invisible:
+          category.invisible !== true
+      }
+
+    });
+
+    showMessage(
+      category.invisible === true
+        ? "Category shown."
+        : "Category hidden."
+    );
+
+    await loadData();
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message ||
+      "Could not change category visibility.",
+      "error"
+    );
+  }
+}
+
+
+/* =========================================================
+   DELETE CATEGORY
+========================================================= */
+
+async function deleteCategory(id){
+
+  const category =
+    categories.find(
+      cat => cat.$id === id
+    );
+
+  if(!category) return;
+
+  const items =
+    menuItems.filter(
+      item =>
+        item.categoryId === id
+    );
+
+  if(items.length){
+
+    alert(
+      `You cannot delete "${category.name}" yet because it contains ${items.length} menu item(s). Remove or move those items first.`
+    );
+
+    return;
+  }
+
+  const confirmed =
+    confirm(
+      `Delete the category "${category.name}"?`
+    );
+
+  if(!confirmed) return;
+
+  try{
+
+    await tablesDB.deleteRow({
+
+      databaseId:
+        APPWRITE_DATABASE_ID,
+
+      tableId:
+        APPWRITE_CATEGORIES_TABLE,
+
+      rowId:
+        id
+    });
+
+    showMessage(
+      "Category deleted."
+    );
+
+    await loadData();
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message ||
+      "Could not delete category.",
+      "error"
+    );
+  }
+}
+
+
+/* =========================================================
+   ITEM MODAL
+========================================================= */
+
+function openAddItemModal(){
+
+  if(!categories.length){
+
+    showMessage(
+      "Create a category first.",
+      "error"
+    );
+
+    return;
+  }
+
+  document.getElementById(
+    "itemModalTitle"
+  ).textContent = "Add Menu Item";
+
+  document.getElementById(
+    "itemId"
+  ).value = "";
+
+  document.getElementById(
+    "itemName"
+  ).value = "";
+
+  document.getElementById(
+    "itemPrice"
+  ).value = "";
+
+  document.getElementById(
+    "itemDescription"
+  ).value = "";
+
+  document.getElementById(
+    "itemImage"
+  ).value = "";
+
+  document.getElementById(
+    "itemSortOrder"
+  ).value = menuItems.length;
+
+  document.getElementById(
+    "itemType"
+  ).value = "";
+
+  document.getElementById(
+    "itemAvailable"
+  ).checked = true;
+
+  document.getElementById(
+    "itemFeatured"
+  ).checked = false;
+
+  document.getElementById(
+    "itemCategory"
+  ).value =
+    categories[0].$id;
+
+  document.getElementById(
+    "itemModal"
+  ).style.display = "block";
+}
+
+
+function closeItemModal(){
+
+  document.getElementById(
+    "itemModal"
+  ).style.display = "none";
+}
+
+
+function editItem(id){
+
+  const item =
+    menuItems.find(
+      row => row.$id === id
+    );
+
+  if(!item) return;
+
+  document.getElementById(
+    "itemModalTitle"
+  ).textContent = "Edit Menu Item";
+
+  document.getElementById(
+    "itemId"
+  ).value = item.$id;
+
+  document.getElementById(
+    "itemName"
+  ).value = item.name || "";
+
+  document.getElementById(
+    "itemPrice"
+  ).value = item.price || "";
+
+  document.getElementById(
+    "itemDescription"
+  ).value =
+    item.description || "";
+
+  document.getElementById(
+    "itemImage"
+  ).value =
+    item.image || "";
+
+  document.getElementById(
+    "itemSortOrder"
+  ).value =
+    item.sortOrder || 0;
+
+  document.getElementById(
+    "itemType"
+  ).value =
+    item.itemType || "";
+
+  document.getElementById(
+    "itemAvailable"
+  ).checked =
+    item.isAvailable !== false;
+
+  document.getElementById(
+    "itemFeatured"
+  ).checked =
+    item.isFeatured === true;
+
+  document.getElementById(
+    "itemCategory"
+  ).value =
+    item.categoryId;
+
+  document.getElementById(
+    "itemModal"
+  ).style.display = "block";
+}
+
+
+document.getElementById(
+  "itemForm"
+).addEventListener(
+  "submit",
+  async function(event){
+
+    event.preventDefault();
+
+    const id =
+      document.getElementById(
+        "itemId"
+      ).value.trim();
+
+    const data = {
+
+      name:
+        document.getElementById(
+          "itemName"
+        ).value.trim(),
+
+      price:
+        document.getElementById(
+          "itemPrice"
+        ).value.trim(),
+
+      description:
+        document.getElementById(
+          "itemDescription"
+        ).value.trim(),
+
+      categoryId:
+        document.getElementById(
+          "itemCategory"
+        ).value,
+
+      image:
+        document.getElementById(
+          "itemImage"
+        ).value.trim(),
+
+      isAvailable:
+        document.getElementById(
+          "itemAvailable"
+        ).checked,
+
+      sortOrder:
+        Number(
+          document.getElementById(
+            "itemSortOrder"
+          ).value
+        ),
+
+      itemType:
+        document.getElementById(
+          "itemType"
+        ).value.trim(),
+
+      isFeatured:
+        document.getElementById(
+          "itemFeatured"
+        ).checked
+
+    };
+
+    try{
+
+      if(id){
+
+        await tablesDB.updateRow({
+
+          databaseId:
+            APPWRITE_DATABASE_ID,
+
+          tableId:
+            APPWRITE_MENU_ITEMS_TABLE,
+
+          rowId:
+            id,
+
+          data:
+            data
+        });
+
+        showMessage(
+          "Menu item updated successfully."
+        );
+
+      }else{
+
+        await tablesDB.createRow({
+
+          databaseId:
+            APPWRITE_DATABASE_ID,
+
+          tableId:
+            APPWRITE_MENU_ITEMS_TABLE,
+
+          rowId:
+            Appwrite.ID.unique(),
+
+          data:
+            data
+        });
+
+        showMessage(
+          "Menu item added successfully."
+        );
+      }
+
+      closeItemModal();
+
+      await loadData();
+
+    }catch(error){
+
+      console.error(error);
+
+      showMessage(
+        error.message ||
+        "Could not save menu item.",
+        "error"
+      );
+    }
+
+  }
+);
+
+
+/* =========================================================
+   ITEM AVAILABILITY
+========================================================= */
+
+async function toggleItemAvailability(id){
+
+  const item =
+    menuItems.find(
+      row => row.$id === id
+    );
+
+  if(!item) return;
+
+  try{
+
+    await tablesDB.updateRow({
+
+      databaseId:
+        APPWRITE_DATABASE_ID,
+
+      tableId:
+        APPWRITE_MENU_ITEMS_TABLE,
+
+      rowId:
+        id,
+
+      data:{
+        isAvailable:
+          item.isAvailable === false
+      }
+
+    });
+
+    showMessage(
+      item.isAvailable === false
+        ? "Item marked available."
+        : "Item marked unavailable."
+    );
+
+    await loadData();
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message ||
+      "Could not change item availability.",
+      "error"
+    );
+  }
+}
+
+
+/* =========================================================
+   DELETE ITEM
+========================================================= */
+
+async function deleteItem(id){
+
+  const item =
+    menuItems.find(
+      row => row.$id === id
+    );
+
+  if(!item) return;
+
+  const confirmed =
+    confirm(
+      `Delete "${item.name}"? This cannot be undone.`
+    );
+
+  if(!confirmed) return;
+
+  try{
+
+    await tablesDB.deleteRow({
+
+      databaseId:
+        APPWRITE_DATABASE_ID,
+
+      tableId:
+        APPWRITE_MENU_ITEMS_TABLE,
+
+      rowId:
+        id
+    });
+
+    showMessage(
+      "Menu item deleted."
+    );
+
+    await loadData();
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message ||
+      "Could not delete menu item.",
+      "error"
+    );
+  }
+}
+
+
+/* =========================================================
+   CUSTOMER MENU
+========================================================= */
+
+function openCustomerMenu(){
+
+  window.open(
+    "index.html",
+    "_blank"
+  );
+}
+
+
+/* =========================================================
+   FORM / MODAL BEHAVIOUR
+========================================================= */
+
+window.addEventListener(
+  "click",
+  function(event){
+
+    const categoryModal =
+      document.getElementById(
+        "categoryModal"
+      );
+
+    const itemModal =
+      document.getElementById(
+        "itemModal"
+      );
+
+    if(event.target === categoryModal){
+      closeCategoryModal();
+    }
+
+    if(event.target === itemModal){
+      closeItemModal();
+    }
+
+  }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+checkExistingSession();
+
+</script>
+
+</body>
+</html>
