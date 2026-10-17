@@ -679,14 +679,20 @@
             >
           </div>
 
-          <div class="full">
-            <label for="categoryImage">Category Image</label>
-            <input
-              id="categoryImage"
-              maxlength="500"
-              placeholder="images/categories/soups.png"
-            >
-          </div>
+<div class="full">
+  <label for="categoryImageFile">Category Photo</label>
+
+  <input
+    type="file"
+    id="categoryImageFile"
+    accept="image/*"
+  >
+
+  <div
+    id="categoryImageUploadStatus"
+    style="color:#777;margin-top:6px;"
+  ></div>
+</div>
 
           <div class="full">
             <label for="categoryDescription">Description</label>
@@ -1209,6 +1215,7 @@ async function uploadMenuItemImage(){
 
       });
 
+  
     const fileUrl =
       `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
 
@@ -1228,6 +1235,65 @@ async function uploadMenuItemImage(){
     return null;
   }
 }
+
+  async function uploadCategoryImage(){
+
+  const fileInput =
+    document.getElementById(
+      "categoryImageFile"
+    );
+
+  const status =
+    document.getElementById(
+      "categoryImageUploadStatus"
+    );
+
+  const file =
+    fileInput.files[0];
+
+  if(!file){
+    return null;
+  }
+
+  try{
+
+    status.textContent =
+      "Uploading image...";
+
+    const response =
+      await storage.createFile({
+
+        bucketId:
+          APPWRITE_STORAGE_BUCKET_ID,
+
+        fileId:
+          Appwrite.ID.unique(),
+
+        file:
+          file
+
+      });
+
+    const fileUrl =
+      `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
+
+    status.textContent =
+      "Image uploaded successfully.";
+
+    return fileUrl;
+
+  }catch(error){
+
+    console.error(error);
+
+    status.textContent =
+      error.message ||
+      "Could not upload image.";
+
+    return null;
+  }
+}
+    
   
 async function saveRestaurantSettings(){
 
@@ -1608,10 +1674,14 @@ function openAddCategoryModal(){
     "categoryName"
   ).value = "";
 
-  document.getElementById(
-    "categoryImage"
-  ).value = "";
+ document.getElementById(
+  "categoryImageFile"
+).value = "";
 
+document.getElementById(
+  "categoryImageUploadStatus"
+).textContent = "";
+  
   document.getElementById(
     "categoryDescription"
   ).value = "";
@@ -1660,9 +1730,13 @@ function editCategory(id){
   ).value = category.name || "";
 
   document.getElementById(
-    "categoryImage"
-  ).value = category.image || "";
+  "categoryImageFile"
+).value = "";
 
+document.getElementById(
+  "categoryImageUploadStatus"
+).textContent = "";
+  
   document.getElementById(
     "categoryDescription"
   ).value =
@@ -1697,45 +1771,57 @@ document.getElementById(
         "categoryId"
       ).value.trim();
 
-    const data = {
+  const uploadedCategoryImageUrl =
+  await uploadCategoryImage();
 
-      name:
-        document.getElementById(
-          "categoryName"
-        ).value.trim(),
+const existingCategory =
+  id
+    ? categories.find(
+        row => row.$id === id
+      )
+    : null;
 
-      image:
-        document.getElementById(
-          "categoryImage"
-        ).value.trim(),
+const categoryImageUrl =
+  uploadedCategoryImageUrl ||
+  existingCategory?.image ||
+  "";
 
-      description:
-        document.getElementById(
-          "categoryDescription"
-        ).value.trim(),
+const data = {
 
-      sortOrder:
-        Number(
-          document.getElementById(
-            "categorySortOrder"
-          ).value
-        ),
+  name:
+    document.getElementById(
+      "categoryName"
+    ).value.trim(),
 
-      isDrink:
-        document.getElementById(
-          "categoryIsDrink"
-        ).checked,
+  image:
+    categoryImageUrl,
 
-      invisible:
-        id
-          ? (
-              categories.find(
-                cat => cat.$id === id
-              )?.invisible === true
-            )
-          : false
-    };
+  description:
+    document.getElementById(
+      "categoryDescription"
+    ).value.trim(),
 
+  sortOrder:
+    Number(
+      document.getElementById(
+        "categorySortOrder"
+      ).value
+    ),
+
+  isDrink:
+    document.getElementById(
+      "categoryIsDrink"
+    ).checked,
+
+  invisible:
+    id
+      ? (
+          categories.find(
+            cat => cat.$id === id
+          )?.invisible === true
+        )
+      : false
+};
     try{
 
       if(id){
