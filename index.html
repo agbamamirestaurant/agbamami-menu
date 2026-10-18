@@ -1460,7 +1460,11 @@ function resolveItemImage(image){
   const value =
     String(image).trim();
 
-  /* Full URLs already saved by Appwrite */
+  /*
+    1. Full URLs are already complete.
+    This includes images uploaded through
+    the Admin dashboard to Appwrite Storage.
+  */
   if(
     value.startsWith("http://") ||
     value.startsWith("https://") ||
@@ -1469,17 +1473,51 @@ function resolveItemImage(image){
     return value;
   }
 
-  /* Local images stored in GitHub */
+
+  /*
+    2. Local GitHub images.
+
+    Examples:
+      5.jpeg
+      9F.jpeg
+      fried rice with chicken.jpeg
+      images/tilapia.jpeg
+      ./images/soup.jpeg
+  */
+  const localImagePattern =
+    /\.(jpg|jpeg|png|webp|gif|avif|svg)$/i;
+
   if(
+    localImagePattern.test(value) ||
     value.startsWith("images/") ||
-    value.startsWith("./") ||
-    value.startsWith("/")
+    value.startsWith("./images/") ||
+    value.startsWith("/images/")
   ){
-    return value;
+
+    return value
+      .replace(/^\.\/+/, "")
+      .replace(/^\/+/, "");
   }
 
-  /* Local image filename in the same folder as index.html */
-  return value;
+
+  /*
+    3. Anything that is not a local image filename
+    is treated as an Appwrite Storage file ID.
+
+    This keeps compatibility with any existing
+    Appwrite images that may have been saved as
+    only their file ID.
+  */
+  return (
+    APPWRITE_ENDPOINT +
+    "/storage/buckets/" +
+    APPWRITE_STORAGE_BUCKET_ID +
+    "/files/" +
+    encodeURIComponent(value) +
+    "/view?project=" +
+    APPWRITE_PROJECT_ID
+  );
+
 }
 
 const appwriteClient =
