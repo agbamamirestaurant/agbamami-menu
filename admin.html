@@ -2229,16 +2229,17 @@ const APPWRITE_SETTINGS_TABLE =
 const APPWRITE_STORAGE_BUCKET_ID =
   "agbamami_images";
 
-
-/* =========================================================
-   ADMIN AUTH CONFIG
-========================================================= */
-
 const APPWRITE_ADMIN_FUNCTION_ID =
   "6ad408700f7949c8b84b";
 
 const ADMIN_INTERNAL_DOMAIN =
   "agbamami-admin.com";
+
+/* =========================================================
+   ADMIN AUTH CONFIG
+========================================================= */
+
+
 
 
 /* =========================================================
@@ -2327,7 +2328,13 @@ function getSearchTerm(){
 
 function usernameToEmail(username){
 
-  return `${username.trim().toLowerCase()}@${ADMIN_INTERNAL_DOMAIN}`;
+  return (
+    username
+      .trim()
+      .toLowerCase() +
+    "@" +
+    ADMIN_INTERNAL_DOMAIN
+  );
 
 }
 
@@ -2340,47 +2347,58 @@ async function executeAdminFunction(payload){
 
   try{
 
+    console.log(
+      "Calling Agbamami Admin Manager:",
+      APPWRITE_ADMIN_FUNCTION_ID
+    );
+
     const execution =
       await functions.createExecution({
-        functionId:APPWRITE_ADMIN_FUNCTION_ID,
-        body:JSON.stringify(payload),
-        async:false
+        functionId:
+          APPWRITE_ADMIN_FUNCTION_ID,
+
+        body:
+          JSON.stringify(payload),
+
+        async:
+          false
       });
 
-    let responseData = null;
+    console.log(
+      "Function execution:",
+      execution
+    );
+
+    let response =
+      execution.response || "";
 
     try{
 
-      responseData =
-        execution.response
-          ? JSON.parse(execution.response)
-          : null;
+      response =
+        JSON.parse(response);
 
-    }catch(parseError){
+    }catch(error){
 
-      responseData = {
-        success:false,
-        message:
-          execution.response ||
-          "The administrator operation returned an invalid response."
-      };
+      // Response is not JSON.
+      // Keep it as text.
 
     }
 
-
     if(
-      !responseData ||
-      responseData.success !== true
-    ){
+      !response ||
+      response.success !== true
+    )
+    {
 
       throw new Error(
-        responseData?.message ||
+        response?.message ||
+        response ||
         "Administrator operation failed."
       );
 
     }
 
-    return responseData;
+    return response;
 
   }catch(error){
 
@@ -2389,12 +2407,14 @@ async function executeAdminFunction(payload){
       error
     );
 
-    throw error;
+    throw new Error(
+      error?.message ||
+      "Could not contact the administrator management function."
+    );
 
   }
 
 }
-
 
 /* =========================================================
    GET ALL ROWS
@@ -2995,37 +3015,38 @@ async function changeOwnPassword(){
 async function createAdministrator(){
 
   const username =
-    document.getElementById(
-      "newAdminUsername"
-    ).value.trim();
+    document
+      .getElementById("newAdminUsername")
+      .value
+      .trim();
 
   const password =
-    document.getElementById(
-      "newAdminPassword"
-    ).value;
+    document
+      .getElementById("newAdminPassword")
+      .value;
 
   const confirmPassword =
-    document.getElementById(
-      "newAdminPasswordConfirm"
-    ).value;
+    document
+      .getElementById("newAdminPasswordConfirm")
+      .value;
 
-  const status =
-    document.getElementById(
-      "adminCreateStatus"
+  if(!username){
+
+    showMessage(
+      "Please enter a username.",
+      "error"
     );
 
+    return;
+
+  }
 
   if(
-    !/^[a-zA-Z0-9._-]{3,30}$/.test(
-      username
-    )
+    password.length < 8
   ){
 
-    status.textContent =
-      "Username must be 3–30 characters and may contain only letters, numbers, dots, underscores or hyphens.";
-
     showMessage(
-      status.textContent,
+      "Password must be at least 8 characters.",
       "error"
     );
 
@@ -3033,96 +3054,59 @@ async function createAdministrator(){
 
   }
 
-
-  if(password.length < 8){
-
-    status.textContent =
-      "Password must be at least 8 characters.";
+  if(
+    password !== confirmPassword
+  ){
 
     showMessage(
-      status.textContent,
+      "The passwords do not match.",
       "error"
     );
 
     return;
 
   }
-
-
-  if(password !== confirmPassword){
-
-    status.textContent =
-      "The passwords do not match.";
-
-    showMessage(
-      status.textContent,
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  const confirmed =
-    confirm(
-      `Create administrator "${username}"?`
-    );
-
-
-  if(!confirmed){
-    return;
-  }
-
 
   try{
 
-    status.textContent =
-      "Creating administrator...";
-
-
     const result =
       await executeAdminFunction({
-        action:"createAdmin",
-        username:username,
-        password:password
+
+        action:
+          "createAdmin",
+
+        username:
+          username,
+
+        password:
+          password
+
       });
-
-
-    document.getElementById(
-      "newAdminUsername"
-    ).value = "";
-
-    document.getElementById(
-      "newAdminPassword"
-    ).value = "";
-
-    document.getElementById(
-      "newAdminPasswordConfirm"
-    ).value = "";
-
-
-    status.textContent =
-      result.message ||
-      `Administrator ${username} created successfully.`;
-
 
     showMessage(
       result.message ||
-      `Administrator ${username} created successfully.`
+      "Administrator created successfully."
     );
 
+    document
+      .getElementById("newAdminUsername")
+      .value = "";
+
+    document
+      .getElementById("newAdminPassword")
+      .value = "";
+
+    document
+      .getElementById("newAdminPasswordConfirm")
+      .value = "";
 
   }catch(error){
 
     console.error(error);
 
-    status.textContent =
-      error.message ||
-      "Could not create administrator.";
-
     showMessage(
-      status.textContent,
+      error.message ||
+      "Could not create administrator.",
       "error"
     );
 
