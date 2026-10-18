@@ -355,10 +355,21 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
   animation:foodCardEnter .62s cubic-bezier(.22,.61,.36,1) both;
 }
 
+#items .item.menu-item-enter:nth-child(1){animation-delay:.04s}
+#items .item.menu-item-enter:nth-child(2){animation-delay:.08s}
+#items .item.menu-item-enter:nth-child(3){animation-delay:.12s}
+#items .item.menu-item-enter:nth-child(4){animation-delay:.16s}
+#items .item.menu-item-enter:nth-child(5){animation-delay:.20s}
+#items .item.menu-item-enter:nth-child(6){animation-delay:.24s}
+#items .item.menu-item-enter:nth-child(7){animation-delay:.28s}
+#items .item.menu-item-enter:nth-child(8){animation-delay:.32s}
+#items .item.menu-item-enter:nth-child(9){animation-delay:.36s}
+#items .item.menu-item-enter:nth-child(10){animation-delay:.40s}
+
 #items .drink-item.menu-item-enter{
   animation:drinkItemEnter .30s ease-out both;
 }
-
+  
 @keyframes categoryEnter{
   from{opacity:0;transform:translateY(18px);}
   to{opacity:1;transform:translateY(0);}
@@ -389,54 +400,6 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 5px}
 }
 
 /* =========================================================
-   UNAVAILABLE / CANCELLED MENU ITEMS
-========================================================= */
-
-.item.unavailable{
-  opacity:.72;
-}
-
-.item.unavailable .item-name,
-.item.unavailable .item-price{
-  text-decoration:line-through;
-  text-decoration-thickness:2px;
-  text-decoration-color:currentColor;
-}
-
-.item.unavailable .item-photo img{
-  filter:grayscale(.75);
-  opacity:.55;
-}
-
-.unavailable-label{
-  display:inline-block;
-  margin-top:7px;
-  padding:4px 8px;
-  border-radius:6px;
-  background:rgba(120,20,20,.88);
-  color:#fff;
-  font-size:9px;
-  line-height:1;
-  font-weight:800;
-  letter-spacing:.7px;
-  text-transform:uppercase;
-  text-decoration:none !important;
-}
-
-.drink-item.unavailable{
-  opacity:.68;
-}
-
-.drink-item.unavailable .item-name,
-.drink-item.unavailable .item-price{
-  text-decoration:line-through;
-  text-decoration-thickness:2px;
-}
-
-.drink-item.unavailable .unavailable-label{
-  margin-top:4px;
-  background:#8f2d2d;
-}/* =========================================================
    UNAVAILABLE / CANCELLED MENU ITEMS
 ========================================================= */
 
@@ -528,6 +491,7 @@ body.lightbox-open{overflow:hidden}
 @media(max-width:480px){
   .image-lightbox{padding:10px}
   .image-lightbox img{max-width:98vw;max-height:84vh;border-radius:12px}
+  
 }
 </style>
 </head>
@@ -1484,6 +1448,39 @@ const APPWRITE_CATEGORIES_TABLE =
 const APPWRITE_MENU_ITEMS_TABLE =
   "menu_items";
 
+  const APPWRITE_STORAGE_BUCKET_ID =
+  "agbamami_images";
+  
+function resolveItemImage(image){
+
+  if(!image){
+    return "";
+  }
+
+  const value =
+    String(image).trim();
+
+  /* Full URLs already saved by Appwrite */
+  if(
+    value.startsWith("http://") ||
+    value.startsWith("https://") ||
+    value.startsWith("data:")
+  ){
+    return value;
+  }
+
+  /* Local images stored in GitHub */
+  if(
+    value.startsWith("images/") ||
+    value.startsWith("./") ||
+    value.startsWith("/")
+  ){
+    return value;
+  }
+
+  /* Local image filename in the same folder as index.html */
+  return value;
+}
 
 const appwriteClient =
   new Appwrite.Client();
@@ -1647,8 +1644,8 @@ async function loadMenuFromAppwrite(){
           name:
             category.name || "",
 
-          image:
-            category.image || "",
+         image:
+          resolveItemImage(category.image || ""),
 
           isDrink:
             category.isDrink === true,
@@ -1849,37 +1846,44 @@ function openCategory(index){
   }
 
 
-  const info =
-    document.createElement("div");
+ const info =
+  document.createElement("div");
 
-  info.className =
-    "item-info";
-
-
-  const name =
-    document.createElement("div");
-
-  name.className =
-    "item-name";
-
-  name.textContent =
-    item.name;
+info.className =
+  "item-info";
 
 
-  const price =
-    document.createElement("div");
+const itemRow =
+  document.createElement("div");
 
-  price.className =
-    "item-price";
-
-  price.textContent =
-    item.price;
+itemRow.className =
+  "item-row";
 
 
-  info.appendChild(name);
+const name =
+  document.createElement("div");
 
-  info.appendChild(price);
+name.className =
+  "item-name";
 
+name.textContent =
+  item.name;
+
+
+const price =
+  document.createElement("div");
+
+price.className =
+  "item-price";
+
+price.textContent =
+  item.price;
+
+
+itemRow.appendChild(name);
+itemRow.appendChild(price);
+
+info.appendChild(itemRow);
 
   if(item.desc){
 
@@ -1930,13 +1934,28 @@ function openCategory(index){
       "item-photo";
 
 
-    if(item.image){
+  if(item.image){
 
-      const img =
-        document.createElement("img");
+  const img =
+    document.createElement("img");
 
-      img.src =
-        item.image;
+  const imageUrl =
+    resolveItemImage(item.image);
+
+  img.src =
+    imageUrl;
+
+  img.onerror = () => {
+
+    console.error(
+      "Failed to load menu image:",
+      item.name,
+      imageUrl
+    );
+
+    img.style.display = "none";
+
+  };
 
       img.alt =
         item.name;
@@ -1950,7 +1969,7 @@ function openCategory(index){
         () => {
 
           openImagePreview(
-            item.image,
+             imageUrl,
             item.name
           );
 
