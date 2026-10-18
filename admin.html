@@ -2663,6 +2663,15 @@ async function login(identifier,password){
       return;
     }
 
+    if(String(password || "").length < 8){
+
+  showLoginError(
+    "Password must be at least 8 characters long."
+  );
+
+  return;
+}
+
     const email =
       value.includes("@")
         ? value
