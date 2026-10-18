@@ -1082,6 +1082,8 @@ input[type=file]::file-selector-button{
           required
         >
 
+        <div id="loginError" class="login-error"></div>
+
       </div>
 
       <button
@@ -1105,6 +1107,20 @@ input[type=file]::file-selector-button{
       Your username is used instead of your email address.
     </div>
 
+.login-error{
+  display:none;
+  margin:14px 0 0;
+  padding:11px 13px;
+  border-radius:9px;
+  background:#fff0f0;
+  border:1px solid #f1c4c4;
+  color:#b83232;
+  font-size:13px;
+  line-height:1.4;
+  text-align:center;
+  font-weight:600;
+}
+    
   </div>
 
 </section>
@@ -2591,19 +2607,48 @@ async function checkExistingSession(){
 
 }
 
-
 async function login(identifier,password){
 
+  const loginError =
+    document.getElementById("loginError");
+
+  function showLoginError(message){
+
+    if(!loginError){
+      return;
+    }
+
+    loginError.textContent =
+      message;
+
+    loginError.style.display =
+      "block";
+  }
+
+  function clearLoginError(){
+
+    if(!loginError){
+      return;
+    }
+
+    loginError.textContent =
+      "";
+
+    loginError.style.display =
+      "none";
+  }
+
   try{
+
+    clearLoginError();
 
     const value =
       String(identifier || "").trim();
 
     if(!value){
 
-      showMessage(
-        "Please enter your username.",
-        "error"
+      showLoginError(
+        "Please enter your username."
       );
 
       return;
@@ -2611,21 +2656,13 @@ async function login(identifier,password){
 
     if(!password){
 
-      showMessage(
-        "Please enter your password.",
-        "error"
+      showLoginError(
+        "Please enter your password."
       );
 
       return;
     }
 
-    /*
-     * If the user enters an email address,
-     * keep supporting the old email login.
-     *
-     * Otherwise convert the username into
-     * the internal Appwrite email.
-     */
     const email =
       value.includes("@")
         ? value
@@ -2638,6 +2675,8 @@ async function login(identifier,password){
 
     currentAdminUser =
       await account.get();
+
+    clearLoginError();
 
     showMessage(
       "Login successful."
@@ -2652,63 +2691,66 @@ async function login(identifier,password){
       error
     );
 
+    console.error(
+      "Login error type:",
+      error?.type
+    );
+
+    console.error(
+      "Login error code:",
+      error?.code
+    );
+
     /*
-     * Appwrite uses user_invalid_credentials
-     * when the username/email or password
-     * is incorrect.
+     * Appwrite uses:
+     *
+     * user_invalid_credentials
+     * code 401
+     *
+     * for an incorrect username/password.
      */
+
     if(
       error?.type ===
-      "user_invalid_credentials"
+        "user_invalid_credentials" ||
+      error?.code === 401 ||
+      error?.code === "401"
     ){
 
-      showMessage(
-        "Incorrect username or password. Please try again.",
-        "error"
+      showLoginError(
+        "Incorrect username or password. Please try again."
       );
 
       return;
     }
 
-    /*
-     * Handle blocked accounts.
-     */
     if(
       error?.type ===
-      "user_blocked"
+        "user_blocked"
     ){
 
-      showMessage(
-        "This administrator account has been blocked.",
-        "error"
+      showLoginError(
+        "This administrator account has been blocked."
       );
 
       return;
     }
 
-    /*
-     * Handle rate limiting.
-     */
     if(
       error?.type ===
-      "general_rate_limit_exceeded"
+        "general_rate_limit_exceeded"
     ){
 
-      showMessage(
-        "Too many login attempts. Please wait a moment and try again.",
-        "error"
+      showLoginError(
+        "Too many login attempts. Please wait a moment and try again."
       );
 
       return;
     }
 
-    /*
-     * Fallback for any other login error.
-     */
-    showMessage(
+    showLoginError(
       error?.message ||
-      "Login failed. Please check your details and try again.",
-      "error"
+      "Login failed. Please check your username and password."
     );
 
   }
@@ -2724,27 +2766,85 @@ async function logout(){
 
   }catch(error){
 
-    console.warn(error);
+    console.warn(
+      "Logout warning:",
+      error
+    );
 
   }
 
-  currentAdminUser = null;
+  currentAdminUser =
+    null;
 
   showLoginScreen();
-
 }
 
 
 function showLoginScreen(){
 
-  document.getElementById(
-    "loginScreen"
-  ).style.display = "flex";
+  const loginScreen =
+    document.getElementById(
+      "loginScreen"
+    );
 
-  document.getElementById(
-    "adminScreen"
-  ).style.display = "none";
+  const adminScreen =
+    document.getElementById(
+      "adminScreen"
+    );
 
+  const loginForm =
+    document.getElementById(
+      "loginForm"
+    );
+
+  const loginIdentifier =
+    document.getElementById(
+      "loginIdentifier"
+    );
+
+  const loginPassword =
+    document.getElementById(
+      "loginPassword"
+    );
+
+  const loginError =
+    document.getElementById(
+      "loginError"
+    );
+
+  if(loginForm){
+    loginForm.reset();
+  }
+
+  if(loginIdentifier){
+    loginIdentifier.value = "";
+  }
+
+  if(loginPassword){
+    loginPassword.value = "";
+  }
+
+  if(loginError){
+
+    loginError.textContent =
+      "";
+
+    loginError.style.display =
+      "none";
+  }
+
+  loginScreen.style.display =
+    "flex";
+
+  adminScreen.style.display =
+    "none";
+
+  if(loginIdentifier){
+
+    setTimeout(()=>{
+      loginIdentifier.focus();
+    },100);
+  }
 }
 
 
