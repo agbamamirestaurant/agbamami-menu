@@ -645,15 +645,6 @@ input[type=file]::file-selector-button{
   padding:7px 8px;
 }
 
-.empty-group{
-  padding:18px;
-  color:#928880;
-  font-size:13px;
-  text-align:center;
-}
-
-/* ORDER CONTROLS */
-
 .order-buttons{
   display:flex;
   gap:3px;
@@ -663,6 +654,54 @@ input[type=file]::file-selector-button{
 .order-buttons button{
   font-size:10px;
   padding:5px 7px;
+}
+
+/* ACCOUNT / ADMIN MANAGEMENT */
+
+.account-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:15px;
+}
+
+.account-card{
+  border:1px solid #e7dfd7;
+  border-radius:14px;
+  padding:16px;
+  background:#faf8f5;
+}
+
+.account-card h4{
+  margin:0 0 5px;
+  color:#403229;
+  font-size:15px;
+}
+
+.account-card p{
+  margin:0 0 14px;
+  color:#91877e;
+  font-size:12px;
+  line-height:1.45;
+}
+
+.current-admin{
+  background:#f8f1e9;
+  border:1px solid #ead8c7;
+  border-radius:12px;
+  padding:12px 14px;
+  margin-bottom:15px;
+}
+
+.current-admin-label{
+  font-size:11px;
+  color:#978a7e;
+}
+
+.current-admin-name{
+  font-size:18px;
+  font-weight:600;
+  color:#4a3527;
+  margin-top:2px;
 }
 
 /* MODALS */
@@ -788,9 +827,11 @@ input[type=file]::file-selector-button{
 /* MOBILE */
 
 @media(max-width:900px){
+
   .stats-grid{
     grid-template-columns:repeat(3,minmax(0,1fr));
   }
+
 }
 
 @media(max-width:760px){
@@ -863,6 +904,11 @@ input[type=file]::file-selector-button{
   .stats-grid{
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
+
+  .account-grid{
+    grid-template-columns:1fr;
+  }
+
 }
 
 @media(max-width:450px){
@@ -913,15 +959,18 @@ input[type=file]::file-selector-button{
     bottom:12px;
     max-width:none;
   }
+
 }
 
 @media(prefers-reduced-motion:reduce){
+
   *,*::before,*::after{
     animation-duration:.01ms!important;
     animation-iteration-count:1!important;
     transition-duration:.01ms!important;
     scroll-behavior:auto!important;
   }
+
 }
 </style>
 </head>
@@ -931,6 +980,7 @@ input[type=file]::file-selector-button{
 <!-- LOGIN -->
 
 <section id="loginScreen">
+
   <div class="login-box">
 
     <h1>Agbamami Admin</h1>
@@ -940,32 +990,60 @@ input[type=file]::file-selector-button{
     <form id="loginForm">
 
       <div style="margin-bottom:15px">
-        <label for="loginEmail">Email</label>
+
+        <label for="loginIdentifier">
+          Username
+        </label>
+
         <input
-          id="loginEmail"
-          type="email"
+          id="loginIdentifier"
+          type="text"
           autocomplete="username"
+          placeholder="Enter your username"
           required
         >
+
       </div>
 
       <div style="margin-bottom:15px">
-        <label for="loginPassword">Password</label>
+
+        <label for="loginPassword">
+          Password
+        </label>
+
         <input
           id="loginPassword"
           type="password"
           autocomplete="current-password"
+          placeholder="Enter your password"
           required
         >
+
       </div>
 
-      <button class="primary" type="submit" style="width:100%">
+      <button
+        class="primary"
+        type="submit"
+        style="width:100%"
+      >
         Log in
       </button>
 
     </form>
 
+    <div
+      style="
+        margin-top:14px;
+        text-align:center;
+        color:#a0968d;
+        font-size:11px;
+      "
+    >
+      Your username is used instead of your email address.
+    </div>
+
   </div>
+
 </section>
 
 
@@ -974,21 +1052,33 @@ input[type=file]::file-selector-button{
 <section id="adminScreen">
 
 <header>
+
   <div class="container header-inner">
 
-    <div class="brand">Agbamami Admin</div>
+    <div class="brand">
+      Agbamami Admin
+    </div>
 
     <div class="header-actions">
-      <button class="secondary" onclick="openCustomerMenu()">
+
+      <button
+        class="secondary"
+        onclick="openCustomerMenu()"
+      >
         View Menu
       </button>
 
-      <button class="danger" onclick="logout()">
+      <button
+        class="danger"
+        onclick="logout()"
+      >
         Log out
       </button>
+
     </div>
 
   </div>
+
 </header>
 
 
@@ -999,17 +1089,30 @@ input[type=file]::file-selector-button{
   <div class="dashboard-heading">
 
     <div>
-      <h2>Menu Management</h2>
-      <p>Manage your restaurant information, categories and menu items.</p>
+
+      <h2 id="welcomeHeading">
+        Welcome 👋
+      </h2>
+
+      <p>
+        Manage your restaurant information, categories and menu items.
+      </p>
+
     </div>
 
     <div class="heading-actions">
 
-      <button class="secondary" onclick="openAddCategoryModal()">
+      <button
+        class="secondary"
+        onclick="openAddCategoryModal()"
+      >
         + Category
       </button>
 
-      <button class="primary" onclick="openAddItemModal()">
+      <button
+        class="primary"
+        onclick="openAddItemModal()"
+      >
         + Menu Item
       </button>
 
@@ -1023,36 +1126,332 @@ input[type=file]::file-selector-button{
   <div class="stats-grid">
 
     <div class="stat-card">
-      <div class="stat-label">Categories</div>
-      <div class="stat-value" id="statCategories">0</div>
-      <div class="stat-note">Total categories</div>
+
+      <div class="stat-label">
+        Categories
+      </div>
+
+      <div
+        class="stat-value"
+        id="statCategories"
+      >
+        0
+      </div>
+
+      <div class="stat-note">
+        Total categories
+      </div>
+
     </div>
 
-    <div class="stat-card">
-      <div class="stat-label">Menu Items</div>
-      <div class="stat-value" id="statItems">0</div>
-      <div class="stat-note">Total items</div>
-    </div>
 
     <div class="stat-card">
-      <div class="stat-label">Available</div>
-      <div class="stat-value" id="statAvailable">0</div>
-      <div class="stat-note">Visible items</div>
+
+      <div class="stat-label">
+        Menu Items
+      </div>
+
+      <div
+        class="stat-value"
+        id="statItems"
+      >
+        0
+      </div>
+
+      <div class="stat-note">
+        Total items
+      </div>
+
     </div>
 
-    <div class="stat-card">
-      <div class="stat-label">Unavailable</div>
-      <div class="stat-value" id="statUnavailable">0</div>
-      <div class="stat-note">Temporarily unavailable</div>
-    </div>
 
     <div class="stat-card">
-      <div class="stat-label">Hidden</div>
-      <div class="stat-value" id="statHidden">0</div>
-      <div class="stat-note">Hidden categories</div>
+
+      <div class="stat-label">
+        Available
+      </div>
+
+      <div
+        class="stat-value"
+        id="statAvailable"
+      >
+        0
+      </div>
+
+      <div class="stat-note">
+        Visible items
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-label">
+        Unavailable
+      </div>
+
+      <div
+        class="stat-value"
+        id="statUnavailable"
+      >
+        0
+      </div>
+
+      <div class="stat-note">
+        Temporarily unavailable
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-label">
+        Hidden
+      </div>
+
+      <div
+        class="stat-value"
+        id="statHidden"
+      >
+        0
+      </div>
+
+      <div class="stat-note">
+        Hidden categories
+      </div>
+
     </div>
 
   </div>
+
+
+  <!-- ACCOUNT MANAGEMENT -->
+
+  <section class="section">
+
+    <div class="section-title">
+
+      <div>
+
+        <h3>
+          Administrator Account
+        </h3>
+
+        <div class="section-subtitle">
+          Manage your Agbamami administrator username and password.
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="current-admin">
+
+      <div class="current-admin-label">
+        Currently signed in as
+      </div>
+
+      <div
+        class="current-admin-name"
+        id="currentAdminName"
+      >
+        Admin
+      </div>
+
+    </div>
+
+
+    <div class="account-grid">
+
+
+      <!-- USERNAME -->
+
+      <div class="account-card">
+
+        <h4>
+          Change Username
+        </h4>
+
+        <p>
+          Your username is also what you will use to log in.
+        </p>
+
+        <label for="newUsername">
+          New Username
+        </label>
+
+        <input
+          id="newUsername"
+          type="text"
+          maxlength="30"
+          placeholder="e.g. Kwame"
+        >
+
+        <button
+          type="button"
+          class="primary"
+          style="margin-top:10px"
+          onclick="changeUsername()"
+        >
+          Save Username
+        </button>
+
+      </div>
+
+
+      <!-- PASSWORD -->
+
+      <div class="account-card">
+
+        <h4>
+          Change Password
+        </h4>
+
+        <p>
+          Use at least 8 characters for your administrator password.
+        </p>
+
+        <label for="newPassword">
+          New Password
+        </label>
+
+        <input
+          id="newPassword"
+          type="password"
+          minlength="8"
+          maxlength="256"
+          placeholder="New password"
+        >
+
+        <label
+          for="confirmNewPassword"
+          style="margin-top:10px"
+        >
+          Confirm Password
+        </label>
+
+        <input
+          id="confirmNewPassword"
+          type="password"
+          minlength="8"
+          maxlength="256"
+          placeholder="Confirm password"
+        >
+
+        <button
+          type="button"
+          class="primary"
+          style="margin-top:10px"
+          onclick="changeOwnPassword()"
+        >
+          Change Password
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ADD ADMINISTRATOR -->
+
+  <section class="section">
+
+    <div class="section-title">
+
+      <div>
+
+        <h3>
+          Add Administrator
+        </h3>
+
+        <div class="section-subtitle">
+          Create another administrator who can manage the restaurant dashboard.
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="form-grid">
+
+      <div>
+
+        <label for="newAdminUsername">
+          Username
+        </label>
+
+        <input
+          id="newAdminUsername"
+          type="text"
+          maxlength="30"
+          placeholder="New administrator username"
+        >
+
+      </div>
+
+
+      <div>
+
+        <label for="newAdminPassword">
+          Password
+        </label>
+
+        <input
+          id="newAdminPassword"
+          type="password"
+          minlength="8"
+          maxlength="256"
+          placeholder="At least 8 characters"
+        >
+
+      </div>
+
+
+      <div>
+
+        <label for="newAdminPasswordConfirm">
+          Confirm Password
+        </label>
+
+        <input
+          id="newAdminPasswordConfirm"
+          type="password"
+          minlength="8"
+          maxlength="256"
+          placeholder="Repeat password"
+        >
+
+      </div>
+
+    </div>
+
+
+    <div style="margin-top:15px">
+
+      <button
+        type="button"
+        class="primary"
+        onclick="createAdministrator()"
+      >
+        Create Administrator
+      </button>
+
+    </div>
+
+
+    <div
+      id="adminCreateStatus"
+      class="save-status"
+      style="margin-top:8px"
+    ></div>
+
+  </section>
 
 
   <!-- RESTAURANT SETTINGS -->
@@ -1062,13 +1461,19 @@ input[type=file]::file-selector-button{
     <div class="section-title">
 
       <div>
-        <h3>Restaurant Settings</h3>
+
+        <h3>
+          Restaurant Settings
+        </h3>
+
         <div class="section-subtitle">
           Update the information customers see on your menu.
         </div>
+
       </div>
 
     </div>
+
 
     <div class="settings-layout">
 
@@ -1092,33 +1497,52 @@ input[type=file]::file-selector-button{
       <div class="settings-form">
 
         <div>
-          <label for="restaurantName">Restaurant Name</label>
+
+          <label for="restaurantName">
+            Restaurant Name
+          </label>
+
           <input
             id="restaurantName"
             type="text"
             placeholder="Agbamami"
           >
+
         </div>
 
+
         <div>
-          <label for="restaurantPhone">Phone Number</label>
+
+          <label for="restaurantPhone">
+            Phone Number
+          </label>
+
           <input
             id="restaurantPhone"
             type="text"
             placeholder="+233..."
           >
+
         </div>
 
+
         <div>
-          <label for="restaurantLocation">Location</label>
+
+          <label for="restaurantLocation">
+            Location
+          </label>
+
           <input
             id="restaurantLocation"
             type="text"
             placeholder="Google Maps link"
           >
+
         </div>
 
+
         <div>
+
           <label for="restaurantDescription">
             Restaurant Information
           </label>
@@ -1128,9 +1552,12 @@ input[type=file]::file-selector-button{
             rows="4"
             placeholder="Tell customers about your restaurant..."
           ></textarea>
+
         </div>
 
+
         <div>
+
           <label for="restaurantPromoVideo">
             Promotion Video URL
           </label>
@@ -1140,9 +1567,12 @@ input[type=file]::file-selector-button{
             type="text"
             placeholder="Optional promotion video URL"
           >
+
         </div>
 
+
         <div>
+
           <label for="restaurantPromoPoster">
             Promotion Poster URL
           </label>
@@ -1152,9 +1582,12 @@ input[type=file]::file-selector-button{
             type="text"
             placeholder="Optional promotion poster URL"
           >
+
         </div>
 
+
         <div>
+
           <label for="restaurantLogoFile">
             Change Restaurant Logo
           </label>
@@ -1169,9 +1602,12 @@ input[type=file]::file-selector-button{
             id="logoUploadStatus"
             class="save-status"
           ></div>
+
         </div>
 
+
         <div>
+
           <button
             type="button"
             class="primary"
@@ -1179,7 +1615,9 @@ input[type=file]::file-selector-button{
           >
             Save Restaurant Settings
           </button>
+
         </div>
+
 
         <div
           id="settingsMessage"
@@ -1201,7 +1639,9 @@ input[type=file]::file-selector-button{
 
       <div class="search-input-wrap">
 
-        <span class="search-icon">🔎</span>
+        <span class="search-icon">
+          🔎
+        </span>
 
         <input
           type="search"
@@ -1237,11 +1677,15 @@ input[type=file]::file-selector-button{
     <div class="section-title">
 
       <div>
-        <h3>Categories</h3>
+
+        <h3>
+          Categories
+        </h3>
 
         <div class="section-subtitle">
           Categories appear in the same order as your customer menu.
         </div>
+
       </div>
 
       <button
@@ -1257,9 +1701,11 @@ input[type=file]::file-selector-button{
       id="categoryList"
       class="category-grid"
     >
+
       <div class="loading">
         Loading categories...
       </div>
+
     </div>
 
   </section>
@@ -1272,11 +1718,15 @@ input[type=file]::file-selector-button{
     <div class="section-title">
 
       <div>
-        <h3>Menu Items</h3>
+
+        <h3>
+          Menu Items
+        </h3>
 
         <div class="section-subtitle">
           Items are grouped under their respective categories.
         </div>
+
       </div>
 
       <button
@@ -1292,9 +1742,11 @@ input[type=file]::file-selector-button{
       id="itemList"
       class="menu-groups"
     >
+
       <div class="loading">
         Loading menu items...
       </div>
+
     </div>
 
   </section>
@@ -1304,13 +1756,18 @@ input[type=file]::file-selector-button{
 
 <!-- CATEGORY MODAL -->
 
-<div id="categoryModal" class="modal">
+<div
+  id="categoryModal"
+  class="modal"
+>
 
   <div class="modal-content">
 
     <div class="modal-header">
 
-      <h3 id="categoryModalTitle">Add Category</h3>
+      <h3 id="categoryModalTitle">
+        Add Category
+      </h3>
 
       <button
         class="close"
@@ -1323,22 +1780,33 @@ input[type=file]::file-selector-button{
 
     <form id="categoryForm">
 
-      <input type="hidden" id="categoryId">
+      <input
+        type="hidden"
+        id="categoryId"
+      >
 
       <div class="form-grid">
 
         <div>
-          <label for="categoryName">Category Name</label>
+
+          <label for="categoryName">
+            Category Name
+          </label>
 
           <input
             id="categoryName"
             maxlength="100"
             required
           >
+
         </div>
 
+
         <div>
-          <label for="categorySortOrder">Sort Order</label>
+
+          <label for="categorySortOrder">
+            Sort Order
+          </label>
 
           <input
             id="categorySortOrder"
@@ -1348,7 +1816,9 @@ input[type=file]::file-selector-button{
             value="0"
             required
           >
+
         </div>
+
 
         <div class="full">
 
@@ -1369,30 +1839,38 @@ input[type=file]::file-selector-button{
 
         </div>
 
+
         <div class="full">
 
           <label for="categoryDescription">
             Description
           </label>
 
-          <textarea id="categoryDescription"></textarea>
+          <textarea
+            id="categoryDescription"
+          ></textarea>
 
         </div>
+
 
         <div>
 
           <label>
+
             <input
               id="categoryIsDrink"
               type="checkbox"
               style="width:auto;margin-right:7px"
             >
+
             Drink-style category
+
           </label>
 
         </div>
 
       </div>
+
 
       <div class="form-actions">
 
@@ -1422,13 +1900,18 @@ input[type=file]::file-selector-button{
 
 <!-- ITEM MODAL -->
 
-<div id="itemModal" class="modal">
+<div
+  id="itemModal"
+  class="modal"
+>
 
   <div class="modal-content">
 
     <div class="modal-header">
 
-      <h3 id="itemModalTitle">Add Menu Item</h3>
+      <h3 id="itemModalTitle">
+        Add Menu Item
+      </h3>
 
       <button
         class="close"
@@ -1441,13 +1924,18 @@ input[type=file]::file-selector-button{
 
     <form id="itemForm">
 
-      <input type="hidden" id="itemId">
+      <input
+        type="hidden"
+        id="itemId"
+      >
 
       <div class="form-grid">
 
         <div class="full">
 
-          <label for="itemName">Item Name</label>
+          <label for="itemName">
+            Item Name
+          </label>
 
           <input
             id="itemName"
@@ -1457,9 +1945,12 @@ input[type=file]::file-selector-button{
 
         </div>
 
+
         <div>
 
-          <label for="itemPrice">Price</label>
+          <label for="itemPrice">
+            Price
+          </label>
 
           <input
             id="itemPrice"
@@ -1470,9 +1961,12 @@ input[type=file]::file-selector-button{
 
         </div>
 
+
         <div>
 
-          <label for="itemCategory">Category</label>
+          <label for="itemCategory">
+            Category
+          </label>
 
           <select
             id="itemCategory"
@@ -1480,6 +1974,7 @@ input[type=file]::file-selector-button{
           ></select>
 
         </div>
+
 
         <div class="full">
 
@@ -1500,19 +1995,25 @@ input[type=file]::file-selector-button{
 
         </div>
 
+
         <div class="full">
 
           <label for="itemDescription">
             Description
           </label>
 
-          <textarea id="itemDescription"></textarea>
+          <textarea
+            id="itemDescription"
+          ></textarea>
 
         </div>
 
+
         <div>
 
-          <label for="itemSortOrder">Sort Order</label>
+          <label for="itemSortOrder">
+            Sort Order
+          </label>
 
           <input
             id="itemSortOrder"
@@ -1525,9 +2026,12 @@ input[type=file]::file-selector-button{
 
         </div>
 
+
         <div>
 
-          <label for="itemType">Item Type</label>
+          <label for="itemType">
+            Item Type
+          </label>
 
           <input
             id="itemType"
@@ -1537,34 +2041,43 @@ input[type=file]::file-selector-button{
 
         </div>
 
+
         <div>
 
           <label>
+
             <input
               id="itemAvailable"
               type="checkbox"
               checked
               style="width:auto;margin-right:7px"
             >
+
             Available
+
           </label>
 
         </div>
 
+
         <div>
 
           <label>
+
             <input
               id="itemFeatured"
               type="checkbox"
               style="width:auto;margin-right:7px"
             >
+
             Featured
+
           </label>
 
         </div>
 
       </div>
+
 
       <div class="form-actions">
 
@@ -1581,6 +2094,78 @@ input[type=file]::file-selector-button{
           class="primary"
         >
           Save Item
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- SET USERNAME MODAL -->
+
+<div
+  id="usernameSetupModal"
+  class="modal"
+>
+
+  <div class="modal-content">
+
+    <div class="modal-header">
+
+      <h3>
+        Set Your Admin Username
+      </h3>
+
+    </div>
+
+    <p
+      style="
+        color:#776d65;
+        font-size:13px;
+        line-height:1.55;
+        margin-top:0;
+      "
+    >
+      Your account is still using the old email-based login.
+      Choose a username now so you can log in with your username
+      from your next login.
+    </p>
+
+    <form id="usernameSetupForm">
+
+      <label for="setupUsername">
+        Username
+      </label>
+
+      <input
+        id="setupUsername"
+        type="text"
+        maxlength="30"
+        placeholder="Choose your username"
+        required
+      >
+
+      <div
+        style="
+          margin-top:7px;
+          color:#958b82;
+          font-size:11px;
+        "
+      >
+        3–30 characters. Letters, numbers, dots, underscores and hyphens only.
+      </div>
+
+      <div class="form-actions">
+
+        <button
+          type="submit"
+          class="primary"
+        >
+          Set Username
         </button>
 
       </div>
@@ -1646,6 +2231,17 @@ const APPWRITE_STORAGE_BUCKET_ID =
 
 
 /* =========================================================
+   ADMIN AUTH CONFIG
+========================================================= */
+
+const APPWRITE_ADMIN_FUNCTION_ID =
+  "6ad408700f7949c8b84b";
+
+const ADMIN_INTERNAL_DOMAIN =
+  "agbamami-admin.com";
+
+
+/* =========================================================
    APPWRITE INITIALIZATION
 ========================================================= */
 
@@ -1665,6 +2261,9 @@ const tablesDB =
 const storage =
   new Appwrite.Storage(appwriteClient);
 
+const functions =
+  new Appwrite.Functions(appwriteClient);
+
 
 /* =========================================================
    STATE
@@ -1674,6 +2273,7 @@ let categories = [];
 let menuItems = [];
 let restaurantSettings = null;
 let currentSearch = "";
+let currentAdminUser = null;
 
 
 /* =========================================================
@@ -1681,12 +2281,14 @@ let currentSearch = "";
 ========================================================= */
 
 function escapeHTML(value){
+
   return String(value ?? "")
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
+
 }
 
 
@@ -1710,16 +2312,92 @@ function showMessage(text,type="success"){
     setTimeout(()=>{
       message.style.display = "none";
     },3500);
+
 }
 
 
 function getSearchTerm(){
-  return currentSearch.trim().toLowerCase();
+
+  return currentSearch
+    .trim()
+    .toLowerCase();
+
+}
+
+
+function usernameToEmail(username){
+
+  return `${username.trim().toLowerCase()}@${ADMIN_INTERNAL_DOMAIN}`;
+
 }
 
 
 /* =========================================================
-   APPWRITE GET ALL
+   ADMIN FUNCTION HELPER
+========================================================= */
+
+async function executeAdminFunction(payload){
+
+  try{
+
+    const execution =
+      await functions.createExecution({
+        functionId:APPWRITE_ADMIN_FUNCTION_ID,
+        body:JSON.stringify(payload),
+        async:false
+      });
+
+    let responseData = null;
+
+    try{
+
+      responseData =
+        execution.response
+          ? JSON.parse(execution.response)
+          : null;
+
+    }catch(parseError){
+
+      responseData = {
+        success:false,
+        message:
+          execution.response ||
+          "The administrator operation returned an invalid response."
+      };
+
+    }
+
+
+    if(
+      !responseData ||
+      responseData.success !== true
+    ){
+
+      throw new Error(
+        responseData?.message ||
+        "Administrator operation failed."
+      );
+
+    }
+
+    return responseData;
+
+  }catch(error){
+
+    console.error(
+      "Admin Function error:",
+      error
+    );
+
+    throw error;
+
+  }
+
+}
+
+
+/* =========================================================
+   GET ALL ROWS
 ========================================================= */
 
 async function getAllRows(tableId){
@@ -1750,6 +2428,7 @@ async function getAllRows(tableId){
   }
 
   return allRows;
+
 }
 
 
@@ -1760,34 +2439,79 @@ async function getAllRows(tableId){
 async function checkExistingSession(){
 
   try{
-    await account.get();
+
+    currentAdminUser =
+      await account.get();
+
     await showAdminScreen();
+
   }catch(error){
+
+    currentAdminUser = null;
+
     showLoginScreen();
+
   }
 
 }
 
 
-async function login(email,password){
+async function login(identifier,password){
 
   try{
+
+    const value =
+      String(identifier || "").trim();
+
+    if(!value){
+
+      throw new Error(
+        "Enter your username."
+      );
+
+    }
+
+    /*
+     * Temporary compatibility:
+     *
+     * If the user enters an email address,
+     * keep supporting the old login.
+     *
+     * Otherwise convert the username into
+     * the internal Appwrite email.
+     */
+
+    const email =
+      value.includes("@")
+        ? value
+        : usernameToEmail(value);
+
 
     await account.createEmailPasswordSession({
       email,
       password
     });
 
-    showMessage("Login successful.");
+
+    currentAdminUser =
+      await account.get();
+
+
+    showMessage(
+      "Login successful."
+    );
+
 
     await showAdminScreen();
+
 
   }catch(error){
 
     console.error(error);
 
     showMessage(
-      error.message || "Login failed.",
+      error.message ||
+      "Login failed.",
       "error"
     );
 
@@ -1799,36 +2523,611 @@ async function login(email,password){
 async function logout(){
 
   try{
+
     await account.deleteSession({
       sessionId:"current"
     });
+
   }catch(error){
+
     console.warn(error);
+
   }
 
+  currentAdminUser = null;
+
   showLoginScreen();
+
 }
 
 
 function showLoginScreen(){
 
-  document.getElementById("loginScreen").style.display =
-    "flex";
+  document.getElementById(
+    "loginScreen"
+  ).style.display = "flex";
 
-  document.getElementById("adminScreen").style.display =
-    "none";
+  document.getElementById(
+    "adminScreen"
+  ).style.display = "none";
+
 }
 
 
 async function showAdminScreen(){
 
-  document.getElementById("loginScreen").style.display =
-    "none";
+  document.getElementById(
+    "loginScreen"
+  ).style.display = "none";
 
-  document.getElementById("adminScreen").style.display =
+  document.getElementById(
+    "adminScreen"
+  ).style.display = "block";
+
+
+  try{
+
+    currentAdminUser =
+      await account.get();
+
+    updateAdminGreeting();
+
+    /*
+     * Load the dashboard first.
+     */
+
+    await loadData();
+
+
+    /*
+     * If the account still uses a normal
+     * email address, ask the existing admin
+     * to choose a username.
+     *
+     * This is what safely migrates the
+     * original administrator.
+     */
+
+    const email =
+      String(
+        currentAdminUser?.email || ""
+      ).toLowerCase();
+
+    const usingInternalUsername =
+      email.endsWith(
+        `@${ADMIN_INTERNAL_DOMAIN}`
+      );
+
+
+    if(!usingInternalUsername){
+
+      setTimeout(
+        openUsernameSetupModal,
+        350
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message ||
+      "Could not load your administrator account.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ADMIN GREETING
+========================================================= */
+
+function updateAdminGreeting(){
+
+  const name =
+    currentAdminUser?.name ||
+    "Admin";
+
+  document.getElementById(
+    "welcomeHeading"
+  ).textContent =
+    `Welcome, ${name} 👋`;
+
+
+  document.getElementById(
+    "currentAdminName"
+  ).textContent =
+    name;
+
+}
+
+
+/* =========================================================
+   USERNAME SETUP / MIGRATION
+========================================================= */
+
+function openUsernameSetupModal(){
+
+  if(!currentAdminUser){
+    return;
+  }
+
+  const modal =
+    document.getElementById(
+      "usernameSetupModal"
+    );
+
+  const input =
+    document.getElementById(
+      "setupUsername"
+    );
+
+  /*
+   * Suggest the existing Appwrite name
+   * if one exists.
+   */
+
+  input.value =
+    currentAdminUser.name || "";
+
+  modal.style.display =
     "block";
 
-  await loadData();
+}
+
+
+function closeUsernameSetupModal(){
+
+  document.getElementById(
+    "usernameSetupModal"
+  ).style.display =
+    "none";
+
+}
+
+
+async function setAdministratorUsername(username){
+
+  const cleanUsername =
+    String(username || "").trim();
+
+
+  if(
+    !/^[a-zA-Z0-9._-]{3,30}$/.test(
+      cleanUsername
+    )
+  ){
+
+    throw new Error(
+      "Username must be 3–30 characters and may contain only letters, numbers, dots, underscores or hyphens."
+    );
+
+  }
+
+
+  return await executeAdminFunction({
+    action:"setUsername",
+    username:cleanUsername
+  });
+
+}
+
+
+document.getElementById(
+  "usernameSetupForm"
+).addEventListener(
+  "submit",
+  async function(event){
+
+    event.preventDefault();
+
+
+    const input =
+      document.getElementById(
+        "setupUsername"
+      );
+
+    const username =
+      input.value.trim();
+
+
+    try{
+
+      const button =
+        this.querySelector(
+          'button[type="submit"]'
+        );
+
+      if(button){
+        button.disabled = true;
+      }
+
+
+      const result =
+        await setAdministratorUsername(
+          username
+        );
+
+
+      /*
+       * Refresh the current Appwrite user
+       * so the greeting uses the new name.
+       */
+
+      currentAdminUser =
+        await account.get();
+
+
+      updateAdminGreeting();
+
+      closeUsernameSetupModal();
+
+
+      showMessage(
+        result.message ||
+        `Your username is now ${username}.`
+      );
+
+
+    }catch(error){
+
+      console.error(error);
+
+      showMessage(
+        error.message ||
+        "Could not set your username.",
+        "error"
+      );
+
+    }finally{
+
+      const button =
+        this.querySelector(
+          'button[type="submit"]'
+        );
+
+      if(button){
+        button.disabled = false;
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   CHANGE USERNAME
+========================================================= */
+
+async function changeUsername(){
+
+  const input =
+    document.getElementById(
+      "newUsername"
+    );
+
+  const username =
+    input.value.trim();
+
+
+  if(
+    !/^[a-zA-Z0-9._-]{3,30}$/.test(
+      username
+    )
+  ){
+
+    showMessage(
+      "Username must be 3–30 characters and may contain only letters, numbers, dots, underscores or hyphens.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    username.toLowerCase() ===
+    String(
+      currentAdminUser?.name || ""
+    ).toLowerCase()
+  ){
+
+    showMessage(
+      "That is already your current username.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const confirmed =
+    confirm(
+      `Change your administrator username to "${username}"?`
+    );
+
+
+  if(!confirmed){
+    return;
+  }
+
+
+  try{
+
+    const result =
+      await setAdministratorUsername(
+        username
+      );
+
+
+    currentAdminUser =
+      await account.get();
+
+    updateAdminGreeting();
+
+    input.value = "";
+
+
+    showMessage(
+      result.message ||
+      `Your username is now ${username}.`
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message ||
+      "Could not change your username.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CHANGE OWN PASSWORD
+========================================================= */
+
+async function changeOwnPassword(){
+
+  const password =
+    document.getElementById(
+      "newPassword"
+    ).value;
+
+  const confirmPassword =
+    document.getElementById(
+      "confirmNewPassword"
+    ).value;
+
+
+  if(password.length < 8){
+
+    showMessage(
+      "Password must be at least 8 characters.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(password !== confirmPassword){
+
+    showMessage(
+      "The passwords do not match.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const confirmed =
+    confirm(
+      "Change your administrator password?"
+    );
+
+
+  if(!confirmed){
+    return;
+  }
+
+
+  try{
+
+    const result =
+      await executeAdminFunction({
+        action:"changeOwnPassword",
+        password:password
+      });
+
+
+    document.getElementById(
+      "newPassword"
+    ).value = "";
+
+    document.getElementById(
+      "confirmNewPassword"
+    ).value = "";
+
+
+    showMessage(
+      result.message ||
+      "Password changed successfully."
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      error.message ||
+      "Could not change your password.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CREATE ADMINISTRATOR
+========================================================= */
+
+async function createAdministrator(){
+
+  const username =
+    document.getElementById(
+      "newAdminUsername"
+    ).value.trim();
+
+  const password =
+    document.getElementById(
+      "newAdminPassword"
+    ).value;
+
+  const confirmPassword =
+    document.getElementById(
+      "newAdminPasswordConfirm"
+    ).value;
+
+  const status =
+    document.getElementById(
+      "adminCreateStatus"
+    );
+
+
+  if(
+    !/^[a-zA-Z0-9._-]{3,30}$/.test(
+      username
+    )
+  ){
+
+    status.textContent =
+      "Username must be 3–30 characters and may contain only letters, numbers, dots, underscores or hyphens.";
+
+    showMessage(
+      status.textContent,
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(password.length < 8){
+
+    status.textContent =
+      "Password must be at least 8 characters.";
+
+    showMessage(
+      status.textContent,
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(password !== confirmPassword){
+
+    status.textContent =
+      "The passwords do not match.";
+
+    showMessage(
+      status.textContent,
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const confirmed =
+    confirm(
+      `Create administrator "${username}"?`
+    );
+
+
+  if(!confirmed){
+    return;
+  }
+
+
+  try{
+
+    status.textContent =
+      "Creating administrator...";
+
+
+    const result =
+      await executeAdminFunction({
+        action:"createAdmin",
+        username:username,
+        password:password
+      });
+
+
+    document.getElementById(
+      "newAdminUsername"
+    ).value = "";
+
+    document.getElementById(
+      "newAdminPassword"
+    ).value = "";
+
+    document.getElementById(
+      "newAdminPasswordConfirm"
+    ).value = "";
+
+
+    status.textContent =
+      result.message ||
+      `Administrator ${username} created successfully.`;
+
+
+    showMessage(
+      result.message ||
+      `Administrator ${username} created successfully.`
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    status.textContent =
+      error.message ||
+      "Could not create administrator.";
+
+    showMessage(
+      status.textContent,
+      "error"
+    );
+
+  }
+
 }
 
 
@@ -1841,10 +3140,14 @@ async function loadData(){
   try{
 
     categories =
-      await getAllRows(APPWRITE_CATEGORIES_TABLE);
+      await getAllRows(
+        APPWRITE_CATEGORIES_TABLE
+      );
 
     menuItems =
-      await getAllRows(APPWRITE_MENU_ITEMS_TABLE);
+      await getAllRows(
+        APPWRITE_MENU_ITEMS_TABLE
+      );
 
     await loadRestaurantSettings();
 
@@ -1865,6 +3168,7 @@ async function loadData(){
     );
 
   }
+
 }
 
 
@@ -1881,14 +3185,18 @@ function sortAllData(){
       Number(a.sortOrder || 0) -
       Number(b.sortOrder || 0)
   );
+
 }
 
 
 function renderEverything(){
 
   updateStats();
+
   renderCategories();
+
   renderItems();
+
   updateSearchNote();
 
 }
@@ -1902,7 +3210,8 @@ function updateStats(){
 
   const available =
     menuItems.filter(
-      item => item.isAvailable !== false
+      item =>
+        item.isAvailable !== false
     ).length;
 
   const unavailable =
@@ -1910,23 +3219,36 @@ function updateStats(){
 
   const hidden =
     categories.filter(
-      category => category.invisible === true
+      category =>
+        category.invisible === true
     ).length;
 
-  document.getElementById("statCategories").textContent =
+
+  document.getElementById(
+    "statCategories"
+  ).textContent =
     categories.length;
 
-  document.getElementById("statItems").textContent =
+  document.getElementById(
+    "statItems"
+  ).textContent =
     menuItems.length;
 
-  document.getElementById("statAvailable").textContent =
+  document.getElementById(
+    "statAvailable"
+  ).textContent =
     available;
 
-  document.getElementById("statUnavailable").textContent =
+  document.getElementById(
+    "statUnavailable"
+  ).textContent =
     unavailable;
 
-  document.getElementById("statHidden").textContent =
+  document.getElementById(
+    "statHidden"
+  ).textContent =
     hidden;
+
 }
 
 
@@ -1939,28 +3261,57 @@ async function loadRestaurantSettings(){
   try{
 
     const rows =
-      await getAllRows(APPWRITE_SETTINGS_TABLE);
+      await getAllRows(
+        APPWRITE_SETTINGS_TABLE
+      );
 
     restaurantSettings =
-      rows.length ? rows[0] : null;
+      rows.length
+        ? rows[0]
+        : null;
 
-    document.getElementById("restaurantName").value =
-      restaurantSettings?.restaurantName || "";
 
-    document.getElementById("restaurantPhone").value =
-      restaurantSettings?.phone || "";
+    document.getElementById(
+      "restaurantName"
+    ).value =
+      restaurantSettings?.restaurantName ||
+      "";
 
-    document.getElementById("restaurantLocation").value =
-      restaurantSettings?.location || "";
 
-    document.getElementById("restaurantDescription").value =
-      restaurantSettings?.description || "";
+    document.getElementById(
+      "restaurantPhone"
+    ).value =
+      restaurantSettings?.phone ||
+      "";
 
-    document.getElementById("restaurantPromoVideo").value =
-      restaurantSettings?.promoVideo || "";
 
-    document.getElementById("restaurantPromoPoster").value =
-      restaurantSettings?.promoPoster || "";
+    document.getElementById(
+      "restaurantLocation"
+    ).value =
+      restaurantSettings?.location ||
+      "";
+
+
+    document.getElementById(
+      "restaurantDescription"
+    ).value =
+      restaurantSettings?.description ||
+      "";
+
+
+    document.getElementById(
+      "restaurantPromoVideo"
+    ).value =
+      restaurantSettings?.promoVideo ||
+      "";
+
+
+    document.getElementById(
+      "restaurantPromoPoster"
+    ).value =
+      restaurantSettings?.promoPoster ||
+      "";
+
 
     updateLogoPreview();
 
@@ -1975,35 +3326,47 @@ async function loadRestaurantSettings(){
     );
 
   }
+
 }
 
 
 function updateLogoPreview(){
 
   const box =
-    document.getElementById("logoPreview");
+    document.getElementById(
+      "logoPreview"
+    );
+
 
   if(restaurantSettings?.logo){
 
     box.innerHTML =
-      `<img src="${escapeHTML(restaurantSettings.logo)}"
-            alt="Restaurant logo">`;
+      `<img
+        src="${escapeHTML(restaurantSettings.logo)}"
+        alt="Restaurant logo"
+      >`;
 
   }else{
 
-    box.textContent = "No logo";
+    box.textContent =
+      "No logo";
 
   }
+
 }
 
 
 function openCurrentLogo(){
 
-  if(restaurantSettings?.logo){
+  if(
+    restaurantSettings?.logo
+  ){
+
     openImageLightbox(
       restaurantSettings.logo,
       "Restaurant logo"
     );
+
   }
 
 }
@@ -2021,26 +3384,36 @@ async function uploadRestaurantLogo(){
       "logoUploadStatus"
     );
 
+
   if(!file){
     return null;
   }
 
+
   try{
 
-    status.textContent = "Uploading logo...";
+    status.textContent =
+      "Uploading logo...";
+
 
     const response =
       await storage.createFile({
-        bucketId:APPWRITE_STORAGE_BUCKET_ID,
-        fileId:Appwrite.ID.unique(),
-        file:file
+        bucketId:
+          APPWRITE_STORAGE_BUCKET_ID,
+        fileId:
+          Appwrite.ID.unique(),
+        file:
+          file
       });
+
 
     const fileUrl =
       `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
 
+
     status.textContent =
       "Logo uploaded successfully.";
+
 
     return fileUrl;
 
@@ -2049,10 +3422,13 @@ async function uploadRestaurantLogo(){
     console.error(error);
 
     status.textContent =
-      error.message || "Could not upload logo.";
+      error.message ||
+      "Could not upload logo.";
 
     throw error;
+
   }
+
 }
 
 
@@ -2063,12 +3439,17 @@ async function saveRestaurantSettings(){
       '[onclick="saveRestaurantSettings()"]'
     );
 
+
   try{
 
-    if(button) button.disabled = true;
+    if(button){
+      button.disabled = true;
+    }
+
 
     const uploadedLogoUrl =
       await uploadRestaurantLogo();
+
 
     const data = {
 
@@ -2106,17 +3487,22 @@ async function saveRestaurantSettings(){
         uploadedLogoUrl ||
         restaurantSettings?.logo ||
         ""
+
     };
 
 
     if(restaurantSettings?.$id){
 
       await tablesDB.updateRow({
-        databaseId:APPWRITE_DATABASE_ID,
-        tableId:APPWRITE_SETTINGS_TABLE,
-        rowId:restaurantSettings.$id,
+        databaseId:
+          APPWRITE_DATABASE_ID,
+        tableId:
+          APPWRITE_SETTINGS_TABLE,
+        rowId:
+          restaurantSettings.$id,
         data
       });
+
 
       showMessage(
         "Restaurant settings updated successfully."
@@ -2126,13 +3512,19 @@ async function saveRestaurantSettings(){
 
       const response =
         await tablesDB.createRow({
-          databaseId:APPWRITE_DATABASE_ID,
-          tableId:APPWRITE_SETTINGS_TABLE,
-          rowId:Appwrite.ID.unique(),
+          databaseId:
+            APPWRITE_DATABASE_ID,
+          tableId:
+            APPWRITE_SETTINGS_TABLE,
+          rowId:
+            Appwrite.ID.unique(),
           data
         });
 
-      restaurantSettings = response;
+
+      restaurantSettings =
+        response;
+
 
       showMessage(
         "Restaurant settings saved successfully."
@@ -2140,11 +3532,14 @@ async function saveRestaurantSettings(){
 
     }
 
+
     await loadRestaurantSettings();
+
 
     document.getElementById(
       "restaurantLogoFile"
     ).value = "";
+
 
   }catch(error){
 
@@ -2158,9 +3553,12 @@ async function saveRestaurantSettings(){
 
   }finally{
 
-    if(button) button.disabled = false;
+    if(button){
+      button.disabled = false;
+    }
 
   }
+
 }
 
 
@@ -2175,32 +3573,45 @@ async function uploadFileFromInput(
 ){
 
   const file =
-    document.getElementById(inputId).files[0];
+    document.getElementById(
+      inputId
+    ).files[0];
 
   const status =
-    document.getElementById(statusId);
+    document.getElementById(
+      statusId
+    );
+
 
   if(!file){
     return null;
   }
+
 
   try{
 
     status.textContent =
       `Uploading ${label}...`;
 
+
     const response =
       await storage.createFile({
-        bucketId:APPWRITE_STORAGE_BUCKET_ID,
-        fileId:Appwrite.ID.unique(),
-        file:file
+        bucketId:
+          APPWRITE_STORAGE_BUCKET_ID,
+        fileId:
+          Appwrite.ID.unique(),
+        file:
+          file
       });
+
 
     const fileUrl =
       `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
 
+
     status.textContent =
       `${label} uploaded successfully.`;
+
 
     return fileUrl;
 
@@ -2213,25 +3624,31 @@ async function uploadFileFromInput(
       `Could not upload ${label}.`;
 
     throw error;
+
   }
+
 }
 
 
 async function uploadMenuItemImage(){
+
   return uploadFileFromInput(
     "itemImageFile",
     "itemImageUploadStatus",
     "image"
   );
+
 }
 
 
 async function uploadCategoryImage(){
+
   return uploadFileFromInput(
     "categoryImageFile",
     "categoryImageUploadStatus",
     "image"
   );
+
 }
 
 
@@ -2241,51 +3658,77 @@ async function uploadCategoryImage(){
 
 function categoryMatchesSearch(category){
 
-  const term = getSearchTerm();
+  const term =
+    getSearchTerm();
 
-  if(!term) return true;
+
+  if(!term){
+    return true;
+  }
+
 
   return (
+
     String(category.name || "")
       .toLowerCase()
       .includes(term)
+
     ||
+
     String(category.description || "")
       .toLowerCase()
       .includes(term)
+
   );
+
 }
 
 
 function itemMatchesSearch(item){
 
-  const term = getSearchTerm();
+  const term =
+    getSearchTerm();
 
-  if(!term) return true;
+
+  if(!term){
+    return true;
+  }
+
 
   const category =
     categories.find(
       category =>
-        category.$id === item.categoryId
+        category.$id ===
+        item.categoryId
     );
 
+
   return (
+
     String(item.name || "")
       .toLowerCase()
       .includes(term)
+
     ||
+
     String(item.description || "")
       .toLowerCase()
       .includes(term)
+
     ||
+
     String(item.price || "")
       .toLowerCase()
       .includes(term)
+
     ||
+
     String(category?.name || "")
       .toLowerCase()
       .includes(term)
+
   );
+
 }
 
 
@@ -2296,28 +3739,43 @@ function updateSearchNote(){
       "searchResultsNote"
     );
 
+
   const term =
     getSearchTerm();
+
 
   if(!term){
 
     note.textContent = "";
+
     return;
 
   }
 
+
   const matchingCategories =
-    categories.filter(categoryMatchesSearch).length;
+    categories.filter(
+      categoryMatchesSearch
+    ).length;
+
 
   const matchingItems =
-    menuItems.filter(itemMatchesSearch).length;
+    menuItems.filter(
+      itemMatchesSearch
+    ).length;
+
 
   note.textContent =
     `${matchingCategories} categor${
-      matchingCategories === 1 ? "y" : "ies"
+      matchingCategories === 1
+        ? "y"
+        : "ies"
     } · ${matchingItems} menu item${
-      matchingItems === 1 ? "" : "s"
+      matchingItems === 1
+        ? ""
+        : "s"
     } found`;
+
 }
 
 
@@ -2328,12 +3786,20 @@ function updateSearchNote(){
 function renderCategories(){
 
   const container =
-    document.getElementById("categoryList");
+    document.getElementById(
+      "categoryList"
+    );
 
-  const term = getSearchTerm();
+
+  const term =
+    getSearchTerm();
+
 
   const visibleCategories =
-    categories.filter(categoryMatchesSearch);
+    categories.filter(
+      categoryMatchesSearch
+    );
+
 
   if(!visibleCategories.length){
 
@@ -2343,140 +3809,176 @@ function renderCategories(){
         : `<div class="empty">No categories found.</div>`;
 
     return;
+
   }
 
 
   container.innerHTML =
-    visibleCategories.map(
-      (category,index) => {
+    visibleCategories
+      .map(
+        (category,index) => {
 
-        const itemCount =
-          menuItems.filter(
-            item =>
-              item.categoryId === category.$id
-          ).length;
+          const itemCount =
+            menuItems.filter(
+              item =>
+                item.categoryId ===
+                category.$id
+            ).length;
 
-        const hidden =
-          category.invisible === true;
 
-        const image =
-          category.image || "";
+          const hidden =
+            category.invisible === true;
 
-        return `
 
-          <div class="category-card ${
-            hidden ? "hidden-category" : ""
-          }">
+          const image =
+            category.image ||
+            "";
 
-            <div
-              class="category-photo"
-              onclick="${
-                image
-                  ? `openImageLightbox('${escapeHTML(image)}','${escapeHTML(category.name)}')`
-                  : ""
-              }"
-            >
 
-              ${
-                image
-                  ? `<img
-                       src="${escapeHTML(image)}"
-                       alt="${escapeHTML(category.name)}"
-                     >`
-                  : `<div class="category-photo-placeholder">
-                       No photo
-                     </div>`
-              }
+          return `
 
-            </div>
+            <div class="category-card ${
+              hidden
+                ? "hidden-category"
+                : ""
+            }">
 
-            <div class="category-card-body">
-
-              <div class="category-card-name">
-                ${escapeHTML(category.name)}
-              </div>
-
-              <div class="category-card-meta">
-                ${itemCount}
-                item${itemCount === 1 ? "" : "s"}
-                · Order ${Number(category.sortOrder || 0)}
-              </div>
-
-              <div class="category-badges">
-
-                ${
-                  hidden
-                    ? `<span class="badge hidden">Hidden</span>`
-                    : `<span class="badge">Visible</span>`
-                }
-
-                ${
-                  category.isDrink === true
-                    ? `<span class="badge drink">Drink style</span>`
+              <div
+                class="category-photo"
+                onclick="${
+                  image
+                    ? `openImageLightbox('${escapeHTML(image)}','${escapeHTML(category.name)}')`
                     : ""
+                }"
+              >
+
+                ${
+                  image
+                    ? `<img
+                         src="${escapeHTML(image)}"
+                         alt="${escapeHTML(category.name)}"
+                       >`
+
+                    : `<div class="category-photo-placeholder">
+                         No photo
+                       </div>`
                 }
 
               </div>
 
-              <div class="order-buttons">
 
-                <button
-                  class="secondary"
-                  onclick="moveCategory('${category.$id}',-1)"
-                  ${index === 0 ? "disabled" : ""}
-                >
-                  ↑
-                </button>
+              <div class="category-card-body">
 
-                <button
-                  class="secondary"
-                  onclick="moveCategory('${category.$id}',1)"
-                  ${index === visibleCategories.length - 1 ? "disabled" : ""}
-                >
-                  ↓
-                </button>
+                <div class="category-card-name">
+                  ${escapeHTML(category.name)}
+                </div>
 
-                <button
-                  class="primary"
-                  onclick="openAddItemModal('${category.$id}')"
-                >
-                  + Item
-                </button>
 
-              </div>
+                <div class="category-card-meta">
 
-              <div class="category-card-actions">
+                  ${itemCount}
+                  item${itemCount === 1 ? "" : "s"}
 
-                <button
-                  class="secondary"
-                  onclick="editCategory('${category.$id}')"
-                >
-                  Edit
-                </button>
+                  · Order
+                  ${Number(category.sortOrder || 0)}
 
-                <button
-                  class="${hidden ? "success" : "warning"}"
-                  onclick="toggleCategoryVisibility('${category.$id}')"
-                >
-                  ${hidden ? "Show" : "Hide"}
-                </button>
+                </div>
 
-                <button
-                  class="danger"
-                  onclick="deleteCategory('${category.$id}')"
-                >
-                  Delete
-                </button>
+
+                <div class="category-badges">
+
+                  ${
+                    hidden
+                      ? `<span class="badge hidden">Hidden</span>`
+                      : `<span class="badge">Visible</span>`
+                  }
+
+
+                  ${
+                    category.isDrink === true
+                      ? `<span class="badge drink">Drink style</span>`
+                      : ""
+                  }
+
+                </div>
+
+
+                <div class="order-buttons">
+
+                  <button
+                    class="secondary"
+                    onclick="moveCategory('${category.$id}',-1)"
+                    ${index === 0 ? "disabled" : ""}
+                  >
+                    ↑
+                  </button>
+
+
+                  <button
+                    class="secondary"
+                    onclick="moveCategory('${category.$id}',1)"
+                    ${
+                      index ===
+                      visibleCategories.length - 1
+                        ? "disabled"
+                        : ""
+                    }
+                  >
+                    ↓
+                  </button>
+
+
+                  <button
+                    class="primary"
+                    onclick="openAddItemModal('${category.$id}')"
+                  >
+                    + Item
+                  </button>
+
+                </div>
+
+
+                <div class="category-card-actions">
+
+                  <button
+                    class="secondary"
+                    onclick="editCategory('${category.$id}')"
+                  >
+                    Edit
+                  </button>
+
+
+                  <button
+                    class="${
+                      hidden
+                        ? "success"
+                        : "warning"
+                    }"
+                    onclick="toggleCategoryVisibility('${category.$id}')"
+                  >
+                    ${hidden ? "Show" : "Hide"}
+                  </button>
+
+
+                  <button
+                    class="danger"
+                    onclick="deleteCategory('${category.$id}')"
+                  >
+                    Delete
+                  </button>
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+          `;
 
-        `;
-      }
-    ).join("");
+        }
+      )
+      .join("");
+
 }
 
 
@@ -2487,27 +3989,40 @@ function renderCategories(){
 function renderItems(){
 
   const container =
-    document.getElementById("itemList");
+    document.getElementById(
+      "itemList"
+    );
+
 
   const groups = [];
+
 
   categories.forEach(category => {
 
     const categoryMatches =
-      categoryMatchesSearch(category);
+      categoryMatchesSearch(
+        category
+      );
+
 
     const matchingItems =
       menuItems.filter(
         item =>
-          item.categoryId === category.$id &&
+          item.categoryId ===
+            category.$id &&
           itemMatchesSearch(item)
       );
 
-    if(categoryMatches || matchingItems.length){
+
+    if(
+      categoryMatches ||
+      matchingItems.length
+    ){
 
       groups.push({
         category,
-        items:matchingItems
+        items:
+          matchingItems
       });
 
     }
@@ -2516,16 +4031,24 @@ function renderItems(){
 
 
   const unknownItems =
-    menuItems.filter(item => {
+    menuItems.filter(
+      item => {
 
-      const exists =
-        categories.some(
-          category =>
-            category.$id === item.categoryId
+        const exists =
+          categories.some(
+            category =>
+              category.$id ===
+              item.categoryId
+          );
+
+
+        return (
+          !exists &&
+          itemMatchesSearch(item)
         );
 
-      return !exists && itemMatchesSearch(item);
-    });
+      }
+    );
 
 
   if(unknownItems.length){
@@ -2536,7 +4059,8 @@ function renderItems(){
         name:"Unassigned Items",
         invisible:false
       },
-      items:unknownItems
+      items:
+        unknownItems
     });
 
   }
@@ -2550,116 +4074,153 @@ function renderItems(){
         : `<div class="empty">No menu items found.</div>`;
 
     return;
+
   }
 
 
   container.innerHTML =
-    groups.map(group => {
+    groups
+      .map(
+        group => {
 
-      const category =
-        group.category;
+          const category =
+            group.category;
 
-      const items =
-        group.items;
+          const items =
+            group.items;
 
-      const hidden =
-        category.invisible === true;
+          const hidden =
+            category.invisible === true;
 
-      return `
 
-        <div class="menu-group">
+          return `
 
-          <div class="menu-group-header">
+            <div class="menu-group">
 
-            <div class="menu-group-title">
+              <div class="menu-group-header">
 
-              <h4>
-                ${escapeHTML(category.name)}
-              </h4>
+                <div class="menu-group-title">
 
-              <span class="menu-group-count">
-                ${items.length}
-                item${items.length === 1 ? "" : "s"}
-              </span>
+                  <h4>
+                    ${escapeHTML(category.name)}
+                  </h4>
+
+                  <span class="menu-group-count">
+
+                    ${items.length}
+                    item${items.length === 1 ? "" : "s"}
+
+                  </span>
+
+                </div>
+
+
+                ${
+                  category.$id !== "unknown"
+                    ? `
+
+                      <div class="menu-group-actions">
+
+                        <button
+                          class="primary"
+                          onclick="openAddItemModal('${category.$id}')"
+                        >
+                          + Item
+                        </button>
+
+
+                        <button
+                          class="secondary"
+                          onclick="editCategory('${category.$id}')"
+                        >
+                          Edit
+                        </button>
+
+
+                        <button
+                          class="${
+                            hidden
+                              ? "success"
+                              : "warning"
+                          }"
+                          onclick="toggleCategoryVisibility('${category.$id}')"
+                        >
+                          ${hidden ? "Show" : "Hide"}
+                        </button>
+
+                      </div>
+
+                    `
+                    : ""
+                }
+
+              </div>
+
+
+              <div class="item-list">
+
+                ${
+                  items.length
+
+                    ? items
+                        .map(
+                          (item,index) =>
+                            renderSingleItem(
+                              item,
+                              index,
+                              items.length
+                            )
+                        )
+                        .join("")
+
+                    : `
+
+                      <div class="empty-group">
+
+                        No menu items in this category.
+
+                        <br>
+
+                        <button
+                          class="primary"
+                          style="margin-top:9px"
+                          onclick="openAddItemModal('${category.$id}')"
+                        >
+                          + Add First Item
+                        </button>
+
+                      </div>
+
+                    `
+                }
+
+              </div>
 
             </div>
 
-            ${
-              category.$id !== "unknown"
-                ? `
-                  <div class="menu-group-actions">
+          `;
 
-                    <button
-                      class="primary"
-                      onclick="openAddItemModal('${category.$id}')"
-                    >
-                      + Item
-                    </button>
+        }
+      )
+      .join("");
 
-                    <button
-                      class="secondary"
-                      onclick="editCategory('${category.$id}')"
-                    >
-                      Edit
-                    </button>
-
-                    <button
-                      class="${hidden ? "success" : "warning"}"
-                      onclick="toggleCategoryVisibility('${category.$id}')"
-                    >
-                      ${hidden ? "Show" : "Hide"}
-                    </button>
-
-                  </div>
-                `
-                : ""
-            }
-
-          </div>
-
-          <div class="item-list">
-
-            ${
-              items.length
-                ? items.map(
-                    (item,index) =>
-                      renderSingleItem(
-                        item,
-                        index,
-                        items.length
-                      )
-                  ).join("")
-                : `
-                  <div class="empty-group">
-                    No menu items in this category.
-                    <br>
-                    <button
-                      class="primary"
-                      style="margin-top:9px"
-                      onclick="openAddItemModal('${category.$id}')"
-                    >
-                      + Add First Item
-                    </button>
-                  </div>
-                `
-            }
-
-          </div>
-
-        </div>
-
-      `;
-    }).join("");
 }
 
 
-function renderSingleItem(item,index,total){
+function renderSingleItem(
+  item,
+  index,
+  total
+){
 
   const available =
     item.isAvailable !== false;
 
+
   const image =
-    item.image || "";
+    item.image ||
+    "";
+
 
   return `
 
@@ -2676,10 +4237,12 @@ function renderSingleItem(item,index,total){
 
         ${
           image
+
             ? `<img
                  src="${escapeHTML(image)}"
                  alt="${escapeHTML(item.name)}"
                >`
+
             : `<div class="item-photo-placeholder">
                  No photo
                </div>`
@@ -2694,52 +4257,76 @@ function renderSingleItem(item,index,total){
           ${escapeHTML(item.name)}
         </div>
 
+
         <div class="item-price">
           ${escapeHTML(item.price)}
         </div>
 
+
         ${
           item.description
+
             ? `
               <div class="item-description">
                 ${escapeHTML(item.description)}
               </div>
             `
+
             : ""
         }
 
+
         <span
           class="item-status ${
-            available ? "available" : "unavailable"
+            available
+              ? "available"
+              : "unavailable"
           }"
         >
-          ${available ? "Available" : "Unavailable"}
+          ${
+            available
+              ? "Available"
+              : "Unavailable"
+          }
         </span>
+
 
         ${
           item.isFeatured === true
+
             ? `
               <span class="item-status featured-badge">
                 Featured
               </span>
             `
+
             : ""
         }
+
 
         <div class="order-buttons">
 
           <button
             class="secondary"
             onclick="moveItem('${item.$id}',-1)"
-            ${index === 0 ? "disabled" : ""}
+            ${
+              index === 0
+                ? "disabled"
+                : ""
+            }
           >
             ↑
           </button>
 
+
           <button
             class="secondary"
             onclick="moveItem('${item.$id}',1)"
-            ${index === total - 1 ? "disabled" : ""}
+            ${
+              index === total - 1
+                ? "disabled"
+                : ""
+            }
           >
             ↓
           </button>
@@ -2758,12 +4345,22 @@ function renderSingleItem(item,index,total){
           Edit
         </button>
 
+
         <button
-          class="${available ? "warning" : "success"}"
+          class="${
+            available
+              ? "warning"
+              : "success"
+          }"
           onclick="toggleItemAvailability('${item.$id}')"
         >
-          ${available ? "Unavailable" : "Available"}
+          ${
+            available
+              ? "Unavailable"
+              : "Available"
+          }
         </button>
+
 
         <button
           class="${
@@ -2780,6 +4377,7 @@ function renderSingleItem(item,index,total){
           }
         </button>
 
+
         <button
           class="danger"
           onclick="deleteItem('${item.$id}')"
@@ -2792,6 +4390,7 @@ function renderSingleItem(item,index,total){
     </div>
 
   `;
+
 }
 
 
@@ -2802,15 +4401,21 @@ function renderSingleItem(item,index,total){
 function populateCategorySelect(){
 
   const select =
-    document.getElementById("itemCategory");
+    document.getElementById(
+      "itemCategory"
+    );
+
 
   select.innerHTML =
-    categories.map(
-      category =>
-        `<option value="${escapeHTML(category.$id)}">
-          ${escapeHTML(category.name)}
-        </option>`
-    ).join("");
+    categories
+      .map(
+        category =>
+          `<option value="${escapeHTML(category.$id)}">
+            ${escapeHTML(category.name)}
+          </option>`
+      )
+      .join("");
+
 }
 
 
@@ -2820,35 +4425,64 @@ function populateCategorySelect(){
 
 function openAddCategoryModal(){
 
-  document.getElementById("categoryModalTitle").textContent =
+  document.getElementById(
+    "categoryModalTitle"
+  ).textContent =
     "Add Category";
 
-  document.getElementById("categoryId").value = "";
 
-  document.getElementById("categoryName").value = "";
+  document.getElementById(
+    "categoryId"
+  ).value = "";
 
-  document.getElementById("categoryImageFile").value = "";
 
-  document.getElementById("categoryImageUploadStatus").textContent =
-    "";
+  document.getElementById(
+    "categoryName"
+  ).value = "";
 
-  document.getElementById("categoryDescription").value = "";
 
-  document.getElementById("categorySortOrder").value =
+  document.getElementById(
+    "categoryImageFile"
+  ).value = "";
+
+
+  document.getElementById(
+    "categoryImageUploadStatus"
+  ).textContent = "";
+
+
+  document.getElementById(
+    "categoryDescription"
+  ).value = "";
+
+
+  document.getElementById(
+    "categorySortOrder"
+  ).value =
     categories.length;
 
-  document.getElementById("categoryIsDrink").checked =
+
+  document.getElementById(
+    "categoryIsDrink"
+  ).checked =
     false;
 
-  document.getElementById("categoryModal").style.display =
+
+  document.getElementById(
+    "categoryModal"
+  ).style.display =
     "block";
+
 }
 
 
 function closeCategoryModal(){
 
-  document.getElementById("categoryModal").style.display =
+  document.getElementById(
+    "categoryModal"
+  ).style.display =
     "none";
+
 }
 
 
@@ -2856,39 +4490,74 @@ function editCategory(id){
 
   const category =
     categories.find(
-      cat => cat.$id === id
+      cat =>
+        cat.$id === id
     );
 
-  if(!category) return;
 
-  document.getElementById("categoryModalTitle").textContent =
+  if(!category){
+    return;
+  }
+
+
+  document.getElementById(
+    "categoryModalTitle"
+  ).textContent =
     "Edit Category";
 
-  document.getElementById("categoryId").value =
+
+  document.getElementById(
+    "categoryId"
+  ).value =
     category.$id;
 
-  document.getElementById("categoryName").value =
-    category.name || "";
 
-  document.getElementById("categoryImageFile").value =
+  document.getElementById(
+    "categoryName"
+  ).value =
+    category.name ||
     "";
 
-  document.getElementById("categoryImageUploadStatus").textContent =
+
+  document.getElementById(
+    "categoryImageFile"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "categoryImageUploadStatus"
+  ).textContent =
     category.image
       ? "Existing photo will be kept unless a new one is selected."
       : "";
 
-  document.getElementById("categoryDescription").value =
-    category.description || "";
 
-  document.getElementById("categorySortOrder").value =
-    category.sortOrder || 0;
+  document.getElementById(
+    "categoryDescription"
+  ).value =
+    category.description ||
+    "";
 
-  document.getElementById("categoryIsDrink").checked =
+
+  document.getElementById(
+    "categorySortOrder"
+  ).value =
+    category.sortOrder ||
+    0;
+
+
+  document.getElementById(
+    "categoryIsDrink"
+  ).checked =
     category.isDrink === true;
 
-  document.getElementById("categoryModal").style.display =
+
+  document.getElementById(
+    "categoryModal"
+  ).style.display =
     "block";
+
 }
 
 
@@ -2896,102 +4565,130 @@ function editCategory(id){
    CATEGORY SAVE
 ========================================================= */
 
-document.getElementById("categoryForm")
-.addEventListener("submit",async function(event){
+document.getElementById(
+  "categoryForm"
+)
+.addEventListener(
+  "submit",
+  async function(event){
 
-  event.preventDefault();
+    event.preventDefault();
 
-  const id =
-    document.getElementById("categoryId").value.trim();
 
-  const existingCategory =
-    id
-      ? categories.find(
-          row => row.$id === id
-        )
-      : null;
+    const id =
+      document.getElementById(
+        "categoryId"
+      ).value.trim();
 
-  try{
 
-    const uploadedImageUrl =
-      await uploadCategoryImage();
+    const existingCategory =
+      id
 
-    const data = {
+        ? categories.find(
+            row =>
+              row.$id === id
+          )
 
-      name:
-        document.getElementById(
-          "categoryName"
-        ).value.trim(),
+        : null;
 
-      image:
-        uploadedImageUrl ||
-        existingCategory?.image ||
-        "",
 
-      description:
-        document.getElementById(
-          "categoryDescription"
-        ).value.trim(),
+    try{
 
-      sortOrder:
-        Number(
+      const uploadedImageUrl =
+        await uploadCategoryImage();
+
+
+      const data = {
+
+        name:
           document.getElementById(
-            "categorySortOrder"
-          ).value
-        ),
+            "categoryName"
+          ).value.trim(),
 
-      isDrink:
-        document.getElementById(
-          "categoryIsDrink"
-        ).checked,
+        image:
+          uploadedImageUrl ||
+          existingCategory?.image ||
+          "",
 
-      invisible:
-        existingCategory?.invisible === true
+        description:
+          document.getElementById(
+            "categoryDescription"
+          ).value.trim(),
 
-    };
+        sortOrder:
+          Number(
+            document.getElementById(
+              "categorySortOrder"
+            ).value
+          ),
+
+        isDrink:
+          document.getElementById(
+            "categoryIsDrink"
+          ).checked,
+
+        invisible:
+          existingCategory?.invisible === true
+
+      };
 
 
-    if(id){
+      if(id){
 
-      await tablesDB.updateRow({
-        databaseId:APPWRITE_DATABASE_ID,
-        tableId:APPWRITE_CATEGORIES_TABLE,
-        rowId:id,
-        data
-      });
+        await tablesDB.updateRow({
+          databaseId:
+            APPWRITE_DATABASE_ID,
+          tableId:
+            APPWRITE_CATEGORIES_TABLE,
+          rowId:
+            id,
+          data
+        });
 
-      showMessage("Category updated successfully.");
 
-    }else{
+        showMessage(
+          "Category updated successfully."
+        );
 
-      await tablesDB.createRow({
-        databaseId:APPWRITE_DATABASE_ID,
-        tableId:APPWRITE_CATEGORIES_TABLE,
-        rowId:Appwrite.ID.unique(),
-        data
-      });
+      }else{
 
-      showMessage("Category added successfully.");
+        await tablesDB.createRow({
+          databaseId:
+            APPWRITE_DATABASE_ID,
+          tableId:
+            APPWRITE_CATEGORIES_TABLE,
+          rowId:
+            Appwrite.ID.unique(),
+          data
+        });
+
+
+        showMessage(
+          "Category added successfully."
+        );
+
+      }
+
+
+      closeCategoryModal();
+
+      await loadData();
+
+
+    }catch(error){
+
+      console.error(error);
+
+      showMessage(
+        error.message ||
+        "Could not save category.",
+        "error"
+      );
 
     }
 
-    closeCategoryModal();
-
-    await loadData();
-
-  }catch(error){
-
-    console.error(error);
-
-    showMessage(
-      error.message ||
-      "Could not save category.",
-      "error"
-    );
-
   }
-
-});
+);
 
 
 /* =========================================================
@@ -3002,24 +4699,35 @@ async function toggleCategoryVisibility(id){
 
   const category =
     categories.find(
-      cat => cat.$id === id
+      cat =>
+        cat.$id === id
     );
 
-  if(!category) return;
+
+  if(!category){
+    return;
+  }
+
 
   const newValue =
     category.invisible !== true;
 
+
   try{
 
     await tablesDB.updateRow({
-      databaseId:APPWRITE_DATABASE_ID,
-      tableId:APPWRITE_CATEGORIES_TABLE,
-      rowId:id,
+      databaseId:
+        APPWRITE_DATABASE_ID,
+      tableId:
+        APPWRITE_CATEGORIES_TABLE,
+      rowId:
+        id,
       data:{
-        invisible:newValue
+        invisible:
+          newValue
       }
     });
+
 
     showMessage(
       newValue
@@ -3027,7 +4735,9 @@ async function toggleCategoryVisibility(id){
         : "Category shown."
     );
 
+
     await loadData();
+
 
   }catch(error){
 
@@ -3040,6 +4750,7 @@ async function toggleCategoryVisibility(id){
     );
 
   }
+
 }
 
 
@@ -3047,51 +4758,84 @@ async function toggleCategoryVisibility(id){
    CATEGORY ORDERING
 ========================================================= */
 
-async function moveCategory(id,direction){
+async function moveCategory(
+  id,
+  direction
+){
 
   const index =
     categories.findIndex(
-      category => category.$id === id
+      category =>
+        category.$id === id
     );
 
-  if(index < 0) return;
+
+  if(index < 0){
+    return;
+  }
+
 
   const newIndex =
     index + direction;
 
-  if(newIndex < 0 || newIndex >= categories.length){
+
+  if(
+    newIndex < 0 ||
+    newIndex >= categories.length
+  ){
     return;
   }
+
 
   const current =
     categories[index];
 
+
   const target =
     categories[newIndex];
+
 
   try{
 
     await tablesDB.updateRow({
-      databaseId:APPWRITE_DATABASE_ID,
-      tableId:APPWRITE_CATEGORIES_TABLE,
-      rowId:current.$id,
+      databaseId:
+        APPWRITE_DATABASE_ID,
+      tableId:
+        APPWRITE_CATEGORIES_TABLE,
+      rowId:
+        current.$id,
       data:{
-        sortOrder:Number(target.sortOrder || 0)
+        sortOrder:
+          Number(
+            target.sortOrder || 0
+          )
       }
     });
+
 
     await tablesDB.updateRow({
-      databaseId:APPWRITE_DATABASE_ID,
-      tableId:APPWRITE_CATEGORIES_TABLE,
-      rowId:target.$id,
+      databaseId:
+        APPWRITE_DATABASE_ID,
+      tableId:
+        APPWRITE_CATEGORIES_TABLE,
+      rowId:
+        target.$id,
       data:{
-        sortOrder:Number(current.sortOrder || 0)
+        sortOrder:
+          Number(
+            current.sortOrder || 0
+          )
       }
     });
 
-    showMessage("Category order updated.");
+
+    showMessage(
+      "Category order updated."
+    );
+
 
     await loadData();
+
 
   }catch(error){
 
@@ -3104,6 +4848,7 @@ async function moveCategory(id,direction){
     );
 
   }
+
 }
 
 
@@ -3115,15 +4860,22 @@ async function deleteCategory(id){
 
   const category =
     categories.find(
-      cat => cat.$id === id
+      cat =>
+        cat.$id === id
     );
 
-  if(!category) return;
+
+  if(!category){
+    return;
+  }
+
 
   const items =
     menuItems.filter(
-      item => item.categoryId === id
+      item =>
+        item.categoryId === id
     );
+
 
   if(items.length){
 
@@ -3132,26 +4884,40 @@ async function deleteCategory(id){
     );
 
     return;
+
   }
+
 
   const confirmed =
     confirm(
       `Delete the category "${category.name}"? This cannot be undone.`
     );
 
-  if(!confirmed) return;
+
+  if(!confirmed){
+    return;
+  }
+
 
   try{
 
     await tablesDB.deleteRow({
-      databaseId:APPWRITE_DATABASE_ID,
-      tableId:APPWRITE_CATEGORIES_TABLE,
-      rowId:id
+      databaseId:
+        APPWRITE_DATABASE_ID,
+      tableId:
+        APPWRITE_CATEGORIES_TABLE,
+      rowId:
+        id
     });
 
-    showMessage("Category deleted.");
+
+    showMessage(
+      "Category deleted."
+    );
+
 
     await loadData();
+
 
   }catch(error){
 
@@ -3164,6 +4930,7 @@ async function deleteCategory(id){
     );
 
   }
+
 }
 
 
@@ -3171,7 +4938,9 @@ async function deleteCategory(id){
    ITEM MODAL
 ========================================================= */
 
-function openAddItemModal(categoryId=null){
+function openAddItemModal(
+  categoryId=null
+){
 
   if(!categories.length){
 
@@ -3181,47 +4950,91 @@ function openAddItemModal(categoryId=null){
     );
 
     return;
+
   }
 
-  document.getElementById("itemModalTitle").textContent =
+
+  document.getElementById(
+    "itemModalTitle"
+  ).textContent =
     "Add Menu Item";
 
-  document.getElementById("itemId").value = "";
 
-  document.getElementById("itemName").value = "";
+  document.getElementById(
+    "itemId"
+  ).value = "";
 
-  document.getElementById("itemPrice").value = "";
 
-  document.getElementById("itemDescription").value = "";
+  document.getElementById(
+    "itemName"
+  ).value = "";
 
-  document.getElementById("itemSortOrder").value =
+
+  document.getElementById(
+    "itemPrice"
+  ).value = "";
+
+
+  document.getElementById(
+    "itemDescription"
+  ).value = "";
+
+
+  document.getElementById(
+    "itemSortOrder"
+  ).value =
     menuItems.length;
 
-  document.getElementById("itemType").value = "";
 
-  document.getElementById("itemAvailable").checked =
+  document.getElementById(
+    "itemType"
+  ).value = "";
+
+
+  document.getElementById(
+    "itemAvailable"
+  ).checked =
     true;
 
-  document.getElementById("itemFeatured").checked =
+
+  document.getElementById(
+    "itemFeatured"
+  ).checked =
     false;
 
-  document.getElementById("itemImageFile").value = "";
 
-  document.getElementById("itemImageUploadStatus").textContent =
-    "";
+  document.getElementById(
+    "itemImageFile"
+  ).value = "";
 
-  document.getElementById("itemCategory").value =
-    categoryId || categories[0].$id;
 
-  document.getElementById("itemModal").style.display =
+  document.getElementById(
+    "itemImageUploadStatus"
+  ).textContent = "";
+
+
+  document.getElementById(
+    "itemCategory"
+  ).value =
+    categoryId ||
+    categories[0].$id;
+
+
+  document.getElementById(
+    "itemModal"
+  ).style.display =
     "block";
+
 }
 
 
 function closeItemModal(){
 
-  document.getElementById("itemModal").style.display =
+  document.getElementById(
+    "itemModal"
+  ).style.display =
     "none";
+
 }
 
 
@@ -3229,51 +5042,100 @@ function editItem(id){
 
   const item =
     menuItems.find(
-      row => row.$id === id
+      row =>
+        row.$id === id
     );
 
-  if(!item) return;
 
-  document.getElementById("itemModalTitle").textContent =
+  if(!item){
+    return;
+  }
+
+
+  document.getElementById(
+    "itemModalTitle"
+  ).textContent =
     "Edit Menu Item";
 
-  document.getElementById("itemId").value =
+
+  document.getElementById(
+    "itemId"
+  ).value =
     item.$id;
 
-  document.getElementById("itemName").value =
-    item.name || "";
 
-  document.getElementById("itemPrice").value =
-    item.price || "";
-
-  document.getElementById("itemDescription").value =
-    item.description || "";
-
-  document.getElementById("itemSortOrder").value =
-    item.sortOrder || 0;
-
-  document.getElementById("itemType").value =
-    item.itemType || "";
-
-  document.getElementById("itemAvailable").checked =
-    item.isAvailable !== false;
-
-  document.getElementById("itemFeatured").checked =
-    item.isFeatured === true;
-
-  document.getElementById("itemCategory").value =
-    item.categoryId;
-
-  document.getElementById("itemImageFile").value =
+  document.getElementById(
+    "itemName"
+  ).value =
+    item.name ||
     "";
 
-  document.getElementById("itemImageUploadStatus").textContent =
+
+  document.getElementById(
+    "itemPrice"
+  ).value =
+    item.price ||
+    "";
+
+
+  document.getElementById(
+    "itemDescription"
+  ).value =
+    item.description ||
+    "";
+
+
+  document.getElementById(
+    "itemSortOrder"
+  ).value =
+    item.sortOrder ||
+    0;
+
+
+  document.getElementById(
+    "itemType"
+  ).value =
+    item.itemType ||
+    "";
+
+
+  document.getElementById(
+    "itemAvailable"
+  ).checked =
+    item.isAvailable !== false;
+
+
+  document.getElementById(
+    "itemFeatured"
+  ).checked =
+    item.isFeatured === true;
+
+
+  document.getElementById(
+    "itemCategory"
+  ).value =
+    item.categoryId;
+
+
+  document.getElementById(
+    "itemImageFile"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "itemImageUploadStatus"
+  ).textContent =
     item.image
       ? "Existing photo will be kept unless a new one is selected."
       : "";
 
-  document.getElementById("itemModal").style.display =
+
+  document.getElementById(
+    "itemModal"
+  ).style.display =
     "block";
+
 }
 
 
@@ -3281,123 +5143,147 @@ function editItem(id){
    ITEM SAVE
 ========================================================= */
 
-document.getElementById("itemForm")
-.addEventListener("submit",async function(event){
+document.getElementById(
+  "itemForm"
+)
+.addEventListener(
+  "submit",
+  async function(event){
 
-  event.preventDefault();
+    event.preventDefault();
 
-  const id =
-    document.getElementById("itemId").value.trim();
 
-  const existingItem =
-    id
-      ? menuItems.find(
-          row => row.$id === id
-        )
-      : null;
+    const id =
+      document.getElementById(
+        "itemId"
+      ).value.trim();
 
-  try{
 
-    const uploadedImageUrl =
-      await uploadMenuItemImage();
+    const existingItem =
+      id
 
-    const data = {
+        ? menuItems.find(
+            row =>
+              row.$id === id
+          )
 
-      name:
-        document.getElementById(
-          "itemName"
-        ).value.trim(),
+        : null;
 
-      price:
-        document.getElementById(
-          "itemPrice"
-        ).value.trim(),
 
-      description:
-        document.getElementById(
-          "itemDescription"
-        ).value.trim(),
+    try{
 
-      categoryId:
-        document.getElementById(
-          "itemCategory"
-        ).value,
+      const uploadedImageUrl =
+        await uploadMenuItemImage();
 
-      image:
-        uploadedImageUrl ||
-        existingItem?.image ||
-        "",
 
-      isAvailable:
-        document.getElementById(
-          "itemAvailable"
-        ).checked,
+      const data = {
 
-      sortOrder:
-        Number(
+        name:
           document.getElementById(
-            "itemSortOrder"
-          ).value
-        ),
+            "itemName"
+          ).value.trim(),
 
-      itemType:
-        document.getElementById(
-          "itemType"
-        ).value.trim(),
+        price:
+          document.getElementById(
+            "itemPrice"
+          ).value.trim(),
 
-      isFeatured:
-        document.getElementById(
-          "itemFeatured"
-        ).checked
+        description:
+          document.getElementById(
+            "itemDescription"
+          ).value.trim(),
 
-    };
+        categoryId:
+          document.getElementById(
+            "itemCategory"
+          ).value,
+
+        image:
+          uploadedImageUrl ||
+          existingItem?.image ||
+          "",
+
+        isAvailable:
+          document.getElementById(
+            "itemAvailable"
+          ).checked,
+
+        sortOrder:
+          Number(
+            document.getElementById(
+              "itemSortOrder"
+            ).value
+          ),
+
+        itemType:
+          document.getElementById(
+            "itemType"
+          ).value.trim(),
+
+        isFeatured:
+          document.getElementById(
+            "itemFeatured"
+          ).checked
+
+      };
 
 
-    if(id){
+      if(id){
 
-      await tablesDB.updateRow({
-        databaseId:APPWRITE_DATABASE_ID,
-        tableId:APPWRITE_MENU_ITEMS_TABLE,
-        rowId:id,
-        data
-      });
+        await tablesDB.updateRow({
+          databaseId:
+            APPWRITE_DATABASE_ID,
+          tableId:
+            APPWRITE_MENU_ITEMS_TABLE,
+          rowId:
+            id,
+          data
+        });
+
+
+        showMessage(
+          "Menu item updated successfully."
+        );
+
+      }else{
+
+        await tablesDB.createRow({
+          databaseId:
+            APPWRITE_DATABASE_ID,
+          tableId:
+            APPWRITE_MENU_ITEMS_TABLE,
+          rowId:
+            Appwrite.ID.unique(),
+          data
+        });
+
+
+        showMessage(
+          "Menu item added successfully."
+        );
+
+      }
+
+
+      closeItemModal();
+
+      await loadData();
+
+
+    }catch(error){
+
+      console.error(error);
 
       showMessage(
-        "Menu item updated successfully."
-      );
-
-    }else{
-
-      await tablesDB.createRow({
-        databaseId:APPWRITE_DATABASE_ID,
-        tableId:APPWRITE_MENU_ITEMS_TABLE,
-        rowId:Appwrite.ID.unique(),
-        data
-      });
-
-      showMessage(
-        "Menu item added successfully."
+        error.message ||
+        "Could not save menu item.",
+        "error"
       );
 
     }
 
-    closeItemModal();
-
-    await loadData();
-
-  }catch(error){
-
-    console.error(error);
-
-    showMessage(
-      error.message ||
-      "Could not save menu item.",
-      "error"
-    );
-
   }
-
-});
+);
 
 
 /* =========================================================
@@ -3408,24 +5294,35 @@ async function toggleItemAvailability(id){
 
   const item =
     menuItems.find(
-      row => row.$id === id
+      row =>
+        row.$id === id
     );
 
-  if(!item) return;
+
+  if(!item){
+    return;
+  }
+
 
   const newValue =
     item.isAvailable === false;
 
+
   try{
 
     await tablesDB.updateRow({
-      databaseId:APPWRITE_DATABASE_ID,
-      tableId:APPWRITE_MENU_ITEMS_TABLE,
-      rowId:id,
+      databaseId:
+        APPWRITE_DATABASE_ID,
+      tableId:
+        APPWRITE_MENU_ITEMS_TABLE,
+      rowId:
+        id,
       data:{
-        isAvailable:newValue
+        isAvailable:
+          newValue
       }
     });
+
 
     showMessage(
       newValue
@@ -3433,7 +5330,9 @@ async function toggleItemAvailability(id){
         : "Item marked unavailable."
     );
 
+
     await loadData();
+
 
   }catch(error){
 
@@ -3446,6 +5345,7 @@ async function toggleItemAvailability(id){
     );
 
   }
+
 }
 
 
@@ -3457,24 +5357,35 @@ async function toggleItemFeatured(id){
 
   const item =
     menuItems.find(
-      row => row.$id === id
+      row =>
+        row.$id === id
     );
 
-  if(!item) return;
+
+  if(!item){
+    return;
+  }
+
 
   const newValue =
     item.isFeatured !== true;
 
+
   try{
 
     await tablesDB.updateRow({
-      databaseId:APPWRITE_DATABASE_ID,
-      tableId:APPWRITE_MENU_ITEMS_TABLE,
-      rowId:id,
+      databaseId:
+        APPWRITE_DATABASE_ID,
+      tableId:
+        APPWRITE_MENU_ITEMS_TABLE,
+      rowId:
+        id,
       data:{
-        isFeatured:newValue
+        isFeatured:
+          newValue
       }
     });
+
 
     showMessage(
       newValue
@@ -3482,7 +5393,9 @@ async function toggleItemFeatured(id){
         : "Item removed from featured."
     );
 
+
     await loadData();
+
 
   }catch(error){
 
@@ -3495,6 +5408,7 @@ async function toggleItemFeatured(id){
     );
 
   }
+
 }
 
 
@@ -3502,20 +5416,29 @@ async function toggleItemFeatured(id){
    ITEM ORDERING
 ========================================================= */
 
-async function moveItem(id,direction){
+async function moveItem(
+  id,
+  direction
+){
 
   const item =
     menuItems.find(
-      row => row.$id === id
+      row =>
+        row.$id === id
     );
 
-  if(!item) return;
+
+  if(!item){
+    return;
+  }
+
 
   const categoryItems =
     menuItems
       .filter(
         row =>
-          row.categoryId === item.categoryId
+          row.categoryId ===
+          item.categoryId
       )
       .sort(
         (a,b)=>
@@ -3523,15 +5446,22 @@ async function moveItem(id,direction){
           Number(b.sortOrder || 0)
       );
 
+
   const index =
     categoryItems.findIndex(
-      row => row.$id === id
+      row =>
+        row.$id === id
     );
 
-  if(index < 0) return;
+
+  if(index < 0){
+    return;
+  }
+
 
   const newIndex =
     index + direction;
+
 
   if(
     newIndex < 0 ||
@@ -3540,35 +5470,56 @@ async function moveItem(id,direction){
     return;
   }
 
+
   const current =
     categoryItems[index];
+
 
   const target =
     categoryItems[newIndex];
 
+
   try{
 
     await tablesDB.updateRow({
-      databaseId:APPWRITE_DATABASE_ID,
-      tableId:APPWRITE_MENU_ITEMS_TABLE,
-      rowId:current.$id,
+      databaseId:
+        APPWRITE_DATABASE_ID,
+      tableId:
+        APPWRITE_MENU_ITEMS_TABLE,
+      rowId:
+        current.$id,
       data:{
-        sortOrder:Number(target.sortOrder || 0)
+        sortOrder:
+          Number(
+            target.sortOrder || 0
+          )
       }
     });
+
 
     await tablesDB.updateRow({
-      databaseId:APPWRITE_DATABASE_ID,
-      tableId:APPWRITE_MENU_ITEMS_TABLE,
-      rowId:target.$id,
+      databaseId:
+        APPWRITE_DATABASE_ID,
+      tableId:
+        APPWRITE_MENU_ITEMS_TABLE,
+      rowId:
+        target.$id,
       data:{
-        sortOrder:Number(current.sortOrder || 0)
+        sortOrder:
+          Number(
+            current.sortOrder || 0
+          )
       }
     });
 
-    showMessage("Item order updated.");
+
+    showMessage(
+      "Item order updated."
+    );
+
 
     await loadData();
+
 
   }catch(error){
 
@@ -3581,6 +5532,7 @@ async function moveItem(id,direction){
     );
 
   }
+
 }
 
 
@@ -3592,29 +5544,46 @@ async function deleteItem(id){
 
   const item =
     menuItems.find(
-      row => row.$id === id
+      row =>
+        row.$id === id
     );
 
-  if(!item) return;
+
+  if(!item){
+    return;
+  }
+
 
   const confirmed =
     confirm(
       `Delete "${item.name}"? This cannot be undone.`
     );
 
-  if(!confirmed) return;
+
+  if(!confirmed){
+    return;
+  }
+
 
   try{
 
     await tablesDB.deleteRow({
-      databaseId:APPWRITE_DATABASE_ID,
-      tableId:APPWRITE_MENU_ITEMS_TABLE,
-      rowId:id
+      databaseId:
+        APPWRITE_DATABASE_ID,
+      tableId:
+        APPWRITE_MENU_ITEMS_TABLE,
+      rowId:
+        id
     });
 
-    showMessage("Menu item deleted.");
+
+    showMessage(
+      "Menu item deleted."
+    );
+
 
     await loadData();
+
 
   }catch(error){
 
@@ -3627,6 +5596,7 @@ async function deleteItem(id){
     );
 
   }
+
 }
 
 
@@ -3634,33 +5604,61 @@ async function deleteItem(id){
    IMAGE LIGHTBOX
 ========================================================= */
 
-function openImageLightbox(src,alt="Image"){
+function openImageLightbox(
+  src,
+  alt="Image"
+){
 
-  if(!src) return;
+  if(!src){
+    return;
+  }
+
 
   const lightbox =
-    document.getElementById("imageLightbox");
+    document.getElementById(
+      "imageLightbox"
+    );
+
 
   const image =
-    document.getElementById("lightboxImage");
+    document.getElementById(
+      "lightboxImage"
+    );
 
-  image.src = src;
-  image.alt = alt;
 
-  lightbox.style.display = "flex";
+  image.src =
+    src;
+
+  image.alt =
+    alt;
+
+
+  lightbox.style.display =
+    "flex";
+
 }
 
 
 function closeImageLightbox(){
 
   const lightbox =
-    document.getElementById("imageLightbox");
+    document.getElementById(
+      "imageLightbox"
+    );
+
 
   const image =
-    document.getElementById("lightboxImage");
+    document.getElementById(
+      "lightboxImage"
+    );
 
-  lightbox.style.display = "none";
-  image.src = "";
+
+  lightbox.style.display =
+    "none";
+
+  image.src =
+    "";
+
 }
 
 
@@ -3682,99 +5680,185 @@ function openCustomerMenu(){
    SEARCH EVENTS
 ========================================================= */
 
-document.getElementById("menuSearch")
-.addEventListener("input",function(){
+document.getElementById(
+  "menuSearch"
+)
+.addEventListener(
+  "input",
+  function(){
 
-  currentSearch = this.value;
+    currentSearch =
+      this.value;
 
-  renderEverything();
+    renderEverything();
 
-});
+  }
+);
 
 
-document.getElementById("clearSearch")
-.addEventListener("click",function(){
+document.getElementById(
+  "clearSearch"
+)
+.addEventListener(
+  "click",
+  function(){
 
-  document.getElementById("menuSearch").value = "";
+    document.getElementById(
+      "menuSearch"
+    ).value = "";
 
-  currentSearch = "";
+    currentSearch =
+      "";
 
-  renderEverything();
+    renderEverything();
 
-  document.getElementById("menuSearch").focus();
+    document.getElementById(
+      "menuSearch"
+    ).focus();
 
-});
+  }
+);
 
 
 /* =========================================================
-   LOGIN
+   LOGIN EVENT
 ========================================================= */
 
-document.getElementById("loginForm")
-.addEventListener("submit",async function(event){
+document.getElementById(
+  "loginForm"
+)
+.addEventListener(
+  "submit",
+  async function(event){
 
-  event.preventDefault();
+    event.preventDefault();
 
-  const email =
-    document.getElementById(
-      "loginEmail"
-    ).value.trim();
 
-  const password =
-    document.getElementById(
-      "loginPassword"
-    ).value;
+    const identifier =
+      document.getElementById(
+        "loginIdentifier"
+      ).value.trim();
 
-  await login(email,password);
 
-});
+    const password =
+      document.getElementById(
+        "loginPassword"
+      ).value;
+
+
+    await login(
+      identifier,
+      password
+    );
+
+  }
+);
 
 
 /* =========================================================
    MODAL BEHAVIOUR
 ========================================================= */
 
-window.addEventListener("click",function(event){
+window.addEventListener(
+  "click",
+  function(event){
 
-  const categoryModal =
-    document.getElementById("categoryModal");
+    const categoryModal =
+      document.getElementById(
+        "categoryModal"
+      );
 
-  const itemModal =
-    document.getElementById("itemModal");
 
-  const lightbox =
-    document.getElementById("imageLightbox");
+    const itemModal =
+      document.getElementById(
+        "itemModal"
+      );
 
-  if(event.target === categoryModal){
-    closeCategoryModal();
+
+    const usernameSetupModal =
+      document.getElementById(
+        "usernameSetupModal"
+      );
+
+
+    const lightbox =
+      document.getElementById(
+        "imageLightbox"
+      );
+
+
+    if(
+      event.target ===
+      categoryModal
+    ){
+
+      closeCategoryModal();
+
+    }
+
+
+    if(
+      event.target ===
+      itemModal
+    ){
+
+      closeItemModal();
+
+    }
+
+
+    if(
+      event.target ===
+      usernameSetupModal
+    ){
+
+      /*
+       * Do not allow the existing administrator
+       * to accidentally dismiss the required
+       * username setup.
+       */
+
+    }
+
+
+    if(
+      event.target ===
+      lightbox
+    ){
+
+      closeImageLightbox();
+
+    }
+
   }
+);
 
-  if(event.target === itemModal){
-    closeItemModal();
+
+document.getElementById(
+  "closeLightbox"
+)
+.addEventListener(
+  "click",
+  closeImageLightbox
+);
+
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(event.key === "Escape"){
+
+      closeCategoryModal();
+
+      closeItemModal();
+
+      closeImageLightbox();
+
+    }
+
   }
-
-  if(event.target === lightbox){
-    closeImageLightbox();
-  }
-
-});
-
-
-document.getElementById("closeLightbox")
-.addEventListener("click",closeImageLightbox);
-
-
-document.addEventListener("keydown",function(event){
-
-  if(event.key === "Escape"){
-
-    closeCategoryModal();
-    closeItemModal();
-    closeImageLightbox();
-
-  }
-
-});
+);
 
 
 /* =========================================================
