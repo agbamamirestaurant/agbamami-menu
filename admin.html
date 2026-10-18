@@ -247,6 +247,69 @@ header{
   font-size:13px;
 }
 
+
+/* ADMIN TABS */
+.admin-tabs{
+  display:flex;
+  gap:7px;
+  margin:0 0 20px;
+  padding:6px;
+  background:#eee9e3;
+  border:1px solid #e4ddd5;
+  border-radius:14px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+
+.admin-tabs::-webkit-scrollbar{display:none}
+
+.admin-tab{
+  flex:1 1 0;
+  min-width:145px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:11px 15px;
+  border-radius:10px;
+  background:transparent;
+  color:#756b63;
+  font-size:13px;
+  font-weight:600;
+  white-space:nowrap;
+  box-shadow:none;
+}
+
+.admin-tab:hover{
+  background:#f7f3ef;
+  color:#4d4037;
+  transform:none;
+}
+
+.admin-tab.active{
+  background:#fff;
+  color:#9e5d25;
+  box-shadow:0 3px 12px rgba(70,50,30,.08);
+}
+
+.admin-tab-panel{display:none}
+.admin-tab-panel.active{display:block}
+
+.admin-tab-panel > .section:last-child{margin-bottom:20px}
+
+@media(max-width:600px){
+  .admin-tabs{
+    gap:5px;
+    padding:5px;
+  }
+
+  .admin-tab{
+    min-width:125px;
+    padding:10px 12px;
+    font-size:12px;
+  }
+}
+
 /* SETTINGS */
 
 .settings-layout{
@@ -1121,6 +1184,22 @@ input[type=file]::file-selector-button{
   </div>
 
 
+
+
+  <!-- ADMIN TABS -->
+  <nav class="admin-tabs" aria-label="Admin sections">
+    <button type="button" class="admin-tab active" data-tab="menu" onclick="switchAdminTab('menu')">
+      <span>🍽️</span> Menu
+    </button>
+    <button type="button" class="admin-tab" data-tab="settings" onclick="switchAdminTab('settings')">
+      <span>⚙️</span> Settings
+    </button>
+    <button type="button" class="admin-tab" data-tab="account" onclick="switchAdminTab('account')">
+      <span>👤</span> Admin Account
+    </button>
+  </nav>
+
+  <div id="tab-menu" class="admin-tab-panel active">
   <!-- STATS -->
 
   <div class="stats-grid">
@@ -1227,6 +1306,311 @@ input[type=file]::file-selector-button{
   </div>
 
 
+  <!-- SEARCH -->
+
+  <div class="search-area">
+
+    <div class="search-box">
+
+      <div class="search-input-wrap">
+
+        <span class="search-icon">
+          🔎
+        </span>
+
+        <input
+          type="search"
+          id="menuSearch"
+          placeholder="Search categories, items, descriptions or prices..."
+          autocomplete="off"
+        >
+
+      </div>
+
+      <button
+        id="clearSearch"
+        class="secondary"
+        type="button"
+      >
+        Clear
+      </button>
+
+    </div>
+
+    <div
+      id="searchResultsNote"
+      class="search-results-note"
+    ></div>
+
+  </div>
+
+
+  <!-- CATEGORIES -->
+
+  <section class="section">
+
+    <div class="section-title">
+
+      <div>
+
+        <h3>
+          Categories
+        </h3>
+
+        <div class="section-subtitle">
+          Categories appear in the same order as your customer menu.
+        </div>
+
+      </div>
+
+      <button
+        class="primary"
+        onclick="openAddCategoryModal()"
+      >
+        + Add Category
+      </button>
+
+    </div>
+
+    <div
+      id="categoryList"
+      class="category-grid"
+    >
+
+      <div class="loading">
+        Loading categories...
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- MENU ITEMS -->
+
+  <section class="section">
+
+    <div class="section-title">
+
+      <div>
+
+        <h3>
+          Menu Items
+        </h3>
+
+        <div class="section-subtitle">
+          Items are grouped under their respective categories.
+        </div>
+
+      </div>
+
+      <button
+        class="primary"
+        onclick="openAddItemModal()"
+      >
+        + Add Menu Item
+      </button>
+
+    </div>
+
+    <div
+      id="itemList"
+      class="menu-groups"
+    >
+
+      <div class="loading">
+        Loading menu items...
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+  </div>
+
+  <div id="tab-settings" class="admin-tab-panel">
+  <!-- RESTAURANT SETTINGS -->
+
+  <section class="section">
+
+    <div class="section-title">
+
+      <div>
+
+        <h3>
+          Restaurant Settings
+        </h3>
+
+        <div class="section-subtitle">
+          Update the information customers see on your menu.
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="settings-layout">
+
+      <div class="logo-preview-area">
+
+        <div
+          id="logoPreview"
+          class="logo-preview"
+          onclick="openCurrentLogo()"
+        >
+          No logo
+        </div>
+
+        <div class="logo-preview-note">
+          Click logo to enlarge
+        </div>
+
+      </div>
+
+
+      <div class="settings-form">
+
+        <div>
+
+          <label for="restaurantName">
+            Restaurant Name
+          </label>
+
+          <input
+            id="restaurantName"
+            type="text"
+            placeholder="Agbamami"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="restaurantPhone">
+            Phone Number
+          </label>
+
+          <input
+            id="restaurantPhone"
+            type="text"
+            placeholder="+233..."
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="restaurantLocation">
+            Location
+          </label>
+
+          <input
+            id="restaurantLocation"
+            type="text"
+            placeholder="Google Maps link"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="restaurantDescription">
+            Restaurant Information
+          </label>
+
+          <textarea
+            id="restaurantDescription"
+            rows="4"
+            placeholder="Tell customers about your restaurant..."
+          ></textarea>
+
+        </div>
+
+
+        <div>
+
+          <label for="restaurantPromoVideo">
+            Promotion Video URL
+          </label>
+
+          <input
+            id="restaurantPromoVideo"
+            type="text"
+            placeholder="Optional promotion video URL"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="restaurantPromoPoster">
+            Promotion Poster URL
+          </label>
+
+          <input
+            id="restaurantPromoPoster"
+            type="text"
+            placeholder="Optional promotion poster URL"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="restaurantLogoFile">
+            Change Restaurant Logo
+          </label>
+
+          <input
+            type="file"
+            id="restaurantLogoFile"
+            accept="image/*"
+          >
+
+          <div
+            id="logoUploadStatus"
+            class="save-status"
+          ></div>
+
+        </div>
+
+
+        <div>
+
+          <button
+            type="button"
+            class="primary"
+            onclick="saveRestaurantSettings()"
+          >
+            Save Restaurant Settings
+          </button>
+
+        </div>
+
+
+        <div
+          id="settingsMessage"
+          class="save-status"
+        ></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  </div>
+
+  <div id="tab-account" class="admin-tab-panel">
   <!-- ACCOUNT MANAGEMENT -->
 
   <section class="section">
@@ -1454,302 +1838,8 @@ input[type=file]::file-selector-button{
   </section>
 
 
-  <!-- RESTAURANT SETTINGS -->
-
-  <section class="section">
-
-    <div class="section-title">
-
-      <div>
-
-        <h3>
-          Restaurant Settings
-        </h3>
-
-        <div class="section-subtitle">
-          Update the information customers see on your menu.
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="settings-layout">
-
-      <div class="logo-preview-area">
-
-        <div
-          id="logoPreview"
-          class="logo-preview"
-          onclick="openCurrentLogo()"
-        >
-          No logo
-        </div>
-
-        <div class="logo-preview-note">
-          Click logo to enlarge
-        </div>
-
-      </div>
-
-
-      <div class="settings-form">
-
-        <div>
-
-          <label for="restaurantName">
-            Restaurant Name
-          </label>
-
-          <input
-            id="restaurantName"
-            type="text"
-            placeholder="Agbamami"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label for="restaurantPhone">
-            Phone Number
-          </label>
-
-          <input
-            id="restaurantPhone"
-            type="text"
-            placeholder="+233..."
-          >
-
-        </div>
-
-
-        <div>
-
-          <label for="restaurantLocation">
-            Location
-          </label>
-
-          <input
-            id="restaurantLocation"
-            type="text"
-            placeholder="Google Maps link"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label for="restaurantDescription">
-            Restaurant Information
-          </label>
-
-          <textarea
-            id="restaurantDescription"
-            rows="4"
-            placeholder="Tell customers about your restaurant..."
-          ></textarea>
-
-        </div>
-
-
-        <div>
-
-          <label for="restaurantPromoVideo">
-            Promotion Video URL
-          </label>
-
-          <input
-            id="restaurantPromoVideo"
-            type="text"
-            placeholder="Optional promotion video URL"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label for="restaurantPromoPoster">
-            Promotion Poster URL
-          </label>
-
-          <input
-            id="restaurantPromoPoster"
-            type="text"
-            placeholder="Optional promotion poster URL"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label for="restaurantLogoFile">
-            Change Restaurant Logo
-          </label>
-
-          <input
-            type="file"
-            id="restaurantLogoFile"
-            accept="image/*"
-          >
-
-          <div
-            id="logoUploadStatus"
-            class="save-status"
-          ></div>
-
-        </div>
-
-
-        <div>
-
-          <button
-            type="button"
-            class="primary"
-            onclick="saveRestaurantSettings()"
-          >
-            Save Restaurant Settings
-          </button>
-
-        </div>
-
-
-        <div
-          id="settingsMessage"
-          class="save-status"
-        ></div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- SEARCH -->
-
-  <div class="search-area">
-
-    <div class="search-box">
-
-      <div class="search-input-wrap">
-
-        <span class="search-icon">
-          🔎
-        </span>
-
-        <input
-          type="search"
-          id="menuSearch"
-          placeholder="Search categories, items, descriptions or prices..."
-          autocomplete="off"
-        >
-
-      </div>
-
-      <button
-        id="clearSearch"
-        class="secondary"
-        type="button"
-      >
-        Clear
-      </button>
-
-    </div>
-
-    <div
-      id="searchResultsNote"
-      class="search-results-note"
-    ></div>
 
   </div>
-
-
-  <!-- CATEGORIES -->
-
-  <section class="section">
-
-    <div class="section-title">
-
-      <div>
-
-        <h3>
-          Categories
-        </h3>
-
-        <div class="section-subtitle">
-          Categories appear in the same order as your customer menu.
-        </div>
-
-      </div>
-
-      <button
-        class="primary"
-        onclick="openAddCategoryModal()"
-      >
-        + Add Category
-      </button>
-
-    </div>
-
-    <div
-      id="categoryList"
-      class="category-grid"
-    >
-
-      <div class="loading">
-        Loading categories...
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- MENU ITEMS -->
-
-  <section class="section">
-
-    <div class="section-title">
-
-      <div>
-
-        <h3>
-          Menu Items
-        </h3>
-
-        <div class="section-subtitle">
-          Items are grouped under their respective categories.
-        </div>
-
-      </div>
-
-      <button
-        class="primary"
-        onclick="openAddItemModal()"
-      >
-        + Add Menu Item
-      </button>
-
-    </div>
-
-    <div
-      id="itemList"
-      class="menu-groups"
-    >
-
-      <div class="loading">
-        Loading menu items...
-      </div>
-
-    </div>
-
-  </section>
 
 </main>
 
@@ -2230,7 +2320,7 @@ const APPWRITE_STORAGE_BUCKET_ID =
   "agbamami_images";
 
 const APPWRITE_ADMIN_FUNCTION_ID =
-  "agbamami_admin_mangager";
+  "6ad408700f7949c8b84b";
 
 const ADMIN_INTERNAL_DOMAIN =
   "agbamami-admin.com";
@@ -5850,6 +5940,34 @@ document.addEventListener(
 ========================================================= */
 
 checkExistingSession();
+
+
+
+/* =========================================================
+   ADMIN TABS
+========================================================= */
+function switchAdminTab(tabName){
+  const validTabs = ["menu","settings","account"];
+  if(!validTabs.includes(tabName)){
+    tabName = "menu";
+  }
+
+  document.querySelectorAll(".admin-tab").forEach(button=>{
+    button.classList.toggle(
+      "active",
+      button.dataset.tab === tabName
+    );
+  });
+
+  document.querySelectorAll(".admin-tab-panel").forEach(panel=>{
+    panel.classList.toggle(
+      "active",
+      panel.id === `tab-${tabName}`
+    );
+  });
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
 
 </script>
 
