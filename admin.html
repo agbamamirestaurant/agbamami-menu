@@ -2601,60 +2601,118 @@ async function login(identifier,password){
 
     if(!value){
 
-      throw new Error(
-        "Enter your username."
+      showMessage(
+        "Please enter your username.",
+        "error"
       );
 
+      return;
+    }
+
+    if(!password){
+
+      showMessage(
+        "Please enter your password.",
+        "error"
+      );
+
+      return;
     }
 
     /*
-     * Temporary compatibility:
-     *
      * If the user enters an email address,
-     * keep supporting the old login.
+     * keep supporting the old email login.
      *
      * Otherwise convert the username into
      * the internal Appwrite email.
      */
-
     const email =
       value.includes("@")
         ? value
         : usernameToEmail(value);
-
 
     await account.createEmailPasswordSession({
       email,
       password
     });
 
-
     currentAdminUser =
       await account.get();
-
 
     showMessage(
       "Login successful."
     );
 
-
     await showAdminScreen();
-
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Login error:",
+      error
+    );
 
+    /*
+     * Appwrite uses user_invalid_credentials
+     * when the username/email or password
+     * is incorrect.
+     */
+    if(
+      error?.type ===
+      "user_invalid_credentials"
+    ){
+
+      showMessage(
+        "Incorrect username or password. Please try again.",
+        "error"
+      );
+
+      return;
+    }
+
+    /*
+     * Handle blocked accounts.
+     */
+    if(
+      error?.type ===
+      "user_blocked"
+    ){
+
+      showMessage(
+        "This administrator account has been blocked.",
+        "error"
+      );
+
+      return;
+    }
+
+    /*
+     * Handle rate limiting.
+     */
+    if(
+      error?.type ===
+      "general_rate_limit_exceeded"
+    ){
+
+      showMessage(
+        "Too many login attempts. Please wait a moment and try again.",
+        "error"
+      );
+
+      return;
+    }
+
+    /*
+     * Fallback for any other login error.
+     */
     showMessage(
-      error.message ||
-      "Login failed.",
+      error?.message ||
+      "Login failed. Please check your details and try again.",
       "error"
     );
 
   }
-
 }
-
 
 async function logout(){
 
