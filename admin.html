@@ -2459,33 +2459,61 @@ async function executeAdminFunction(payload){
       execution
     );
 
+    /*
+     * Appwrite's current Web SDK returns the
+     * synchronous Function response in
+     * responseBody.
+     */
     let response =
-      execution.response || "";
+      execution.responseBody || "";
 
-    try{
+    console.log(
+      "Function response body:",
+      response
+    );
 
-      response =
-        JSON.parse(response);
+    /*
+     * Convert the response body from JSON text
+     * into a JavaScript object.
+     */
+    if(typeof response === "string"){
 
-    }catch(error){
+      try{
 
-      // Response is not JSON.
-      // Keep it as text.
+        response =
+          JSON.parse(response);
 
+      }catch(error){
+
+        console.warn(
+          "Function response was not JSON:",
+          response
+        );
+
+      }
     }
 
+    /*
+     * The Function should return:
+     *
+     * {
+     *   success: true,
+     *   message: "..."
+     * }
+     */
     if(
       !response ||
       response.success !== true
-    )
-    {
+    ){
 
       throw new Error(
         response?.message ||
-        response ||
-        "Administrator operation failed."
+        (
+          typeof response === "string"
+            ? response
+            : "Administrator operation failed."
+        )
       );
-
     }
 
     return response;
@@ -2501,11 +2529,9 @@ async function executeAdminFunction(payload){
       error?.message ||
       "Could not contact the administrator management function."
     );
-
   }
-
 }
-
+  
 /* =========================================================
    GET ALL ROWS
 ========================================================= */
