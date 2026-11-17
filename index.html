@@ -17,7 +17,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=Oswald:wght@400;500;600&family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/appwrite@28.3.0"></script>
 <style>
 :root{
   --page-bg:#fff7e8;
@@ -609,14 +608,8 @@ const PHONE = "+233549503755";
 const WHATSAPP = "233XXXXXXXXX";
 const LOCATION = "https://maps.google.com/?q=Agbamami";
 
-const APPWRITE_SETTINGS_TABLE = "restaurant_settings";
-
-let RESTAURANT_SETTINGS = {
-  restaurantName: "Agbamami",
-  phone: PHONE,
-  location: LOCATION,
-  description: ""
-};
+const RESTAURANT_NAME = "Agbamami Restaurant Menu";
+const RESTAURANT_DESCRIPTION = "Explore our menu";
 
 /* ===== VISUAL SETTINGS ===== */
 const FONT_FAMILY = "Nunito";
@@ -630,7 +623,7 @@ const MUTED_COLOR = "#6f675d";
 const CARD_COLOR = "#ffffff";
 
 /* ===== BRANDING ===== */
-const LOGO = "";
+const LOGO = "logo.png";
 
 /* ===== MENU =====
    Add as many categories and items as you want.
@@ -1395,6 +1388,20 @@ const LOCAL_MENU = [
 
 let MENU = LOCAL_MENU;
 
+/* Keep local GitHub image paths working in the offline customer menu.
+   Older Appwrite URLs are preserved temporarily, but the final published
+   menu should reference local repository paths. */
+function resolveItemImage(imagePath){
+  const value = String(imagePath || "").trim();
+  if(!value) return "";
+  if(/^(https?:)?\/\//i.test(value) || /^(data|blob):/i.test(value)){
+    return value;
+  }
+  return value.replace(/^\.\//, "");
+}
+
+
+
 /* Apply visual settings */
 document.documentElement.style.setProperty("--font-family", `'${FONT_FAMILY}', Arial, Helvetica, sans-serif`);
 document.documentElement.style.setProperty("--page-bg", BACKGROUND_COLOR);
@@ -1428,310 +1435,6 @@ const home = document.getElementById("home");
 const categoryView = document.getElementById("categoryView");
 const title = document.getElementById("categoryTitle");
 const items = document.getElementById("items");
-
-/* =========================================================
-   APPWRITE MENU CONNECTION
-========================================================= */
-
-const APPWRITE_ENDPOINT =
-  "https://fra.cloud.appwrite.io/v1";
-
-const APPWRITE_PROJECT_ID =
-  "6ad2ca49001034ba372a";
-
-const APPWRITE_DATABASE_ID =
-  "agbamami_menu";
-
-const APPWRITE_CATEGORIES_TABLE =
-  "categories";
-
-const APPWRITE_MENU_ITEMS_TABLE =
-  "menu_items";
-
-  const APPWRITE_STORAGE_BUCKET_ID =
-  "agbamami_images";
-  
-function resolveItemImage(image){
-
-  if(!image){
-    return "";
-  }
-
-  const value =
-    String(image).trim();
-
-  /*
-    1. Full URLs are already complete.
-    This includes images uploaded through
-    the Admin dashboard to Appwrite Storage.
-  */
-  if(
-    value.startsWith("http://") ||
-    value.startsWith("https://") ||
-    value.startsWith("data:")
-  ){
-    return value;
-  }
-
-
-  /*
-    2. Local GitHub images.
-
-    Examples:
-      5.jpeg
-      9F.jpeg
-      fried rice with chicken.jpeg
-      images/tilapia.jpeg
-      ./images/soup.jpeg
-  */
-  const localImagePattern =
-    /\.(jpg|jpeg|png|webp|gif|avif|svg)$/i;
-
-  if(
-    localImagePattern.test(value) ||
-    value.startsWith("images/") ||
-    value.startsWith("./images/") ||
-    value.startsWith("/images/")
-  ){
-
-    return value
-      .replace(/^\.\/+/, "")
-      .replace(/^\/+/, "");
-  }
-
-
-  /*
-    3. Anything that is not a local image filename
-    is treated as an Appwrite Storage file ID.
-
-    This keeps compatibility with any existing
-    Appwrite images that may have been saved as
-    only their file ID.
-  */
-  return (
-    APPWRITE_ENDPOINT +
-    "/storage/buckets/" +
-    APPWRITE_STORAGE_BUCKET_ID +
-    "/files/" +
-    encodeURIComponent(value) +
-    "/view?project=" +
-    APPWRITE_PROJECT_ID
-  );
-
-}
-
-const appwriteClient =
-  new Appwrite.Client();
-
-appwriteClient
-  .setEndpoint(APPWRITE_ENDPOINT)
-  .setProject(APPWRITE_PROJECT_ID);
-
-
-const appwriteTablesDB =
-  new Appwrite.TablesDB(appwriteClient);
-
-
-/* =========================================================
-   GET ALL APPWRITE ROWS
-========================================================= */
-async function getAllAppwriteRows(tableId){
-
-  let allRows = [];
-  let offset = 0;
-
-  while(true){
-
-    const response =
-      await appwriteTablesDB.listRows({
-
-        databaseId:
-          APPWRITE_DATABASE_ID,
-
-        tableId:
-          tableId,
-
-        queries: [
-          Appwrite.Query.limit(500),
-          Appwrite.Query.offset(offset)
-        ]
-
-      });
-
-    allRows =
-      allRows.concat(response.rows);
-
-    if(response.rows.length < 500){
-      break;
-    }
-
-    offset += 500;
-
-  }
-
-  return allRows;
-}
-
-
-/* =========================================================
-   LOAD RESTAURANT SETTINGS FROM APPWRITE
-========================================================= */
-
-async function loadRestaurantSettingsFromAppwrite(){
-
-  try{
-
-    const rows =
-      await getAllAppwriteRows(
-        APPWRITE_SETTINGS_TABLE
-      );
-
-    if(!rows.length){
-      return;
-    }
-
-    const settings = rows[0];
-
-    RESTAURANT_SETTINGS = {
-
-      restaurantName:
-        settings.restaurantName ||
-        "Agbamami",
-
-      phone:
-        settings.phone ||
-        PHONE,
-
-      location:
-        settings.location ||
-        LOCATION,
-
-    description:
-    settings.description ||
-    "",
-
-    logo:
-     settings.logo ||
-      ""
-
-    };
-
-  }catch(error){
-
-    console.error(
-      "Could not load restaurant settings:",
-      error
-    );
-
-  }
-
-}
-/* =========================================================
-   LOAD MENU FROM APPWRITE
-========================================================= */
-
-async function loadMenuFromAppwrite(){
-
-  try{
-
-    const categoryRows =
-      await getAllAppwriteRows(
-        APPWRITE_CATEGORIES_TABLE
-      );
-
-
-    const itemRows =
-      await getAllAppwriteRows(
-        APPWRITE_MENU_ITEMS_TABLE
-      );
-
-
-    const visibleCategories =
-      categoryRows
-
-        .filter(category =>
-          category.invisible !== true
-        )
-
-        .sort(
-          (a,b) =>
-            (a.sortOrder || 0) -
-            (b.sortOrder || 0)
-        );
-
-
-    const appwriteMenu =
-      visibleCategories.map(category => {
-
-        const categoryItems =
-          itemRows
-
-            .filter(item =>
-              item.categoryId === category.$id
-            )
-
-            .sort(
-              (a,b) =>
-                (a.sortOrder || 0) -
-                (b.sortOrder || 0)
-            );
-
-
-        return {
-
-          name:
-            category.name || "",
-
-         image:
-          resolveItemImage(category.image || ""),
-
-          isDrink:
-            category.isDrink === true,
-
-          items:
-            categoryItems.map(item => ({
-
-              name:
-                item.name || "",
-
-              price:
-                item.price || "",
-
-              desc:
-                item.description || "",
-
-              image:
-                item.image || "",
-
-              isAvailable:
-                item.isAvailable !== false
-
-            }))
-
-        };
-
-      });
-
-
-    MENU.length = 0;
-
-    appwriteMenu.forEach(category => {
-      MENU.push(category);
-    });
-
-
-    renderCategories();
-
-  }catch(error){
-
-    console.error(
-      "Could not load menu from Appwrite:",
-      error
-    );
-
-  }
-
-}
 
 const imageLightbox = document.getElementById("imageLightbox");
 const imageLightboxImg = document.getElementById("imageLightboxImg");
@@ -2106,39 +1809,24 @@ document.getElementById("backBtn").addEventListener("click",()=>{
   });
 });
   
-loadRestaurantSettingsFromAppwrite().then(() => {
+/* =========================================================
+   CUSTOMER MENU STARTUP — LOCAL / GITHUB PAGES ONLY
+   The public menu does not contact Appwrite. This keeps the
+   restaurant branding, menu, prices and images available even
+   when Appwrite is suspended or unreachable.
+========================================================= */
+document.getElementById("callBtn").href = "tel:" + PHONE;
+document.getElementById("locationBtn").href = LOCATION;
+document.getElementById("restaurantNameDisplay").textContent = RESTAURANT_NAME;
+document.getElementById("restaurantDescriptionDisplay").textContent = RESTAURANT_DESCRIPTION;
 
-  document.getElementById("callBtn").href =
-    "tel:" + RESTAURANT_SETTINGS.phone;
+const localLogoBox = document.getElementById("logoBox");
+if(LOGO){
+  localLogoBox.innerHTML = `<img src="${LOGO}" alt="Agbamami Traditional Restaurant logo">`;
+}
 
-  document.getElementById("locationBtn").href =
-    RESTAURANT_SETTINGS.location;
-
-  document.getElementById("restaurantNameDisplay").textContent =
-    RESTAURANT_SETTINGS.restaurantName;
-
-  document.getElementById("restaurantDescriptionDisplay").textContent =
-    RESTAURANT_SETTINGS.description ||
-    "Explore our menu";
-
-  const logoBox =
-    document.getElementById("logoBox");
-
-  if(RESTAURANT_SETTINGS.logo){
-
-    logoBox.innerHTML =
-      `<img src="${RESTAURANT_SETTINGS.logo}" alt="Agbamami logo">`;
-
-  }else{
-
-    logoBox.textContent = "ADD LOGO";
-
-  }
-
-  renderCategories();
-  loadMenuFromAppwrite();
-
-});
+// Render the local menu immediately. No network or Appwrite request is required.
+renderCategories();
 
 </script>
 </body>
