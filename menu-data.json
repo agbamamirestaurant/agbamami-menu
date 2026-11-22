@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "publishedAt": "2026-11-22T18:50:24.369Z",
+  "publishedAt": "2026-11-22T19:41:05.928Z",
   "categories": [
     {
       "name": "SOUPS",
@@ -76,10 +76,10 @@
     },
     {
       "name": "CHIPS & CHICKEN",
-      "image": "chicken.jpg",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795376456390-dab6858fbc.jpeg",
       "description": "",
       "sortOrder": 8,
-      "isDrink": false,
+      "isDrink": true,
       "invisible": false,
       "id": "cat_09_chips"
     },
@@ -429,7 +429,7 @@
       "price": "GH₵ 100",
       "description": "",
       "categoryId": "cat_01_soups",
-      "image": "",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795375092785-d0c1cc4f05.jpeg",
       "isAvailable": true,
       "sortOrder": 1,
       "itemType": "",
@@ -665,18 +665,6 @@
       "id": "item_20_002_tzepao"
     },
     {
-      "name": "FRESH FISH",
-      "price": "GH₵ 120",
-      "description": "",
-      "categoryId": "cat_01_soups",
-      "image": "",
-      "isAvailable": true,
-      "sortOrder": 2,
-      "itemType": "",
-      "isFeatured": false,
-      "id": "item_01_003_fresh-fish"
-    },
-    {
       "name": "EWORKPLE (LARGE/REGULAR)",
       "price": "GH₵ 20/10",
       "description": "",
@@ -867,18 +855,6 @@
       "itemType": "",
       "isFeatured": false,
       "id": "item_18_003_jagd-bitters"
-    },
-    {
-      "name": "FRESH FISH (GRUPPER/RED SNIPPER)",
-      "price": "GH₵ 160",
-      "description": "",
-      "categoryId": "cat_01_soups",
-      "image": "",
-      "isAvailable": true,
-      "sortOrder": 3,
-      "itemType": "",
-      "isFeatured": false,
-      "id": "item_01_004_fresh-fish-grupper-red-snipper"
     },
     {
       "name": "PLAIN RICE",
@@ -1241,16 +1217,16 @@
       "id": "item_02_006_jollof-rice"
     },
     {
-      "name": "GBORVILOLO STEW",
-      "price": "GH₵ 85",
-      "description": "",
+      "name": "BEEF SAUCE",
+      "price": "GH₵ 100",
+      "description": "SLICED BEEF, GREEN PEPPER, ONION AND CARROT",
       "categoryId": "cat_03_sauces",
-      "image": "",
+      "image": "beef sauce.png",
       "isAvailable": true,
       "sortOrder": 5,
       "itemType": "",
       "isFeatured": false,
-      "id": "item_03_006_gborvilolo-stew"
+      "id": "item_03_007_beef-sauce"
     },
     {
       "name": "WELE",
@@ -1349,16 +1325,16 @@
       "id": "item_02_007_plantain"
     },
     {
-      "name": "BEEF SAUCE",
-      "price": "GH₵ 100",
-      "description": "SLICED BEEF, GREEN PEPPER, ONION AND CARROT",
+      "name": "GOAT STEW",
+      "price": "GH₵ 150",
+      "description": "",
       "categoryId": "cat_03_sauces",
-      "image": "beef sauce.png",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795371242861-59b345931b.jpeg",
       "isAvailable": true,
       "sortOrder": 6,
       "itemType": "",
       "isFeatured": false,
-      "id": "item_03_007_beef-sauce"
+      "id": "item_03_008_goat-stew"
     },
     {
       "name": "ANCHOVIES (KETA SCHOOL BOYS)",
@@ -1457,18 +1433,6 @@
       "id": "item_02_008_yam"
     },
     {
-      "name": "GOAT STEW",
-      "price": "GH₵ 150",
-      "description": "",
-      "categoryId": "cat_03_sauces",
-      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795371242861-59b345931b.jpeg",
-      "isAvailable": true,
-      "sortOrder": 7,
-      "itemType": "",
-      "isFeatured": false,
-      "id": "item_03_008_goat-stew"
-    },
-    {
       "name": "OKRO MIXED WITH SPINACH (GBOMA)",
       "price": "GH₵ 20",
       "description": "Replace with your actual menu item.",
@@ -1541,6 +1505,18 @@
       "id": "item_18_008_origin-bitters"
     },
     {
+      "name": "PRAWNS & OCTOPUS SAUCE",
+      "price": "GH₵ 240",
+      "description": "",
+      "categoryId": "cat_03_sauces",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795376035030-38c1e8c76c.jpeg",
+      "isAvailable": true,
+      "sortOrder": 7,
+      "itemType": "",
+      "isFeatured": false,
+      "id": "men_8965d40be89f30b6cc238f001fc4f9f8"
+    },
+    {
       "name": "GROUNDNUT SOUP/PEANUT SOUP(FISH)",
       "price": "GH₵ 160",
       "description": "",
@@ -1565,8 +1541,8 @@
       "id": "item_02_009_plantain-yam"
     },
     {
-      "name": "SPICY BEEF IN TOMATOES SAUCE",
-      "price": "GH₵ 100",
+      "name": "GBORVILOLO STEW",
+      "price": "GH₵ 85",
       "description": "",
       "categoryId": "cat_03_sauces",
       "image": "",
@@ -1574,7 +1550,7 @@
       "sortOrder": 8,
       "itemType": "",
       "isFeatured": false,
-      "id": "item_03_009_spicy-beef-in-tomatoes-sauce"
+      "id": "item_03_006_gborvilolo-stew"
     },
     {
       "name": "SHRIMPS/PRAWNS",
@@ -1914,10 +1890,10 @@
     },
     {
       "name": "GOAT LIGHT SOUP",
-      "price": "GH₵ 80",
-      "description": "",
+      "price": "GH₵ 160",
+      "description": "FOUR PIECES OF GOAT MEAT",
       "categoryId": "cat_01_soups",
-      "image": "",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795375178302-3e715134e1.jpeg",
       "isAvailable": true,
       "sortOrder": 21,
       "itemType": "",
@@ -1925,13 +1901,25 @@
       "id": "item_01_022_goat-light-soup"
     },
     {
+      "name": "GOAT LIGHT SOUP",
+      "price": "GH₵ 80",
+      "description": "TWO PIECES OF GOAT MEAT",
+      "categoryId": "cat_01_soups",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795375489201-dd458ae45c.jpeg",
+      "isAvailable": true,
+      "sortOrder": 22,
+      "itemType": "",
+      "isFeatured": false,
+      "id": "men_137a73d1338512b9991a8d5ab387bc0f"
+    },
+    {
       "name": "SMOKED GRASSCUTTER LIGHT SOUP",
       "price": "GH₵ 180",
       "description": "",
       "categoryId": "cat_01_soups",
-      "image": "",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795375206273-1080553584.jpeg",
       "isAvailable": true,
-      "sortOrder": 22,
+      "sortOrder": 23,
       "itemType": "",
       "isFeatured": false,
       "id": "item_01_023_smoked-grasscutter-light-soup"
@@ -1943,7 +1931,7 @@
       "categoryId": "cat_01_soups",
       "image": "16.jpeg",
       "isAvailable": true,
-      "sortOrder": 23,
+      "sortOrder": 24,
       "itemType": "",
       "isFeatured": false,
       "id": "item_01_024_chicken-light-soup"
@@ -1955,7 +1943,7 @@
       "categoryId": "cat_01_soups",
       "image": "",
       "isAvailable": true,
-      "sortOrder": 24,
+      "sortOrder": 25,
       "itemType": "",
       "isFeatured": false,
       "id": "item_01_025_smoked-catfish-blolo-light-soup"
@@ -1967,34 +1955,22 @@
       "categoryId": "cat_01_soups",
       "image": "ADEF.jpeg",
       "isAvailable": true,
-      "sortOrder": 25,
+      "sortOrder": 147,
       "itemType": "",
       "isFeatured": false,
       "id": "item_01_026_ademe-fish"
     },
     {
-      "name": "ADEME(FISH,BEEF,CRAB & WELE)",
-      "price": "GH₵ 160",
-      "description": "",
-      "categoryId": "cat_01_soups",
-      "image": "",
-      "isAvailable": true,
-      "sortOrder": 26,
-      "itemType": "",
-      "isFeatured": false,
-      "id": "item_01_027_ademe-fish-beef-crab-wele"
-    },
-    {
-      "name": "OKRO MIXED WITH GBOMA WITH(FRIED FISH)",
+      "name": "SPICY BEEF IN TOMATOES SAUCE",
       "price": "GH₵ 100",
       "description": "",
-      "categoryId": "cat_01_soups",
+      "categoryId": "cat_03_sauces",
       "image": "",
       "isAvailable": true,
-      "sortOrder": 27,
+      "sortOrder": 148,
       "itemType": "",
       "isFeatured": false,
-      "id": "item_01_028_okro-mixed-with-gboma-with-fried-fish"
+      "id": "item_03_009_spicy-beef-in-tomatoes-sauce"
     }
   ],
   "settings": {
