@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "publishedAt": "2026-11-22T18:14:39.415Z",
+  "publishedAt": "2026-11-22T18:35:23.539Z",
   "categories": [
     {
       "name": "SOUPS",
@@ -88,7 +88,7 @@
       "image": "salad.png",
       "description": "",
       "sortOrder": 9,
-      "isDrink": false,
+      "isDrink": true,
       "invisible": false,
       "id": "cat_10_salads"
     },
@@ -489,7 +489,7 @@
       "price": "GH₵ 100",
       "description": "",
       "categoryId": "cat_06_red-red",
-      "image": "",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795372253417-2c964f23a4.jpeg",
       "isAvailable": true,
       "sortOrder": 1,
       "itemType": "",
@@ -1593,7 +1593,7 @@
       "price": "GH₵ 100",
       "description": "",
       "categoryId": "cat_07_rice-dishes",
-      "image": "",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795372402639-9146444c17.jpeg",
       "isAvailable": true,
       "sortOrder": 8,
       "itemType": "",
@@ -1689,7 +1689,7 @@
       "price": "GH₵ 100",
       "description": "",
       "categoryId": "cat_07_rice-dishes",
-      "image": "",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795372433828-1a5b45fc9b.jpeg",
       "isAvailable": true,
       "sortOrder": 9,
       "itemType": "",
@@ -1737,7 +1737,7 @@
       "price": "GH₵ 125",
       "description": "",
       "categoryId": "cat_07_rice-dishes",
-      "image": "",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795372458339-9fd03a4011.jpeg",
       "isAvailable": true,
       "sortOrder": 10,
       "itemType": "",
