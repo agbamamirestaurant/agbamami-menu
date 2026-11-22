@@ -1825,8 +1825,127 @@ if(LOGO){
   localLogoBox.innerHTML = `<img src="${LOGO}" alt="Agbamami Traditional Restaurant logo">`;
 }
 
-// Render the local menu immediately. No network or Appwrite request is required.
+
+/* =========================================================
+   CUSTOMER MENU STARTUP
+   Load the latest published menu from GitHub.
+   Keep LOCAL_MENU as an offline fallback.
+========================================================= */
+
+async function loadPublishedMenu(){
+
+  try{
+
+    const response = await fetch(
+      "./menu-data.json?v=" + Date.now(),
+      {
+        cache: "no-store"
+      }
+    );
+
+    if(!response.ok){
+      throw new Error(
+        "Could not load published menu data."
+      );
+    }
+
+    const published = await response.json();
+
+    if(
+      !Array.isArray(published.categories) ||
+      !Array.isArray(published.items)
+    ){
+      throw new Error(
+        "Published menu data has an invalid format."
+      );
+    }
+
+    MENU = published.categories.map(category => {
+
+      const categoryItems =
+        published.items
+          .filter(item =>
+            String(item.categoryId) === String(category.id)
+          )
+          .map(item => ({
+            ...item,
+            desc: item.description || item.desc || "",
+            image: item.image || ""
+          }));
+
+      return {
+        ...category,
+
+        isDrink:
+          Boolean(category.isDrink) ||
+          DRINK_CATEGORIES.has(
+            String(category.name || "").toUpperCase()
+          ),
+
+        items: categoryItems
+      };
+
+    });
+
+    renderCategories();
+
+    console.log(
+      "Latest Agbamami menu loaded successfully.",
+      published.publishedAt
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Using offline menu data:",
+      error
+    );
+
+    MENU = LOCAL_MENU;
+
+    renderCategories();
+
+  }
+
+}
+
+
+/* Restaurant contact information */
+
+document.getElementById("callBtn").href =
+  "tel:" + PHONE;
+
+document.getElementById("locationBtn").href =
+  LOCATION;
+
+document.getElementById("restaurantNameDisplay").textContent =
+  RESTAURANT_NAME;
+
+document.getElementById("restaurantDescriptionDisplay").textContent =
+  RESTAURANT_DESCRIPTION;
+
+
+/* Restaurant logo */
+
+const localLogoBox =
+  document.getElementById("logoBox");
+
+if(LOGO){
+
+  localLogoBox.innerHTML =
+    `<img src="${LOGO}" alt="Agbamami Traditional Restaurant logo">`;
+
+}
+
+
+/* Display local menu immediately, then update from GitHub. */
+
+MENU = LOCAL_MENU;
+
 renderCategories();
+
+loadPublishedMenu();
+
 
 </script>
 </body>
