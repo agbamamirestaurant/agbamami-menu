@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "publishedAt": "2026-11-22T18:08:49.993Z",
+  "publishedAt": "2026-11-22T18:14:39.415Z",
   "categories": [
     {
       "name": "SOUPS",
@@ -213,7 +213,7 @@
       "price": "GH₵ 85",
       "description": "",
       "categoryId": "cat_03_sauces",
-      "image": "13 stew.jpeg",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795371112735-80824b7e39.jpeg",
       "isAvailable": true,
       "sortOrder": 0,
       "itemType": "",
@@ -449,11 +449,11 @@
       "id": "item_02_002_fufu-large-regular"
     },
     {
-      "name": "ANCHOVIES (KETA SCHOOL BOYS) WITH PEPPER\t",
+      "name": "ANCHOVIES (KETA SCHOOL BOYS) WITH PEPPER",
       "price": "GH₵ 80",
       "description": "",
       "categoryId": "cat_03_sauces",
-      "image": "",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795371163484-3266ad682b.jpeg",
       "isAvailable": true,
       "sortOrder": 1,
       "itemType": "",
@@ -1461,7 +1461,7 @@
       "price": "GH₵ 150",
       "description": "",
       "categoryId": "cat_03_sauces",
-      "image": "",
+      "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795371242861-59b345931b.jpeg",
       "isAvailable": true,
       "sortOrder": 7,
       "itemType": "",
@@ -1995,18 +1995,6 @@
       "itemType": "",
       "isFeatured": false,
       "id": "item_01_028_okro-mixed-with-gboma-with-fried-fish"
-    },
-    {
-      "name": "LIGHT SOUP",
-      "price": "GH₵ 20",
-      "description": "",
-      "categoryId": "cat_01_soups",
-      "image": "",
-      "isAvailable": true,
-      "sortOrder": 151,
-      "itemType": "",
-      "isFeatured": false,
-      "id": "men_c2bed0ffd03867897138bbae584b1745"
     }
   ],
   "settings": {
