@@ -1809,22 +1809,6 @@ document.getElementById("backBtn").addEventListener("click",()=>{
   });
 });
   
-/* =========================================================
-   CUSTOMER MENU STARTUP — LOCAL / GITHUB PAGES ONLY
-   The public menu does not contact Appwrite. This keeps the
-   restaurant branding, menu, prices and images available even
-   when Appwrite is suspended or unreachable.
-========================================================= */
-document.getElementById("callBtn").href = "tel:" + PHONE;
-document.getElementById("locationBtn").href = LOCATION;
-document.getElementById("restaurantNameDisplay").textContent = RESTAURANT_NAME;
-document.getElementById("restaurantDescriptionDisplay").textContent = RESTAURANT_DESCRIPTION;
-
-const localLogoBox = document.getElementById("logoBox");
-if(LOGO){
-  localLogoBox.innerHTML = `<img src="${LOGO}" alt="Agbamami Traditional Restaurant logo">`;
-}
-
 
 /* =========================================================
    CUSTOMER MENU STARTUP
