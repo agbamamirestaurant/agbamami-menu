@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "publishedAt": "2026-11-22T17:06:45.338Z",
+  "publishedAt": "2026-11-22T17:24:58.464Z",
   "categories": [
     {
       "name": "SOUPS",
@@ -1995,6 +1995,18 @@
       "itemType": "",
       "isFeatured": false,
       "id": "item_01_028_okro-mixed-with-gboma-with-fried-fish"
+    },
+    {
+      "name": "LIGHT SOUP",
+      "price": "GH₵ 20",
+      "description": "",
+      "categoryId": "cat_01_soups",
+      "image": "",
+      "isAvailable": true,
+      "sortOrder": 151,
+      "itemType": "",
+      "isFeatured": false,
+      "id": "men_c2bed0ffd03867897138bbae584b1745"
     }
   ],
   "settings": {
