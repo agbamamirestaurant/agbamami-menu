@@ -2293,67 +2293,212 @@ input[type=file]::file-selector-button{
 
 <script>
 
+
 /* =========================================================
-   APPWRITE CONFIG
+   CLOUDFLARE CONFIGURATION
 ========================================================= */
 
-const APPWRITE_ENDPOINT =
-  "https://fra.cloud.appwrite.io/v1";
-
-const APPWRITE_PROJECT_ID =
-  "6ad2ca49001034ba372a";
-
-const APPWRITE_DATABASE_ID =
-  "agbamami_menu";
-
-const APPWRITE_CATEGORIES_TABLE =
-  "categories";
-
-const APPWRITE_MENU_ITEMS_TABLE =
-  "menu_items";
-
-const APPWRITE_SETTINGS_TABLE =
-  "restaurant_settings";
-
-const APPWRITE_STORAGE_BUCKET_ID =
-  "agbamami_images";
-
-const APPWRITE_ADMIN_FUNCTION_ID =
-  "6ad408700f7949c8b84b";
+const API_BASE =
+  "https://agbamami-menu-api.ewoenamjnr05.workers.dev";
 
 const ADMIN_INTERNAL_DOMAIN =
   "agbamami-admin.com";
 
+const APPWRITE_DATABASE_ID = "agbamami_menu";
+const APPWRITE_CATEGORIES_TABLE = "categories";
+const APPWRITE_MENU_ITEMS_TABLE = "menu_items";
+const APPWRITE_SETTINGS_TABLE = "restaurant_settings";
+const APPWRITE_STORAGE_BUCKET_ID = "agbamami_images";
+
+const ADMIN_TOKEN_KEY = "agbamami_admin_token";
+
+function getAdminToken(){
+  return localStorage.getItem(ADMIN_TOKEN_KEY) || "";
+}
+
+async function apiRequest(path, options = {}) {
+  const headers = new Headers(options.headers || {});
+  const token = getAdminToken();
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  if (
+    options.body &&
+    !(options.body instanceof FormData) &&
+    !headers.has("Content-Type")
+  ) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  const response = await fetch(API_BASE + path, {
+    ...options,
+    headers
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok || data.success === false) {
+    throw new Error(
+      data.message || `Request failed (${response.status})`
+    );
+  }
+
+  return data;
+}
+
 /* =========================================================
-   ADMIN AUTH CONFIG
+   CLOUDFLARE AUTHENTICATION
 ========================================================= */
 
+const account = {
+  async createEmailPasswordSession({ email, password }) {
+    const username = String(email || "")
+      .replace(new RegExp("@" + ADMIN_INTERNAL_DOMAIN + "$", "i"), "");
 
+    const data = await apiRequest("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password })
+    });
 
+    const token = data.token || data.session?.token;
+
+    if (!token) {
+      throw new Error("Login succeeded but no session token was returned.");
+    }
+
+    localStorage.setItem(ADMIN_TOKEN_KEY, token);
+    return data;
+  },
+
+  async get() {
+    const data = await apiRequest("/api/auth/me");
+    return data.user || data.admin || data;
+  },
+
+  async deleteSession() {
+    try {
+      await apiRequest("/api/auth/logout", {
+        method: "POST"
+      });
+    } finally {
+      localStorage.removeItem(ADMIN_TOKEN_KEY);
+    }
+  }
+};
 
 /* =========================================================
-   APPWRITE INITIALIZATION
+   CLOUDFLARE DATABASE COMPATIBILITY
 ========================================================= */
 
-const appwriteClient =
-  new Appwrite.Client();
+const tablesDB = {
+  async listRows({ tableId, queries = [] }) {
+    const limitQuery = queries.find(q => q.type === "limit");
+    const offsetQuery = queries.find(q => q.type === "offset");
 
-appwriteClient
-  .setEndpoint(APPWRITE_ENDPOINT)
-  .setProject(APPWRITE_PROJECT_ID);
+    const limit = limitQuery?.value || 500;
+    const offset = offsetQuery?.value || 0;
 
-const account =
-  new Appwrite.Account(appwriteClient);
+    const data = await apiRequest(
+      `/api/tables/${encodeURIComponent(tableId)}?limit=${limit}&offset=${offset}`
+    );
 
-const tablesDB =
-  new Appwrite.TablesDB(appwriteClient);
+    return {
+      rows: data.rows || [],
+      total: data.total || 0
+    };
+  },
 
-const storage =
-  new Appwrite.Storage(appwriteClient);
+  async createRow({ tableId, rowId, data }) {
+    return apiRequest(
+      `/api/tables/${encodeURIComponent(tableId)}`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          id: rowId,
+          data
+        })
+      }
+    );
+  },
 
-const functions =
-  new Appwrite.Functions(appwriteClient);
+  async updateRow({ tableId, rowId, data }) {
+    return apiRequest(
+      `/api/tables/${encodeURIComponent(tableId)}/${encodeURIComponent(rowId)}`,
+      {
+        method: "PUT",
+        body: JSON.stringify({ data })
+      }
+    );
+  },
 
+  async deleteRow({ tableId, rowId }) {
+    return apiRequest(
+      `/api/tables/${encodeURIComponent(tableId)}/${encodeURIComponent(rowId)}`,
+      { method: "DELETE" }
+    );
+  }
+};
+
+/* =========================================================
+   CLOUDFLARE IMAGE STORAGE
+========================================================= */
+
+const storage = {
+  async createFile({ file }) {
+    const form = new FormData();
+    form.append("file", file);
+
+    return apiRequest("/api/storage/upload", {
+      method: "POST",
+      body: form
+    });
+  }
+};
+
+/* =========================================================
+   CLOUDFLARE ADMIN FUNCTIONS
+========================================================= */
+
+const functions = {
+  async createExecution({ body }) {
+    const payload = typeof body === "string"
+      ? JSON.parse(body)
+      : body;
+
+    const data = await apiRequest("/api/functions", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    return {
+      response: JSON.stringify(data)
+    };
+  }
+};
+
+/* =========================================================
+   APPWRITE HELPER COMPATIBILITY
+========================================================= */
+
+const Appwrite = {
+  ID: {
+    unique() {
+      return "item_" + crypto.randomUUID();
+    }
+  },
+
+  Query: {
+    limit(value) {
+      return { type: "limit", value };
+    },
+
+    offset(value) {
+      return { type: "offset", value };
+    }
+  }
+};
 
 /* =========================================================
    STATE
@@ -3481,7 +3626,7 @@ async function uploadRestaurantLogo(){
 
 
     const fileUrl =
-      `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
+      response.url || response.imageUrl || response.$id;
 
 
     status.textContent =
@@ -3679,7 +3824,7 @@ async function uploadFileFromInput(
 
 
     const fileUrl =
-      `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_STORAGE_BUCKET_ID}/files/${response.$id}/view?project=${APPWRITE_PROJECT_ID}`;
+      response.url || response.imageUrl || response.$id;
 
 
     status.textContent =
