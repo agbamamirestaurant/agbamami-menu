@@ -1847,11 +1847,21 @@ async function loadPublishedMenu(){
     MENU = published.categories.map(category => {
 
       const categoryItems =
-        published.items
-          .filter(item =>
-            String(item.categoryId) === String(category.id)
-          )
-          .map(item => ({
+  published.items
+    .filter(item =>
+      String(item.categoryId).trim() ===
+      String(category.id).trim()
+    )
+    .sort((a, b) =>
+      Number(a.sortOrder ?? 0) - Number(b.sortOrder ?? 0)
+    )
+    .map(item => ({
+      ...item,
+      desc: item.description || item.desc || "",
+      image: item.image || ""
+    }));
+      
+            .map(item => ({
             ...item,
             desc: item.description || item.desc || "",
             image: item.image || ""
