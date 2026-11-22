@@ -1861,11 +1861,6 @@ async function loadPublishedMenu(){
       image: item.image || ""
     }));
       
-            .map(item => ({
-            ...item,
-            desc: item.description || item.desc || "",
-            image: item.image || ""
-          }));
 
       return {
         ...category,
