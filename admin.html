@@ -1122,25 +1122,33 @@ input[type=file]::file-selector-button{
       Agbamami Admin
     </div>
 
-    <div class="header-actions">
+    
+<div class="header-actions">
 
-      <button
-        class="secondary"
-        onclick="openCustomerMenu()"
-      >
-        View Menu
-      </button>
+  <button
+    class="secondary"
+    onclick="openCustomerMenu()"
+  >
+    View Menu
+  </button>
 
-      <button
-        class="danger"
-        onclick="logout()"
-      >
-        Log out
-      </button>
+  <button
+    class="primary"
+    id="publishMenuButton"
+    onclick="publishMenuNow()"
+  >
+    Publish Menu
+  </button>
 
-    </div>
+  <button
+    class="danger"
+    onclick="logout()"
+  >
+    Log out
+  </button>
 
-  </div>
+</div>
+
 
 </header>
 
@@ -2549,6 +2557,55 @@ function showMessage(text,type="success"){
     setTimeout(()=>{
       message.style.display = "none";
     },3500);
+
+}
+
+
+async function publishMenuNow(){
+
+  const button =
+    document.getElementById("publishMenuButton");
+
+  if(!confirm(
+    "Publish the current restaurant menu to the live customer menu?"
+  )){
+    return;
+  }
+
+  try{
+
+    button.disabled = true;
+    button.textContent = "Publishing...";
+
+    const result = await apiRequest(
+      "/api/publish",
+      {
+        method: "POST",
+        body: JSON.stringify({})
+      }
+    );
+
+    showMessage(
+      result.message ||
+      "Menu published successfully!"
+    );
+
+  }catch(error){
+
+    console.error("Menu publishing failed:",error);
+
+    showMessage(
+      error.message ||
+      "Could not publish the menu.",
+      "error"
+    );
+
+  }finally{
+
+    button.disabled = false;
+    button.textContent = "Publish Menu";
+
+  }
 
 }
 
