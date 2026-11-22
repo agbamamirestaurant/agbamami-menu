@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "publishedAt": "2026-11-22T17:25:29.480Z",
+  "publishedAt": "2026-11-22T17:52:27.215Z",
   "categories": [
     {
       "name": "SOUPS",
@@ -2002,7 +2002,7 @@
       "description": "",
       "categoryId": "cat_01_soups",
       "image": "",
-      "isAvailable": true,
+      "isAvailable": false,
       "sortOrder": 151,
       "itemType": "",
       "isFeatured": false,
