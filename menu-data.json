@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "publishedAt": "2026-11-22T18:35:23.539Z",
+  "publishedAt": "2026-11-22T18:35:48.261Z",
   "categories": [
     {
       "name": "SOUPS",
@@ -75,7 +75,7 @@
       "id": "cat_08_pasta"
     },
     {
-      "name": "CHIPS",
+      "name": "CHIPS & CHICKEN",
       "image": "chicken.jpg",
       "description": "",
       "sortOrder": 8,
