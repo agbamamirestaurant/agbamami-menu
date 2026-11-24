@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "publishedAt": "2026-11-23T16:24:47.064Z",
+  "publishedAt": "2026-11-24T14:34:50.052Z",
   "categories": [
     {
       "name": "SOUPS",
@@ -186,7 +186,7 @@
   "items": [
     {
       "name": "FRESH TILAPIA LIGHT SOUP",
-      "price": "GH₵ 80",
+      "price": "GH₵ 100",
       "description": "",
       "categoryId": "cat_01_soups",
       "image": "5.jpeg",
@@ -210,7 +210,7 @@
     },
     {
       "name": "ANCHOVIES(KETA SCHOOL BOYS WITH STEW)",
-      "price": "GH₵ 85",
+      "price": "GH₵ 100",
       "description": "",
       "categoryId": "cat_03_sauces",
       "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795371112735-80824b7e39.jpeg",
@@ -222,7 +222,7 @@
     },
     {
       "name": "CHAR GRILLED TILAPIA WITH PEPPER (LARGE)",
-      "price": "GH₵ 130",
+      "price": "GH₵ 140",
       "description": "",
       "categoryId": "cat_04_grill",
       "image": "",
@@ -258,7 +258,7 @@
     },
     {
       "name": "BEEF FRIED RICE",
-      "price": "GH₵ 100",
+      "price": "GH₵ 110",
       "description": "",
       "categoryId": "cat_07_rice-dishes",
       "image": "45.jpeg",
@@ -282,7 +282,7 @@
     },
     {
       "name": "YAM CHIPS WITH CHICKEN",
-      "price": "GH₵ 100",
+      "price": "GH₵ 110",
       "description": "",
       "categoryId": "cat_09_chips",
       "image": "",
@@ -462,7 +462,7 @@
     },
     {
       "name": "CHAR GRILLED TILAPIA WITH PEPPER (MEDIUM)",
-      "price": "GH₵ 100",
+      "price": "GH₵ 110",
       "description": "",
       "categoryId": "cat_04_grill",
       "image": "",
@@ -486,7 +486,7 @@
     },
     {
       "name": "BEANS WITH FRIED PLANTAIN AND FISH",
-      "price": "GH₵ 100",
+      "price": "GH₵ 110",
       "description": "",
       "categoryId": "cat_06_red-red",
       "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795372253417-2c964f23a4.jpeg",
@@ -522,7 +522,7 @@
     },
     {
       "name": "POTATO CHIPS WITH CHICKEN",
-      "price": "GH₵ 100",
+      "price": "GH₵ 110",
       "description": "",
       "categoryId": "cat_09_chips",
       "image": "42C.jpeg",
@@ -702,7 +702,7 @@
     },
     {
       "name": "BEANS WITH FRIED PLANTAIN AND CHICKEN",
-      "price": "GH₵ 100",
+      "price": "GH₵ 110",
       "description": "",
       "categoryId": "cat_06_red-red",
       "image": "36.1C.jpeg",
@@ -714,7 +714,7 @@
     },
     {
       "name": "FRIED RICE WITH SHRIMPS",
-      "price": "GH₵ 125",
+      "price": "GH₵ 130",
       "description": "",
       "categoryId": "cat_07_rice-dishes",
       "image": "fried rice with shrimps.jpeg",
@@ -738,7 +738,7 @@
     },
     {
       "name": "POTATO CHIPS WITH FISH",
-      "price": "GH₵ 100",
+      "price": "GH₵ 110",
       "description": "",
       "categoryId": "cat_09_chips",
       "image": "42F.png",
@@ -894,7 +894,7 @@
     },
     {
       "name": "FRIED PLANTAIN",
-      "price": "GH₵ 40",
+      "price": "GH₵ 50",
       "description": "",
       "categoryId": "cat_06_red-red",
       "image": "fried plantain.jpeg",
@@ -918,7 +918,7 @@
     },
     {
       "name": "GRILLED CHICKEN WINGS",
-      "price": "GH₵ 60",
+      "price": "GH₵ 80",
       "description": "",
       "categoryId": "cat_09_chips",
       "image": "",
@@ -1050,7 +1050,7 @@
     },
     {
       "name": "GBORVILOLO WITH PEPPER",
-      "price": "GH₵ 80",
+      "price": "GH₵ 100",
       "description": "",
       "categoryId": "cat_03_sauces",
       "image": "GB.jpeg",
@@ -1242,7 +1242,7 @@
     },
     {
       "name": "JOLLOF RICE WITH CHICKEN",
-      "price": "GH₵ 110",
+      "price": "GH₵ 125",
       "description": "",
       "categoryId": "cat_07_rice-dishes",
       "image": "47C.png",
@@ -1314,7 +1314,7 @@
     },
     {
       "name": "PLANTAIN",
-      "price": "GH₵ 35",
+      "price": "GH₵ 40",
       "description": "",
       "categoryId": "cat_02_sidelines-accompaniments",
       "image": "plantain.jpeg",
@@ -1326,7 +1326,7 @@
     },
     {
       "name": "GOAT STEW",
-      "price": "GH₵ 150",
+      "price": "GH₵ 160",
       "description": "",
       "categoryId": "cat_03_sauces",
       "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795371242861-59b345931b.jpeg",
@@ -1422,7 +1422,7 @@
     },
     {
       "name": "YAM",
-      "price": "GH₵ 35",
+      "price": "GH₵ 40",
       "description": "",
       "categoryId": "cat_02_sidelines-accompaniments",
       "image": "yam.jpeg",
@@ -1530,7 +1530,7 @@
     },
     {
       "name": "PLANTAIN & YAM",
-      "price": "GH₵ 35",
+      "price": "GH₵ 40",
       "description": "",
       "categoryId": "cat_02_sidelines-accompaniments",
       "image": "plantain and yam.jpeg",
@@ -1542,7 +1542,7 @@
     },
     {
       "name": "GBORVILOLO STEW",
-      "price": "GH₵ 85",
+      "price": "GH₵ 100",
       "description": "",
       "categoryId": "cat_03_sauces",
       "image": "",
@@ -1710,7 +1710,7 @@
     },
     {
       "name": "ASSORTED FRIED RICE",
-      "price": "GH₵ 125",
+      "price": "GH₵ 130",
       "description": "",
       "categoryId": "cat_07_rice-dishes",
       "image": "https://agbamamirestaurant.github.io/agbamami-menu/images/uploads/1795372458339-9fd03a4011.jpeg",
@@ -1746,7 +1746,7 @@
     },
     {
       "name": "VEGETABLE FRIED RICE",
-      "price": "GH₵ 50",
+      "price": "GH₵ 70",
       "description": "",
       "categoryId": "cat_07_rice-dishes",
       "image": "vegetable fried rice.jpeg",
